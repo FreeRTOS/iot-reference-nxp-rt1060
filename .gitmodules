@@ -1,0 +1,6 @@
+[submodule "core"]
+	path = core
+	url = git@github.com:NXPmicro/mcux-sdk.git
+[submodule "Middleware/FreeRTOS/kernel"]
+	path = Middleware/FreeRTOS/kernel
+	url = git@github.com:FreeRTOS/FreeRTOS-Kernel.git
