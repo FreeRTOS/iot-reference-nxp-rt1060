@@ -4,3 +4,6 @@
 [submodule "Middleware/FreeRTOS/kernel"]
 	path = Middleware/FreeRTOS/kernel
 	url = git@github.com:FreeRTOS/FreeRTOS-Kernel.git
+[submodule "examples"]
+	path = examples
+	url = git@github.com:NXPmicro/mcux-sdk-examples.git
