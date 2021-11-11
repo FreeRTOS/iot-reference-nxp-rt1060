@@ -7,3 +7,6 @@
 [submodule "examples"]
 	path = examples
 	url = git@github.com:NXPmicro/mcux-sdk-examples.git
+[submodule "Middleware/FreeRTOS/coreMQTT"]
+	path = Middleware/FreeRTOS/coreMQTT
+	url = https://github.com/FreeRTOS/coreMQTT.git
