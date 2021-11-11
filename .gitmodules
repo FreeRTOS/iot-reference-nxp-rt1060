@@ -10,3 +10,6 @@
 [submodule "Middleware/FreeRTOS/coreMQTT"]
 	path = Middleware/FreeRTOS/coreMQTT
 	url = https://github.com/FreeRTOS/coreMQTT.git
+[submodule "Middleware/lwip"]
+	path = Middleware/lwip
+	url = git@github.com:lwip-tcpip/lwip.git
