@@ -70,8 +70,6 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-
-
 #if defined(__ICCARM__)||defined(__CC_ARM)||defined(__GNUC__)
 #include <stdio.h>
 //#include "fsl_debug_console.h"
@@ -124,12 +122,12 @@
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         1
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
-#define configTOTAL_HEAP_SIZE                   ((size_t)(80 * 1024))
+#define configTOTAL_HEAP_SIZE                   ((size_t)(20 * 1024))
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK                     0
-#define configUSE_TICK_HOOK                     1
+#define configUSE_TICK_HOOK                     0
 #define configCHECK_FOR_STACK_OVERFLOW          1
 #define configUSE_MALLOC_FAILED_HOOK            1
 #define configUSE_DAEMON_TASK_STARTUP_HOOK      0
@@ -152,7 +150,7 @@
 #define configTIMER_QUEUE_LENGTH                10
 #define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE * 2)
 
-#define configPRINTF( X )  vLoggingPrintf X
+#define configPRINTF( X )  printf X
 
 /* Map the logging task's printf to the board specific output function. */
 #define configPRINT_STRING          printf
@@ -184,8 +182,8 @@
 #define INCLUDE_eTaskGetState                   0
 #define INCLUDE_xEventGroupSetBitFromISR        1
 #define INCLUDE_xTimerPendFunctionCall          1
-#define INCLUDE_xTaskAbortDelay                 0
-#define INCLUDE_xTaskGetHandle                  0
+#define INCLUDE_xTaskAbortDelay                 1
+#define INCLUDE_xTaskGetHandle                  1
 #define INCLUDE_xTaskResumeFromISR              1
 
 
@@ -220,8 +218,6 @@ standard names. */
 #define xPortPendSVHandler PendSV_Handler
 #define xPortSysTickHandler SysTick_Handler
 
-
-#endif /* FREERTOS_CONFIG_H */
 
 #if defined(__ICCARM__)||defined(__CC_ARM)||defined(__GNUC__)
     /* Clock manager provides in this variable system core clock frequency */
@@ -258,3 +254,5 @@ standard names. */
 #define vPortSVCHandler SVC_Handler
 #define xPortPendSVHandler PendSV_Handler
 #define xPortSysTickHandler SysTick_Handler
+
+#endif /* FREERTOS_CONFIG_H */
