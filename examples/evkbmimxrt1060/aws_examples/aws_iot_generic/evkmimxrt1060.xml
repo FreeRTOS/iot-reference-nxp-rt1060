@@ -1,0 +1,10 @@
+ <chip>
+  <memory id='Flash' type='Flash' is_ro='true' can_program='true'></memory>
+  <memory id='RAM' type='RAM'></memory>
+   <memoryInstance id='BOARD_FLASH' derived_from='Flash' location='0x60000000' size='0x800000' driver='MIMXRT1060_SFDP_QSPI.cfx'  edited='true'  />
+   <memoryInstance id='SRAM_DTC' derived_from='RAM' location='0x20000000' size='0x20000'   edited='true'  />
+   <memoryInstance id='SRAM_ITC' derived_from='RAM' location='0x0' size='0x20000'   edited='true'  />
+   <memoryInstance id='SRAM_OC' derived_from='RAM' location='0x20200000' size='0xc0000'   edited='true'  />
+   <memoryInstance id='BOARD_SDRAM' derived_from='RAM' location='0x80000000' size='0x1e00000'   edited='true'  />
+   <memoryInstance id='NCACHE_REGION' derived_from='RAM' location='0x81e00000' size='0x200000'   edited='true'  />
+ </chip>

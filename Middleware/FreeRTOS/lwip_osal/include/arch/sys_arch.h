@@ -29,39 +29,70 @@
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
+
+/*
+ * Copyright (c) 2013-2016, Freescale Semiconductor, Inc.
+ * Copyright 2016-2017,2020 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #ifndef __ARCH_SYS_ARCH_H__
 #define __ARCH_SYS_ARCH_H__
+
+#include "fsl_debug_console.h"
+#include "lwip/opt.h"
+#include "arch/cc.h"
+
+#if !NO_SYS
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
 
-#define SYS_MBOX_NULL                     ( ( QueueHandle_t ) NULL )
-#define SYS_SEM_NULL                      ( ( SemaphoreHandle_t ) NULL )
-#define SYS_DEFAULT_THREAD_STACK_DEPTH    configMINIMAL_STACK_SIZE
+#endif
 
-typedef SemaphoreHandle_t   sys_sem_t;
-typedef SemaphoreHandle_t   sys_mutex_t;
-typedef TaskHandle_t        sys_thread_t;
+#define SYS_MBOX_NULL					( ( QueueHandle_t ) NULL )
+#define SYS_SEM_NULL					( ( SemaphoreHandle_t ) NULL )
+#define SYS_DEFAULT_THREAD_STACK_DEPTH	configMINIMAL_STACK_SIZE
+#if !NO_SYS
+typedef SemaphoreHandle_t sys_sem_t;
+typedef SemaphoreHandle_t sys_mutex_t;
+typedef QueueHandle_t sys_mbox_t;
+typedef TaskHandle_t sys_thread_t;
 
-struct sys_mbox
-{
-    QueueHandle_t xMbox;
-    TaskHandle_t xTask;
-};
-typedef struct sys_mbox sys_mbox_t;
+#define sys_mbox_valid( x ) ( ( ( *x ) == NULL) ? pdFALSE : pdTRUE )
+#define sys_mbox_set_invalid( x ) ( ( *x ) = NULL )
+#define sys_sem_valid( x ) ( ( ( *x ) == NULL) ? pdFALSE : pdTRUE )
+#define sys_sem_set_invalid( x ) ( ( *x ) = NULL )
 
-#define sys_mbox_valid( x )          ( ( ( ( x ) == NULL ) || ( ( x )->xMbox == NULL ) ) ? pdFALSE : pdTRUE )
-#define sys_mbox_set_invalid( x )    do { if( ( x ) != NULL ) { ( x )->xMbox = NULL; ( x )->xTask = NULL; } } while( 0 )
-#define sys_sem_valid( x )           ( ( ( * x ) == NULL ) ? pdFALSE : pdTRUE )
-#define sys_sem_set_invalid( x )     ( ( * x ) = NULL )
+#else /* NO_SYS */ /* Bare-metal */
 
-#if LWIP_NETCONN_SEM_PER_THREAD
-    sys_sem_t * sys_arch_netconn_sem_get( void );
-    #define LWIP_NETCONN_THREAD_SEM_GET()    sys_arch_netconn_sem_get()
-    #define LWIP_NETCONN_THREAD_SEM_ALLOC()
-    #define LWIP_NETCONN_THREAD_SEM_FREE()
-#endif /* LWIP_NETCONN_SEM_PER_THREAD */
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
+void time_isr(void);
+void time_init(void);
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
+
+#endif
+
+typedef unsigned long sys_prot_t;
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
+void sys_assert( char *msg );
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
 #endif /* __ARCH_SYS_ARCH_H__ */

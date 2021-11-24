@@ -27,104 +27,91 @@
  * This file is part of the lwIP TCP/IP stack.
  *
  * Author: Adam Dunkels <adam@sics.se>
+ * Author: Stefano Oliveri <stefano.oliveri@st.com>
  *
  */
-#ifndef __ARCH_CC_H__
-#define __ARCH_CC_H__
 
-/* Include some files for defining library routines */
-#include <stdio.h>  /* printf, fflush, FILE */
-#include <string.h>
-#include <stdlib.h> /* abort */
-/*#include <errno.h> */
-#if ( !defined( __CC_ARM ) ) && ( !defined( __ICCARM__ ) ) && ( !defined( __ARMCC_VERSION ) )
-    #include <sys/time.h>
+/*
+ * Copyright (c) 2013-2016, Freescale Semiconductor, Inc.
+ * Copyright 2016-2018, 2020-2021 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+#ifndef __CC_H__
+#define __CC_H__
+
+//FSL
+#ifdef __REDLIB__
+#define LWIP_NO_INTTYPES_H 1
 #endif
 
-#include "FreeRTOSConfig.h"
-
-#ifndef BYTE_ORDER
-    #define BYTE_ORDER            LITTLE_ENDIAN
-#endif
-
-#define LWIP_PLATFORM_BYTESWAP    0
-
-/** @todo fix some warnings: don't use #pragma if compiling with cygwin gcc */
-/*#ifndef __GNUC__ */
-#if ( !defined( __ICCARM__ ) ) && ( !defined( __GNUC__ ) ) && ( !defined( __CC_ARM ) )
-    #include <limits.h>
-    #pragma warning (disable: 4244) /* disable conversion warning (implicit integer promotion!) */
-    #pragma warning (disable: 4127) /* conditional expression is constant */
-    #pragma warning (disable: 4996) /* 'strncpy' was declared deprecated */
-    #pragma warning (disable: 4103) /* structure packing changed by including file */
-#endif
-
-#if !defined( LWIP_PROVIDE_ERRNO ) && !defined( LWIP_ERRNO_INCLUDE ) && !defined( LWIP_ERRNO_STDINCLUDE )
-    #define LWIP_PROVIDE_ERRNO
-#endif
-
-/* Define generic types used in lwIP */
-#define LWIP_NO_STDINT_H    1
-typedef unsigned char    u8_t;
-typedef signed char      s8_t;
-typedef unsigned short   u16_t;
-typedef signed short     s16_t;
-typedef unsigned long    u32_t;
-typedef signed long      s32_t;
-
-typedef size_t           mem_ptr_t;
-typedef u32_t            sys_prot_t;
-
-/* Define (sn)printf formatters for these lwIP types */
-#define X8_F     "02x"
-#define U16_F    "hu"
-#define S16_F    "hd"
-#define X16_F    "hx"
-#define U32_F    "lu"
-#define S32_F    "ld"
-#define X32_F    "lx"
-#define SZT_F    U32_F
-
-/* Compiler hints for packing structures */
-#if defined( __ICCARM__ )
-    #define PACK_STRUCT_BEGIN     __packed
-    #define PACK_STRUCT_STRUCT    __packed
+#ifndef LWIP_TIMEVAL_PRIVATE
+#ifdef __NEWLIB__
+#define LWIP_TIMEVAL_PRIVATE 0
 #else
-    #define PACK_STRUCT_STRUCT    __attribute__( ( packed ) )
+#define LWIP_TIMEVAL_PRIVATE 1
+#endif /* __NEWLIB__ */
+#endif /* LWIP_TIMEVAL_PRIVATE */
+
+#if (LWIP_TIMEVAL_PRIVATE == 0)
+#include <sys/time.h>
 #endif
 
-#if 0
-    #ifndef LWIP_DEBUG_USE_PRINTF
-        #define LWIP_LOGE( fmt, arg ... )    LOG_E( lwip, "[lwip]: "fmt, ## arg )
-        #define LWIP_LOGW( fmt, arg ... )    LOG_W( lwip, "[lwip]: "fmt, ## arg )
-        #define LWIP_LOGI( fmt, arg ... )    LOG_I( lwip, "[lwip]: "fmt, ## arg )
-    #endif
+#ifndef LWIP_NO_STDINT_H
+#define LWIP_NO_STDINT_H 0
 #endif
 
-#ifdef LWIP_DEBUG_USE_PRINTF
-/* Plaform specific diagnostic output */
-    #define LWIP_PLATFORM_DIAG( x )    do { printf x; } while( 0 )
+// Typedefs for the types used by lwip
+#if LWIP_NO_STDINT_H
+typedef unsigned char  u8_t;
+typedef signed   char  s8_t;
+typedef unsigned short u16_t;
+typedef signed   short s16_t;
+typedef unsigned int   u32_t;
+typedef signed   int   s32_t;
+typedef u32_t          mem_ptr_t;
+#endif
+
+// Compiler hints for packing lwip's structures
+//FSL: very important at high optimization level
+
+#if defined(__arm__) && defined(__ARMCC_VERSION)
+
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_STRUCT __attribute__((packed, aligned(1)))
+#define PACK_STRUCT_END
+#define PACK_STRUCT_FIELD(x) __attribute__((packed, aligned(1))) x
+
+#elif defined(__GNUC__) && (__GNUC__ != 0)
+
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_STRUCT __attribute__ ((__packed__))
+#define PACK_STRUCT_END
+#define PACK_STRUCT_FIELD(x) x
+
+#elif defined(__IAR_SYSTEMS_ICC__)
+
+#define PACK_STRUCT_BEGIN _Pragma("pack(1)")
+#define PACK_STRUCT_STRUCT
+#define PACK_STRUCT_END _Pragma("pack()")
+#define PACK_STRUCT_FIELD(x) x
+
 #else
-    #define LWIP_PLATFORM_DIAG( x )    do { configPRINTF( x ); } while( 0 )
+
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_STRUCT
+#define PACK_STRUCT_END
+#define PACK_STRUCT_FIELD(x) x
+
 #endif
 
-#define LWIP_PLATFORM_ASSERT( x )                                      \
-    do { configPRINTF( ( "Assertion \"%s\" failed at line %d in %s\n", \
-                         x, __LINE__, __FILE__ ) ); fflush( NULL ); abort(); } while( 0 )
+// Platform specific diagnostic output
+#include "sys_arch.h"//FSL
 
+// non-fatal, print a message.
+#define LWIP_PLATFORM_DIAG(x)                     do {PRINTF x;PRINTF("\r\n");} while(0)
+// fatal, print message and abandon execution.
+#define LWIP_PLATFORM_ASSERT(x)                   sys_assert( x )
 
-#define LWIP_ERROR( message, expression, handler )                                                          \
-    do { if( !( expression ) ) {                                                                            \
-             configPRINTF( ( "Assertion \"%s\" failed at line %d in %s\n", message, __LINE__, __FILE__ ) ); \
-             handler; }                                                                                     \
-    } while( 0 )
-
-
-/* C runtime functions redefined */
-/*#define snprintf _snprintf //2015-07-22 Cheng Liu @132663 */
-
-u32_t dns_lookup_external_hosts_file( const char * name );
-
-#define LWIP_RAND()    ( ( u32_t ) rand() )
-
-#endif /* __ARCH_CC_H__ */
+#endif /* __CC_H__ */
