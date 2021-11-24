@@ -65,7 +65,7 @@
  ******************************************************************************/
 static void hello_task(void *pvParameters);
 
-extern int initNetwork(void);
+extern int Board_InitNetwork(void);
 
 /*******************************************************************************
  * Variables
@@ -78,7 +78,7 @@ struct netif netif;
 /*******************************************************************************
  * Code
  ******************************************************************************/
-int initNetwork(void)
+int Board_InitNetwork(void)
 {
     ip4_addr_t netif_ipaddr, netif_netmask, netif_gw;
     ethernetif_config_t enet_config = {
@@ -182,7 +182,7 @@ int main(void)
 static void hello_task(void *pvParameters)
 {
 
-	if (initNetwork() == pdPASS)
+	if (Board_InitNetwork() == pdPASS)
 	{
 		PRINTF("Network init failed, stopping demo.\r\n");
 		vTaskDelete(NULL);
