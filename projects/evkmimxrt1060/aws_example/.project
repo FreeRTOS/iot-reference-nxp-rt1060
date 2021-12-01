@@ -47,6 +47,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>coreMQTT</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>device</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062</locationURI>
@@ -67,7 +72,17 @@
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/linkscripts</locationURI>
 		</link>
 		<link>
+			<name>logging</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/logging</locationURI>
+		</link>
+		<link>
 			<name>lwip</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>mbedtls</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -157,6 +172,16 @@
 			<locationURI>WORKSPACE_LOC/core/components/uart</locationURI>
 		</link>
 		<link>
+			<name>coreMQTT/port</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>coreMQTT/source</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/coreMQTT/source</locationURI>
+		</link>
+		<link>
 			<name>drivers/fsl_cache.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/cache/armv7-m7/fsl_cache.c</locationURI>
@@ -197,6 +222,16 @@
 			<locationURI>WORKSPACE_LOC/core/drivers/common/fsl_common_arm.h</locationURI>
 		</link>
 		<link>
+			<name>drivers/fsl_dcp.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/dcp/fsl_dcp.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_dcp.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/dcp/fsl_dcp.h</locationURI>
+		</link>
+		<link>
 			<name>drivers/fsl_enet.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/enet/fsl_enet.c</locationURI>
@@ -227,6 +262,16 @@
 			<locationURI>WORKSPACE_LOC/core/drivers/lpuart/fsl_lpuart.h</locationURI>
 		</link>
 		<link>
+			<name>drivers/fsl_trng.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/trng/fsl_trng.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_trng.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/trng/fsl_trng.h</locationURI>
+		</link>
+		<link>
 			<name>lwip/port</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -237,9 +282,39 @@
 			<locationURI>WORKSPACE_LOC/Middleware/lwip/src</locationURI>
 		</link>
 		<link>
+			<name>mbedtls/include</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/mbedtls/include</locationURI>
+		</link>
+		<link>
+			<name>mbedtls/library</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/mbedtls/library</locationURI>
+		</link>
+		<link>
+			<name>mbedtls/port</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/FreeRTOSConfig.h</locationURI>
+		</link>
+		<link>
+			<name>source/aws_mbedtls_config.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/aws_mbedtls_config.h</locationURI>
+		</link>
+		<link>
+			<name>source/core_mqtt_config.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/core_mqtt_config.h</locationURI>
+		</link>
+		<link>
+			<name>source/demo_config.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/demo_config.h</locationURI>
 		</link>
 		<link>
 			<name>source/freertos_tasks_c_additions.h</name>
@@ -257,6 +332,11 @@
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/main.c</locationURI>
 		</link>
 		<link>
+			<name>source/mqtt_mutual_auth.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/demo_tasks/mqtt_mutual_auth.c</locationURI>
+		</link>
+		<link>
 			<name>source/semihost_hardfault.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/semihost_hardfault.c</locationURI>
@@ -265,6 +345,11 @@
 			<name>startup/startup_mimxrt1062.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/mcuxpresso/startup_mimxrt1062.c</locationURI>
+		</link>
+		<link>
+			<name>utilities/backoffAlgorithm</name>
+			<type>2</type>
+			<location>Z:/workspace/iot-reference-nxp-rt1060/Middleware/FreeRTOS/backoffAlgorithm/source</location>
 		</link>
 		<link>
 			<name>utilities/fsl_assert.c</name>
@@ -317,6 +402,11 @@
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.h</locationURI>
 		</link>
 		<link>
+			<name>coreMQTT/port/transport_mbedtls</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/transport_mbedtls</locationURI>
+		</link>
+		<link>
 			<name>lwip/port/arch</name>
 			<type>2</type>
 			<location>Z:/workspace/iot-reference-nxp-rt1060/Middleware/FreeRTOS/lwip_osal/include/arch</location>
@@ -345,6 +435,16 @@
 			<name>lwip/port/sys_arch.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/lwip_osal/src/sys_arch.c</locationURI>
+		</link>
+		<link>
+			<name>mbedtls/port/ksdk</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/NXP/mbedtls_port/ksdk</locationURI>
+		</link>
+		<link>
+			<name>mbedtls/port/mbedtls_freertos.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/Middleware/NXP/mbedtls_port/mbedtls_freertos.c</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>

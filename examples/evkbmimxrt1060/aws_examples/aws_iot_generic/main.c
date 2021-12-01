@@ -32,6 +32,8 @@
 #include "fsl_gpio.h"
 #include "fsl_iomuxc.h"
 
+#include "ksdk_mbedtls.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -59,13 +61,15 @@
 #define EXAMPLE_CLOCK_FREQ CLOCK_GetFreq(kCLOCK_IpgClk)
 
 /* Task priorities. */
-#define hello_task_PRIORITY (configMAX_PRIORITIES - 1)
+#define demo_task_PRIORITY ( tskIDLE_PRIORITY + 1 )
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-static void hello_task(void *pvParameters);
+extern void vMQTTMutualAuthDemoTask( void * pvParameters );
 
-extern int Board_InitNetwork(void);
+static void  prvNetworkTask(void *pvParameters);
+
+extern void Board_InitNetwork(void);
 
 /*******************************************************************************
  * Variables
@@ -78,7 +82,7 @@ struct netif netif;
 /*******************************************************************************
  * Code
  ******************************************************************************/
-int Board_InitNetwork(void)
+void Board_InitNetwork(void)
 {
     ip4_addr_t netif_ipaddr, netif_netmask, netif_gw;
     ethernetif_config_t enet_config = {
@@ -107,6 +111,7 @@ int Board_InitNetwork(void)
 
     while (dhcp->state != DHCP_STATE_BOUND)
     {
+    	PRINTF("Waiting to receive an IP address through DHCP.\r\n");
         vTaskDelay(1000);
     }
 
@@ -135,6 +140,7 @@ void delay(void)
     }
 }
 
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -161,9 +167,12 @@ int main(void)
     GPIO_WritePinOutput(GPIO1, 9, 0);
     delay();
     GPIO_WritePinOutput(GPIO1, 9, 1);
-    //CRYPTO_InitHardware();
+    if( CRYPTO_InitHardware() != 0 )
+    {
+    	PRINTF(( "\r\nFailed to initialize MBEDTLS crypto.\r\n" ));
+    }
 
-    if (xTaskCreate(hello_task, "Hello_task", 2048, NULL, hello_task_PRIORITY, NULL) !=
+    if (xTaskCreate(prvNetworkTask, "MQTTDemo", 2048, NULL, demo_task_PRIORITY, NULL) !=
     		pdPASS)
     {
     	PRINTF("Task creation failed!.\r\n");
@@ -179,20 +188,20 @@ int main(void)
 /*!
  * @brief Task responsible for printing of "Hello world." message.
  */
-static void hello_task(void *pvParameters)
+static void  prvNetworkTask(void *pvParameters)
 {
 
-	if (Board_InitNetwork() == pdPASS)
-	{
-		PRINTF("Network init failed, stopping demo.\r\n");
-		vTaskDelete(NULL);
-	}
+	Board_InitNetwork();
 
-    for (;;)
+	if (xTaskCreate(vMQTTMutualAuthDemoTask, "MQTTDemo", 8192, NULL, demo_task_PRIORITY, NULL) !=
+    		pdPASS)
     {
-        PRINTF("Hello world.\r\n");
-        vTaskDelay(pdMS_TO_TICKS(1000));
+    	PRINTF("MQTT Demo Task creation failed!.\r\n");
+    	while (1);
     }
+
+	vTaskDelete( NULL );
+
 }
 
 void vApplicationDaemonTaskStartupHook(void)

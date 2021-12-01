@@ -13,8 +13,6 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
-#if USE_RTOS
-
 /**
  * SYS_LIGHTWEIGHT_PROT==1: if you want inter-task protection for certain
  * critical regions during buffer allocation, deallocation and memory
@@ -36,26 +34,20 @@
 #define LWIP_SOCKET 1
 
 /**
+ * LWIP_SO_SNDTIMEO==1: Enable send timeout for sockets/netconns and
+ * SO_SNDTIMEO processing.
+ */
+
+#define LWIP_SO_SNDTIMEO 1
+
+/**
  * LWIP_SO_RCVTIMEO==1: Enable receive timeout for sockets/netconns and
  * SO_RCVTIMEO processing.
  */
 #define LWIP_SO_RCVTIMEO 1
 
-#else
-/**
- * NO_SYS==1: Bare metal lwIP
- */
-#define NO_SYS       1
-/**
- * LWIP_NETCONN==0: Disable Netconn API (require to use api_lib.c)
- */
-#define LWIP_NETCONN 0
-/**
- * LWIP_SOCKET==0: Disable Socket API (require to use sockets.c)
- */
-#define LWIP_SOCKET  0
+#define LWIP_SO_SNDRCVTIMEO_NONSTANDARD 1
 
-#endif
 
 /* ---------- Core locking ---------- */
 

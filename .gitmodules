@@ -13,3 +13,6 @@
 [submodule "Middleware/mbedtls"]
 	path = Middleware/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
+[submodule "Middleware/FreeRTOS/backoffAlgorithm"]
+	path = Middleware/FreeRTOS/backoffAlgorithm
+	url = https://github.com/FreeRTOS/backoffAlgorithm
