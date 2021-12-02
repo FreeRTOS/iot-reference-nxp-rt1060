@@ -89,8 +89,11 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\transport_mbedtls&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\coreMQTT\source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\coreMQTT\source\interface&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\coreMQTT-Agent\source\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\mqtt-agent-interface\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\backoffAlgorithm\source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\aws_iot_generic\logging&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\aws_iot_generic\mqtt&quot;"/>
 								</option>
 								<option id="com.crt.advproject.c.misc.dialect.694419664" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
 								<inputType id="com.crt.advproject.compiler.input.318269832" superClass="com.crt.advproject.compiler.input"/>
@@ -142,7 +145,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|lwip/src/netif/lowpan6_ble.c|lwip/src/core/ipv6" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="source/mqtt/mqtt_mutual_auth.c|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|lwip/src/netif/lowpan6_ble.c|lwip/src/core/ipv6" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -217,7 +220,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|lwip/src/netif/lowpan6_ble.c|lwip/src/core/ipv6" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="source/mqtt/mqtt_mutual_auth.c|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|lwip/src/netif/lowpan6_ble.c|lwip/src/core/ipv6" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -269,5 +272,12 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/aws_iot_example"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/aws_iot_example"/>
+		</configuration>
+	</storageModule>
 </cproject>

@@ -65,7 +65,7 @@
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-extern void vMQTTMutualAuthDemoTask( void * pvParameters );
+extern void vMQTTAgentTask( void * pvParameters );
 
 static void  prvNetworkTask(void *pvParameters);
 
@@ -123,7 +123,6 @@ void Board_InitNetwork(void)
     }
     PRINTF("DHCP OK\r\n");
 
-    return pdTRUE;
 }
 void BOARD_InitModuleClock(void)
 {
@@ -193,10 +192,10 @@ static void  prvNetworkTask(void *pvParameters)
 
 	Board_InitNetwork();
 
-	if (xTaskCreate(vMQTTMutualAuthDemoTask, "MQTTDemo", 8192, NULL, demo_task_PRIORITY, NULL) !=
+	if (xTaskCreate(vMQTTAgentTask, "MQTTAgent", 8192, NULL, demo_task_PRIORITY, NULL) !=
     		pdPASS)
     {
-    	PRINTF("MQTT Demo Task creation failed!.\r\n");
+    	PRINTF("MQTT Agent Task creation failed!.\r\n");
     	while (1);
     }
 

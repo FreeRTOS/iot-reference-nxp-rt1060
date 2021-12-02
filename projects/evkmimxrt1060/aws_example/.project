@@ -52,6 +52,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>coreMQTT-Agent</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>device</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062</locationURI>
@@ -180,6 +185,16 @@
 			<name>coreMQTT/source</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/coreMQTT/source</locationURI>
+		</link>
+		<link>
+			<name>coreMQTT-Agent/port</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/mqtt-agent-interface</locationURI>
+		</link>
+		<link>
+			<name>coreMQTT-Agent/source</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/coreMQTT-Agent/source</locationURI>
 		</link>
 		<link>
 			<name>drivers/fsl_cache.c</name>
@@ -332,9 +347,14 @@
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/main.c</locationURI>
 		</link>
 		<link>
-			<name>source/mqtt_mutual_auth.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/demo_tasks/mqtt_mutual_auth.c</locationURI>
+			<name>source/mqtt</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/mqtt</locationURI>
+		</link>
+		<link>
+			<name>source/pubsub</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/pubsub</locationURI>
 		</link>
 		<link>
 			<name>source/semihost_hardfault.c</name>
@@ -527,6 +547,15 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-fsl_adapter_lpuart.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638402774090</id>
+			<name>coreMQTT-Agent/source</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-dependency</arguments>
 			</matcher>
 		</filter>
 		<filter>

@@ -69,7 +69,9 @@
 #include "mbedtls/error.h"
 #include "lwip/sockets.h"
 
-
+/**
+ * Socket type for LWIP sockets.
+ */
 typedef int Socket_t;
 
 /**
@@ -88,14 +90,15 @@ typedef struct SSLContext
 } SSLContext_t;
 
 /**
- * @brief Parameters for the network context of the transport interface
- * implementation that uses mbedTLS and FreeRTOS+TCP sockets.
+ * @brief Definition of the network context for the transport interface
+ * implementation that uses mbedTLS and FreeRTOS+TLS sockets.
  */
-typedef struct TlsTransportParams
+struct NetworkContext
 {
     Socket_t tcpSocket;
     SSLContext_t sslContext;
-} TlsTransportParams_t;
+};
+
 
 /**
  * @brief Contains the credentials necessary for tls connection setup.
@@ -124,6 +127,7 @@ typedef struct NetworkCredentials
     const uint8_t * pPrivateKey; /**< @brief String representing the client certificate's private key. */
     size_t privateKeySize;       /**< @brief Size associated with #NetworkCredentials.pPrivateKey. */
 } NetworkCredentials_t;
+
 
 /**
  * @brief TLS Connect / Disconnect return status.
