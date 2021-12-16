@@ -19,3 +19,9 @@
 [submodule "Middleware/FreeRTOS/coreMQTT-Agent"]
 	path = Middleware/FreeRTOS/coreMQTT-Agent
 	url = https://github.com/FreeRTOS/coreMQTT-Agent.git
+[submodule "Middleware/FreeRTOS/corePKCS11"]
+	path = Middleware/FreeRTOS/corePKCS11
+	url = https://github.com/FreeRTOS/corePKCS11.git
+[submodule "Middleware/FreeRTOS/pkcs11"]
+	path = Middleware/FreeRTOS/pkcs11
+	url = https://github.com/amazon-freertos/pkcs11.git
