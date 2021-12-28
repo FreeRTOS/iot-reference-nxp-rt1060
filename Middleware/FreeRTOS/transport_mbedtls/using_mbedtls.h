@@ -32,29 +32,6 @@
 #ifndef USING_MBEDTLS
 #define USING_MBEDTLS
 
-/**************************************************/
-/******* DO NOT CHANGE the following order ********/
-/**************************************************/
-
-/* Logging related header files are required to be included in the following order:
- * 1. Include the header file "logging_levels.h".
- * 2. Define LIBRARY_LOG_NAME and  LIBRARY_LOG_LEVEL.
- * 3. Include the header file "logging_stack.h".
- */
-
-/* Include header that defines log levels. */
-#include "logging_levels.h"
-
-/* Logging configuration for the Sockets. */
-#ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME     "TlsTransport"
-#endif
-#ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_ERROR
-#endif
-
-#include "logging.h"
-
 /************ End of logging configuration ****************/
 
 /* Transport interface include. */
@@ -66,8 +43,14 @@
 #include "mbedtls/ssl.h"
 #include "mbedtls/threading.h"
 #include "mbedtls/x509.h"
+#include "mbedtls/pk.h"
+#include "mbedtls/pk_internal.h"
 #include "mbedtls/error.h"
 #include "lwip/sockets.h"
+
+
+/* PKCS #11 includes. */
+#include "core_pkcs11.h"
 
 /**
  * Socket type for LWIP sockets.
@@ -79,19 +62,23 @@ typedef int Socket_t;
  */
 typedef struct SSLContext
 {
-    mbedtls_ssl_config config;               /**< @brief SSL connection configuration. */
-    mbedtls_ssl_context context;             /**< @brief SSL connection context */
-    mbedtls_x509_crt_profile certProfile;    /**< @brief Certificate security profile for this connection. */
-    mbedtls_x509_crt rootCa;                 /**< @brief Root CA certificate context. */
-    mbedtls_x509_crt clientCert;             /**< @brief Client certificate context. */
-    mbedtls_pk_context privKey;              /**< @brief Client private key context. */
-    mbedtls_entropy_context entropyContext;  /**< @brief Entropy context for random number generation. */
-    mbedtls_ctr_drbg_context ctrDrgbContext; /**< @brief CTR DRBG context for random number generation. */
+    mbedtls_ssl_config config;            /**< @brief SSL connection configuration. */
+    mbedtls_ssl_context context;          /**< @brief SSL connection context */
+    mbedtls_x509_crt_profile certProfile; /**< @brief Certificate security profile for this connection. */
+    mbedtls_x509_crt rootCa;              /**< @brief Root CA certificate context. */
+    mbedtls_x509_crt clientCert;          /**< @brief Client certificate context. */
+    mbedtls_pk_context privKey;           /**< @brief Client private key context. */
+    mbedtls_pk_info_t privKeyInfo;        /**< @brief Client private key info. */
+
+    /* PKCS#11. */
+    CK_FUNCTION_LIST_PTR pxP11FunctionList;
+    CK_SESSION_HANDLE xP11Session;
+    CK_OBJECT_HANDLE xP11PrivateKey;
+    CK_KEY_TYPE xKeyType;
 } SSLContext_t;
 
-/**
- * @brief Definition of the network context for the transport interface
- * implementation that uses mbedTLS and FreeRTOS+TLS sockets.
+ /* @brief Definition of the network context for the transport interface
+ *  implementation that uses mbedTLS and FreeRTOS+TLS sockets.
  */
 struct NetworkContext
 {
@@ -120,12 +107,14 @@ typedef struct NetworkCredentials
      */
     BaseType_t disableSni;
 
-    const uint8_t * pRootCa;     /**< @brief String representing a trusted server root certificate. */
-    size_t rootCaSize;           /**< @brief Size associated with #NetworkCredentials.pRootCa. */
-    const uint8_t * pClientCert; /**< @brief String representing the client certificate. */
-    size_t clientCertSize;       /**< @brief Size associated with #NetworkCredentials.pClientCert. */
-    const uint8_t * pPrivateKey; /**< @brief String representing the client certificate's private key. */
-    size_t privateKeySize;       /**< @brief Size associated with #NetworkCredentials.pPrivateKey. */
+    const unsigned char * pRootCa;   /**< @brief String representing a trusted server root certificate. */
+    size_t rootCaSize;               /**< @brief Size associated with #NetworkCredentials.pRootCa. */
+    const unsigned char * pUserName; /**< @brief String representing the username for MQTT. */
+    size_t userNameSize;             /**< @brief Size associated with #NetworkCredentials.pUserName. */
+    const unsigned char * pPassword; /**< @brief String representing the password for MQTT. */
+    size_t passwordSize;             /**< @brief Size associated with #NetworkCredentials.pPassword. */
+    const char * pClientCertLabel;   /**< @brief String representing the PKCS #11 label for the client certificate. */
+    const char * pPrivateKeyLabel;   /**< @brief String representing the PKCS #11 label for the private key. */
 } NetworkCredentials_t;
 
 

@@ -48,6 +48,8 @@
 
 #define LWIP_SO_SNDRCVTIMEO_NONSTANDARD 1
 
+#define LWIP_TIMEVAL_PRIVATE 0
+
 
 /* ---------- Core locking ---------- */
 

@@ -64,6 +64,8 @@
 /* Demo Specific configs. */
 #include "demo_config.h"
 
+#include "core_pkcs11_config.h"
+
 /* MQTT library includes. */
 #include "core_mqtt.h"
 
@@ -385,6 +387,8 @@ static MQTTStatus_t prvMQTTConnect( bool xCleanSession )
         #endif /* ifdef democonfigCLIENT_USERNAME */
     #endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
 
+    LogInfo( ( "Creating an MQTT connection to the broker." ) );
+
     /* Send MQTT CONNECT packet to broker. MQTT's Last Will and Testament feature
      * is not used in this demo, so it is passed as NULL. */
     xResult = MQTT_Connect( &( xGlobalMqttAgentContext.mqttContext ),
@@ -392,19 +396,27 @@ static MQTTStatus_t prvMQTTConnect( bool xCleanSession )
                             NULL,
                             mqttexampleCONNACK_RECV_TIMEOUT_MS,
                             &xSessionPresent );
-
-    LogInfo( ( "Session present: %d\n", xSessionPresent ) );
-
-    /* Resume a session if desired. */
-    if( ( xResult == MQTTSuccess ) && ( xCleanSession == false ) )
+    if( xResult == MQTTSuccess )
     {
-        xResult = MQTTAgent_ResumeSession( &xGlobalMqttAgentContext, xSessionPresent );
-
-        /* Resubscribe to all the subscribed topics. */
-        if( ( xResult == MQTTSuccess ) && ( xSessionPresent == false ) )
+        LogInfo( ( "Successfully created an MQTT connection with broker." ) );
+        /* Resume a session if desired. */
+        if( xCleanSession == false )
         {
-            xResult = prvHandleResubscribe();
+            LogInfo( ( "Resuming previous MQTT session with broker." ) );
+            xResult = MQTTAgent_ResumeSession( &xGlobalMqttAgentContext, xSessionPresent );
+
+            if( ( xResult == MQTTSuccess ) && ( xSessionPresent == false ) )
+            {
+                LogInfo( ( "Cannot find a valid subscription session with broker. Resubscribing to all topics." ) );
+
+                /* We did not find a valid subscription with broker. Resubscribe to all the subscribed topics. */
+                xResult = prvHandleResubscribe();
+            }
         }
+    }
+    else
+    {
+        LogError( ( "Failed to create an MQTT connect with broker, error = %d", xResult ) );
     }
 
     return xResult;
@@ -537,12 +549,10 @@ static BaseType_t prvSocketConnect( NetworkContext_t * pxNetworkContext )
     #endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
 
         /* Set the credentials for establishing a TLS connection. */
-    xNetworkCredentials.pRootCa = ( const unsigned char * ) democonfigROOT_CA_PEM;
+    xNetworkCredentials.pRootCa = democonfigROOT_CA_PEM;
     xNetworkCredentials.rootCaSize = sizeof( democonfigROOT_CA_PEM );
-    xNetworkCredentials.pClientCert = ( const unsigned char * ) democonfigCLIENT_CERTIFICATE_PEM;
-    xNetworkCredentials.clientCertSize = sizeof( democonfigCLIENT_CERTIFICATE_PEM );
-    xNetworkCredentials.pPrivateKey = ( const unsigned char * ) democonfigCLIENT_PRIVATE_KEY_PEM;
-    xNetworkCredentials.privateKeySize = sizeof( democonfigCLIENT_PRIVATE_KEY_PEM );
+    xNetworkCredentials.pClientCertLabel = pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS;
+    xNetworkCredentials.pPrivateKeyLabel = pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS;
 
     xNetworkCredentials.disableSni = democonfigDISABLE_SNI;
 
@@ -587,14 +597,20 @@ static BaseType_t prvSocketConnect( NetworkContext_t * pxNetworkContext )
             				"Retrying connection in %hu ms.",
 							usNextRetryBackOff ) );
             		vTaskDelay( pdMS_TO_TICKS( usNextRetryBackOff ) );
-            	}
+            	} else if( xBackoffAlgStatus == BackoffAlgorithmRetriesExhausted )
+                {
+                    LogError( ( "Connection to the broker failed, all attempts exhausted." ) );
+                } else {
+                    /* Empty Else. */
+                }
+            }
+            else
+            {
+                LogInfo( ( "TLS Connection to the broker succeeded." ) );
             }
 
-            if( xBackoffAlgStatus == BackoffAlgorithmRetriesExhausted )
-            {
-            	LogError( ( "Connection to the broker failed, all attempts exhausted." ) );
-            }
     } while( ( xConnected != pdPASS ) && ( xBackoffAlgStatus == BackoffAlgorithmSuccess ) );
+
 
     /* TODO: Set the socket to nonblocking read. */
 

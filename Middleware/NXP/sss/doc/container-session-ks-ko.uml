@@ -1,0 +1,21 @@
+@startuml
+
+    title Container : Session / Key Store / Objects
+
+    Session --o KeyStore
+
+    Interface sss_object  as "sss_object" {
+        KeyID : uint32_t
+    }
+
+    KeyStore "1" --o "*" sss_object
+    
+    sss_object <|-- "Public Keys"
+    sss_object <|-- "Key Pairs"
+    sss_object <|-- "Symmetric Keys"
+    sss_object <|-- "Binaries"
+    class Others as ".. etc..."
+
+    sss_object <|-- Others
+
+@enduml

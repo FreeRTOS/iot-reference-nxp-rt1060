@@ -34,6 +34,10 @@
 
 #include "ksdk_mbedtls.h"
 
+#include "nxlog_App.h"
+
+#include "ex_sss_boot.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -78,6 +82,17 @@ static mdio_handle_t mdioHandle = {.ops = &EXAMPLE_MDIO_OPS};
 static phy_handle_t phyHandle   = {.phyAddr = EXAMPLE_PHY_ADDRESS, .mdioHandle = &mdioHandle, .ops = &EXAMPLE_PHY_OPS};
 
 struct netif netif;
+
+/*******************************************************************************
+ * Secure element contexts
+ ******************************************************************************/
+static ex_sss_boot_ctx_t gex_sss_demo_boot_ctx;
+ex_sss_boot_ctx_t *pex_sss_demo_boot_ctx = &gex_sss_demo_boot_ctx;
+
+static ex_sss_cloud_ctx_t gex_sss_demo_tls_ctx;
+ex_sss_cloud_ctx_t *pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
+
+const char *g_port_name = NULL;
 
 /*******************************************************************************
  * Code
@@ -166,9 +181,14 @@ int main(void)
     GPIO_WritePinOutput(GPIO1, 9, 0);
     delay();
     GPIO_WritePinOutput(GPIO1, 9, 1);
+
     if( CRYPTO_InitHardware() != 0 )
     {
     	PRINTF(( "\r\nFailed to initialize MBEDTLS crypto.\r\n" ));
+    	while (1)
+    	{
+    	    /* Empty while. */
+    	}
     }
 
     if (xTaskCreate(prvNetworkTask, "MQTTDemo", 2048, NULL, demo_task_PRIORITY, NULL) !=
@@ -176,8 +196,10 @@ int main(void)
     {
     	PRINTF("Task creation failed!.\r\n");
     	while (1)
-    		;
-    }
+    	{
+    	    /* Empty while. */
+    	}
+     }
 
     vTaskStartScheduler();
     for (;;)
@@ -191,6 +213,11 @@ static void  prvNetworkTask(void *pvParameters)
 {
 
 	Board_InitNetwork();
+
+    /* Initialize Logging locks */
+     if (nLog_Init() != 0) {
+          LOG_E("Logging initialization failed");
+      }
 
 	if (xTaskCreate(vMQTTAgentTask, "MQTTAgent", 8192, NULL, demo_task_PRIORITY, NULL) !=
     		pdPASS)

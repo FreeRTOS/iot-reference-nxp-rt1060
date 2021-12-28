@@ -1,0 +1,54 @@
+App   :INFO :PlugAndTrust_v02.13.00_20200208
+App   :INFO :Running ..\..\..\simw-top_build\se_x86\bin\Debug\ex_rsa.exe
+App   :INFO :Using PortName='127.0.0.1:8050' (gszSocketPortDefault)
+App   :INFO :If you want to over-ride the selection, use ENV=EX_SSS_BOOT_SSS_PORT or pass in command line arguments.
+smCom :INFO :Opening connection to JRCP server on 127.0.0.1:8050
+sss   :INFO :atr (Len=0)
+sss   :WARN :Communication channel is Plain.
+sss   :WARN :!!!Not recommended for production use.!!!
+App   :INFO :Running RSA Example ex_sss_rsa.c
+sss   :WARN :nxEnsure:'ret == SM_OK' failed. At Line:5612 Function:sss_se05x_TXn
+sss   :WARN :Could not delete Key id EF000046
+App   :INFO :Delete key succeeds only if key exists, ignore error message if any
+App   :INFO :Do Signing
+App   :INFO :digest (Len=32)
+      00 01 02 03    04 05 06 07    08 09 0A 0B    0C 0D 0E 0F 
+      10 11 12 13    14 15 16 17    18 19 1A 1B    1C 1D 1E 1F 
+App   :INFO :Signing successful !!!
+App   :INFO :signature (Len=512)
+      60 64 F1 3B    DE 72 F7 91    05 29 A4 1D    AC 48 47 D6 
+      25 E6 D4 35    67 32 78 37    45 90 03 56    1E B4 97 F5 
+      2A 09 26 CE    9A 81 4E 24    07 31 1E B4    18 04 BD B8 
+      88 42 6F 95    C6 3A 8A 6F    09 7B 80 35    4A F6 1D 9F 
+      19 6F 99 66    F9 61 47 6E    D0 52 8F 80    C5 E4 D3 F6 
+      A2 37 B0 3A    8B 34 32 A0    00 2D 0D B7    BA 10 19 C9 
+      58 EB 7D D0    7E E9 47 4E    E1 E7 2C 96    44 0E D5 BF 
+      4A F4 16 4A    8E BB C0 1C    8F A5 AD C4    64 3A 13 89 
+      B0 08 03 00    19 1C BD 7C    E1 4A 69 AC    C7 1D B2 A9 
+      DB 80 68 34    EA B9 96 1C    D8 DE F0 E2    09 CA A0 4D 
+      35 38 6B FC    88 A3 A2 B8    E9 15 18 7B    5D 81 B4 C6 
+      53 2D 92 12    5E 7D 84 D1    7A 2E C1 C4    72 6D 5F 29 
+      95 4E 21 EE    47 AC 29 80    4E D4 03 DE    98 1B 6C 82 
+      55 D2 61 47    29 CD D1 AE    B8 C4 89 85    89 FB 3E BE 
+      20 30 BE A7    AB DA 5B 42    1C 10 F8 3B    5E 8A C9 23 
+      4F DE 8F 3A    01 D1 ED 4C    79 CF D8 2A    47 4D FD 7E 
+      12 20 D4 B1    49 4A 27 A9    3A 72 34 B7    35 39 4F 87 
+      0D C8 C2 D1    91 E7 93 E5    54 D3 1B 0D    D6 30 97 CD 
+      56 33 9F 54    03 43 E9 44    0A 22 4D D2    27 5C 42 BD 
+      82 40 F7 D8    83 3E 10 A8    31 43 A2 0D    8A 1F 27 FE 
+      66 7A 12 63    2F DC F5 9F    6C 83 B1 C3    AC F1 A9 2F 
+      96 EE 94 00    5C 57 9D AB    D3 3F A0 EB    F0 6B E1 33 
+      95 AB 14 5D    07 87 C0 14    18 70 51 A2    EF 0E 1B C4 
+      92 07 CC 18    3F 0F 48 80    FA 85 55 BD    B9 86 F3 C2 
+      DC 61 84 A6    84 19 4E 9D    60 99 2A A9    84 43 38 42 
+      08 61 5E 53    43 06 C4 BB    72 42 8D 41    A3 3D 64 3D 
+      22 2B 11 1D    13 88 1D CF    03 9C C2 C7    71 DB 4A FA 
+      58 B1 AF 13    8C 86 55 16    3E 15 BB EF    CD 2F EC CD 
+      A8 CA F7 7C    E9 B4 1B ED    FE A1 89 A3    AF 03 7B 38 
+      2F B5 AE 30    0F 88 41 D4    2A E1 F8 4E    25 88 4C B2 
+      2B FD 6A 98    60 B9 F8 A9    A3 5E A2 68    A1 C9 11 F1 
+      BB 06 67 2F    8E B0 5A A6    55 C7 1E 3A    FC 71 CC 1A 
+App   :INFO :Do Verification
+App   :INFO :Verification successful !!!
+App   :INFO :ex_sss_RSA Example Success !!!...
+App   :INFO :ex_sss Finished

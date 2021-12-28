@@ -46,15 +46,7 @@
 #define LWIP_NO_INTTYPES_H 1
 #endif
 
-#ifndef LWIP_TIMEVAL_PRIVATE
-#ifdef __NEWLIB__
-#define LWIP_TIMEVAL_PRIVATE 0
-#else
-#define LWIP_TIMEVAL_PRIVATE 1
-#endif /* __NEWLIB__ */
-#endif /* LWIP_TIMEVAL_PRIVATE */
-
-#if (LWIP_TIMEVAL_PRIVATE == 0)
+#if defined(LWIP_TIMEVAL_PRIVATE) && (LWIP_TIMEVAL_PRIVATE == 0)
 #include <sys/time.h>
 #endif
 

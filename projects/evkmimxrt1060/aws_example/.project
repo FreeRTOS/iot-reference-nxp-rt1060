@@ -102,6 +102,16 @@
 			<locationURI>WORKSPACE_LOC/core/components/phy/device/phyksz8081</locationURI>
 		</link>
 		<link>
+			<name>pkcs11</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>secure_element</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -177,14 +187,14 @@
 			<locationURI>WORKSPACE_LOC/core/components/uart</locationURI>
 		</link>
 		<link>
-			<name>coreMQTT/port</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>coreMQTT/source</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/coreMQTT/source</locationURI>
+		</link>
+		<link>
+			<name>coreMQTT/transport_mbedtls</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/transport_mbedtls</locationURI>
 		</link>
 		<link>
 			<name>coreMQTT-Agent/port</name>
@@ -267,6 +277,26 @@
 			<locationURI>WORKSPACE_LOC/core/drivers/igpio/fsl_gpio.h</locationURI>
 		</link>
 		<link>
+			<name>drivers/fsl_lpi2c.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/lpi2c/fsl_lpi2c.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_lpi2c.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/lpi2c/fsl_lpi2c.h</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_lpi2c_freertos.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/lpi2c/fsl_lpi2c_freertos.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_lpi2c_freertos.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/lpi2c/fsl_lpi2c_freertos.h</locationURI>
+		</link>
+		<link>
 			<name>drivers/fsl_lpuart.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/lpuart/fsl_lpuart.c</locationURI>
@@ -275,6 +305,16 @@
 			<name>drivers/fsl_lpuart.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/lpuart/fsl_lpuart.h</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_pit.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/pit/fsl_pit.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_pit.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/pit/fsl_pit.h</locationURI>
 		</link>
 		<link>
 			<name>drivers/fsl_trng.c</name>
@@ -312,6 +352,31 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>pkcs11/corePKCS11</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/corePKCS11/source</locationURI>
+		</link>
+		<link>
+			<name>pkcs11/include</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/pkcs11</locationURI>
+		</link>
+		<link>
+			<name>pkcs11/source</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/NXP/pkcs11_pal</locationURI>
+		</link>
+		<link>
+			<name>secure_element/hostlib</name>
+			<type>2</type>
+			<location>Z:/workspace/iot-reference-nxp-rt1060/Middleware/NXP/hostLib</location>
+		</link>
+		<link>
+			<name>secure_element/sss</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/NXP/sss</locationURI>
+		</link>
+		<link>
 			<name>source/FreeRTOSConfig.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/FreeRTOSConfig.h</locationURI>
@@ -327,6 +392,11 @@
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/core_mqtt_config.h</locationURI>
 		</link>
 		<link>
+			<name>source/core_pkcs11_config.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/core_pkcs11_config.h</locationURI>
+		</link>
+		<link>
 			<name>source/demo_config.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/demo_config.h</locationURI>
@@ -335,6 +405,11 @@
 			<name>source/freertos_tasks_c_additions.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/freertos_tasks_c_additions.h</locationURI>
+		</link>
+		<link>
+			<name>source/fsl_sss_ftr.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/fsl_sss_ftr.h</locationURI>
 		</link>
 		<link>
 			<name>source/lwipopts.h</name>
@@ -420,11 +495,6 @@
 			<name>xip/fsl_flexspi_nor_boot.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.h</locationURI>
-		</link>
-		<link>
-			<name>coreMQTT/port/transport_mbedtls</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/transport_mbedtls</locationURI>
 		</link>
 		<link>
 			<name>lwip/port/arch</name>
@@ -586,6 +656,96 @@
 			</matcher>
 		</filter>
 		<filter>
+			<id>1639622211516</id>
+			<name>pkcs11/corePKCS11</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-portable</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064248</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-inc</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064274</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-libCommon</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064286</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064300</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x_03_xx_xx</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064327</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-tstUtil</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064346</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-mbedtls</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835064356</id>
+			<name>secure_element/hostlib</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-platform</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622340704</id>
+			<name>secure_element/sss</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-doc</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622340720</id>
+			<name>secure_element/sss</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*</arguments>
+			</matcher>
+		</filter>
+		<filter>
 			<id>1637633535938</id>
 			<name>freertos/portable/GCC</name>
 			<type>9</type>
@@ -610,6 +770,303 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-ppp</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835193739</id>
+			<name>secure_element/hostlib/libCommon</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-hostCrypto</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835836690</id>
+			<name>secure_element/hostlib/platform</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-inc</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835836702</id>
+			<name>secure_element/hostlib/platform</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ksdk</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835964024</id>
+			<name>secure_element/hostlib/se05x_03_xx_xx</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x_perso_api_int.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835964035</id>
+			<name>secure_element/hostlib/se05x_03_xx_xx</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x_perso_api.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835964071</id>
+			<name>secure_element/hostlib/se05x_03_xx_xx</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x_perso_api.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835964084</id>
+			<name>secure_element/hostlib/se05x_03_xx_xx</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x_perso_cnst.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835994952</id>
+			<name>secure_element/hostlib/tstUtil</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-tstHostCrypto.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622373548</id>
+			<name>secure_element/sss/ex</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-inc</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622373563</id>
+			<name>secure_element/sss/ex</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-src</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/plugin</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-mbedtls</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/plugin</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-pkcs11</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/port</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ksdk</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/src</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-mbedtls</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/src</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-se05x</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622271345</id>
+			<name>pkcs11/corePKCS11/dependency/3rdparty</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-mbedtls_utils</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639642457783</id>
+			<name>secure_element/hostlib/libCommon/infra</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-sm_demo_utils_rtos.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835305905</id>
+			<name>secure_element/hostlib/libCommon/scp</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-scp_a7x.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835462231</id>
+			<name>secure_element/hostlib/libCommon/smCom</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-smCom.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835462243</id>
+			<name>secure_element/hostlib/libCommon/smCom</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-smCom.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835462258</id>
+			<name>secure_element/hostlib/libCommon/smCom</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-smComT1oI2C.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835462269</id>
+			<name>secure_element/hostlib/libCommon/smCom</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-smComT1oI2C.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835462284</id>
+			<name>secure_element/hostlib/libCommon/smCom</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-apduComm.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835462298</id>
+			<name>secure_element/hostlib/libCommon/smCom</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-sci2c_cfg.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835108682</id>
+			<name>secure_element/hostlib/mbedtls/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ecdh_alt.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1638835108695</id>
+			<name>secure_element/hostlib/mbedtls/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-rsa_alt.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622745158</id>
+			<name>secure_element/sss/ex/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ex_sss_boot_connectstring.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622745174</id>
+			<name>secure_element/sss/ex/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ex_sss_boot.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622745190</id>
+			<name>secure_element/sss/ex/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ex_sss_boot_int.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622745205</id>
+			<name>secure_element/sss/ex/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ex_sss_se05x.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1639622745205</id>
+			<name>secure_element/sss/ex/src</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-ex_sss_se05x_auth.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/plugin/mbedtls</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-keys</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name>secure_element/sss/plugin/mbedtls</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-scripts</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
