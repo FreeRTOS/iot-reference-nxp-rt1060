@@ -47,7 +47,7 @@
 #define REMOVE
 
 /* Generic logging macros */
-#define SdkLog( level, ... )        do { PRINTF( __VA_ARGS__ ); } while( 0 )
+#define SdkLog( level, ... )    do { PRINTF( level ); PRINTF( __VA_ARGS__ ); PRINTF("\r\n"); } while( 0 )
 
 #define LogAssert( ... )            do { SdkLog( "ASRT", __VA_ARGS__ ); } while( 0 )
 
@@ -66,25 +66,25 @@
 #else
 
     #if ( LOG_LEVEL >= LOG_ERROR )
-        #define LogError( ... )         SdkLog( "ERR", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogError( ... )         SdkLog( "[ERR] ", REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogError( ... )
     #endif
 
     #if ( LOG_LEVEL >= LOG_WARN )
-        #define LogWarn( ... )          SdkLog( "WRN", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogWarn( ... )          SdkLog( "[WRN] ", REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogWarn( ... )
     #endif
 
     #if ( LOG_LEVEL >= LOG_INFO )
-        #define LogInfo( ... )          SdkLog( "INF", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogInfo( ... )          SdkLog( "[INF] ", REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogInfo( ... )
     #endif
 
     #if ( LOG_LEVEL >= LOG_DEBUG )
-        #define LogDebug( ... )         SdkLog( "DBG", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogDebug( ... )         SdkLog( "[DBG] ", REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogDebug( ... )
     #endif

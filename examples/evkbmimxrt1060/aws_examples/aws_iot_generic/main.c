@@ -35,8 +35,11 @@
 #include "ksdk_mbedtls.h"
 
 #include "nxlog_App.h"
+#include "mflash_drv.h"
 
 #include "ex_sss_boot.h"
+#include "flash_info.h"
+#include "ota_pal.h"
 
 /*******************************************************************************
  * Definitions
@@ -71,7 +74,6 @@
  ******************************************************************************/
 extern void vMQTTAgentTask( void * pvParameters );
 
-static void  prvNetworkTask(void *pvParameters);
 
 extern void Board_InitNetwork(void);
 
@@ -127,6 +129,7 @@ void Board_InitNetwork(void)
     while (dhcp->state != DHCP_STATE_BOUND)
     {
     	PRINTF("Waiting to receive an IP address through DHCP.\r\n");
+
         vTaskDelay(1000);
     }
 
@@ -171,6 +174,7 @@ int main(void)
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
     BOARD_InitModuleClock();
+    SCB_DisableDCache();
 
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
 
@@ -191,47 +195,29 @@ int main(void)
     	}
     }
 
-    if (xTaskCreate(prvNetworkTask, "MQTTDemo", 2048, NULL, demo_task_PRIORITY, NULL) !=
-    		pdPASS)
-    {
-    	PRINTF("Task creation failed!.\r\n");
-    	while (1)
-    	{
-    	    /* Empty while. */
-    	}
-     }
-
     vTaskStartScheduler();
     for (;;)
         ;
 }
 
-/*!
- * @brief Task responsible for printing of "Hello world." message.
- */
-static void  prvNetworkTask(void *pvParameters)
-{
-
-	Board_InitNetwork();
-
-    /* Initialize Logging locks */
-     if (nLog_Init() != 0) {
-          LOG_E("Logging initialization failed");
-      }
-
-	if (xTaskCreate(vMQTTAgentTask, "MQTTAgent", 8192, NULL, demo_task_PRIORITY, NULL) !=
-    		pdPASS)
-    {
-    	PRINTF("MQTT Agent Task creation failed!.\r\n");
-    	while (1);
-    }
-
-	vTaskDelete( NULL );
-
-}
-
 void vApplicationDaemonTaskStartupHook(void)
 {
+    mflash_drv_init();
+
+    Board_InitNetwork();
+
+    /* Initialize Logging locks */
+    if (nLog_Init() != 0) {
+        LOG_E("Logging initialization failed");
+    }
+
+    if (xTaskCreate(vMQTTAgentTask, "MQTTAgent", 6144, NULL, demo_task_PRIORITY, NULL) !=
+            pdPASS)
+    {
+        PRINTF("MQTT Agent Task creation failed!.\r\n");
+        while (1);
+    }
+
 }
 
 /**

@@ -39,12 +39,17 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/board</locationURI>
 		</link>
 		<link>
 			<name>component</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>coreJSON</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/coreJSON</locationURI>
 		</link>
 		<link>
 			<name>coreMQTT</name>
@@ -97,6 +102,11 @@
 			<locationURI>WORKSPACE_LOC/core/components/phy/mdio/enet</locationURI>
 		</link>
 		<link>
+			<name>ota</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/AWS/ota</locationURI>
+		</link>
+		<link>
 			<name>phy</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/core/components/phy/device/phyksz8081</locationURI>
@@ -114,12 +124,17 @@
 		<link>
 			<name>source</name>
 			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic</locationURI>
 		</link>
 		<link>
 			<name>startup</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>tinycbor</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/Middleware/tinycbor</locationURI>
 		</link>
 		<link>
 			<name>utilities</name>
@@ -130,46 +145,6 @@
 			<name>xip</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>board/board.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/board.c</locationURI>
-		</link>
-		<link>
-			<name>board/board.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/board.h</locationURI>
-		</link>
-		<link>
-			<name>board/clock_config.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/clock_config.c</locationURI>
-		</link>
-		<link>
-			<name>board/clock_config.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/clock_config.h</locationURI>
-		</link>
-		<link>
-			<name>board/dcd.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/dcd.c</locationURI>
-		</link>
-		<link>
-			<name>board/dcd.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/dcd.h</locationURI>
-		</link>
-		<link>
-			<name>board/pin_mux.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/pin_mux.c</locationURI>
-		</link>
-		<link>
-			<name>board/pin_mux.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/pin_mux.h</locationURI>
 		</link>
 		<link>
 			<name>component/lists</name>
@@ -265,6 +240,16 @@
 			<name>drivers/fsl_enet.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/enet/fsl_enet.h</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_flexspi.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/flexspi/fsl_flexspi.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_flexspi.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/flexspi/fsl_flexspi.h</locationURI>
 		</link>
 		<link>
 			<name>drivers/fsl_gpio.c</name>
@@ -377,66 +362,6 @@
 			<locationURI>WORKSPACE_LOC/Middleware/NXP/sss</locationURI>
 		</link>
 		<link>
-			<name>source/FreeRTOSConfig.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/FreeRTOSConfig.h</locationURI>
-		</link>
-		<link>
-			<name>source/aws_mbedtls_config.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/aws_mbedtls_config.h</locationURI>
-		</link>
-		<link>
-			<name>source/core_mqtt_config.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/core_mqtt_config.h</locationURI>
-		</link>
-		<link>
-			<name>source/core_pkcs11_config.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/core_pkcs11_config.h</locationURI>
-		</link>
-		<link>
-			<name>source/demo_config.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/demo_config.h</locationURI>
-		</link>
-		<link>
-			<name>source/freertos_tasks_c_additions.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/freertos_tasks_c_additions.h</locationURI>
-		</link>
-		<link>
-			<name>source/fsl_sss_ftr.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/fsl_sss_ftr.h</locationURI>
-		</link>
-		<link>
-			<name>source/lwipopts.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/lwipopts.h</locationURI>
-		</link>
-		<link>
-			<name>source/main.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/main.c</locationURI>
-		</link>
-		<link>
-			<name>source/mqtt</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/mqtt</locationURI>
-		</link>
-		<link>
-			<name>source/pubsub</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/pubsub</locationURI>
-		</link>
-		<link>
-			<name>source/semihost_hardfault.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/semihost_hardfault.c</locationURI>
-		</link>
-		<link>
 			<name>startup/startup_mimxrt1062.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/mcuxpresso/startup_mimxrt1062.c</locationURI>
@@ -539,6 +464,24 @@
 	</linkedResources>
 	<filteredResources>
 		<filter>
+			<id>1640799402559</id>
+			<name>coreJSON</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-source</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1640799402577</id>
+			<name>coreJSON</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*</arguments>
+			</matcher>
+		</filter>
+		<filter>
 			<id>1637631780728</id>
 			<name>device</name>
 			<type>5</type>
@@ -578,6 +521,60 @@
 			<id>1637631780774</id>
 			<name>device</name>
 			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1640798696866</id>
+			<name>ota</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-source</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1640798696880</id>
+			<name>ota</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1642029018058</id>
+			<name>source</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-board</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1642029018080</id>
+			<name>source</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-linkscripts</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1640798916246</id>
+			<name>tinycbor</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-src</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1640798916262</id>
+			<name>tinycbor</name>
+			<type>6</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*</arguments>

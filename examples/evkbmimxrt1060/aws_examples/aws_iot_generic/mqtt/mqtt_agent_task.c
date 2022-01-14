@@ -549,7 +549,7 @@ static BaseType_t prvSocketConnect( NetworkContext_t * pxNetworkContext )
     #endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
 
         /* Set the credentials for establishing a TLS connection. */
-    xNetworkCredentials.pRootCa = democonfigROOT_CA_PEM;
+    xNetworkCredentials.pRootCa = ( unsigned char * ) democonfigROOT_CA_PEM;
     xNetworkCredentials.rootCaSize = sizeof( democonfigROOT_CA_PEM );
     xNetworkCredentials.pClientCertLabel = pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS;
     xNetworkCredentials.pPrivateKeyLabel = pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS;
@@ -658,6 +658,7 @@ static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
 
 /*-----------------------------------------------------------*/
 void vSimpleSubscribePublishTask( void * pvParameters );
+void vOTAUpdateTask( void * pvParam );
 
 void vMQTTAgentTask( void * pvParameters )
 {
@@ -696,6 +697,14 @@ void vMQTTAgentTask( void * pvParameters )
                                       ( void * ) ( 0x0U ),
                                       democonfigDEMO_TASK_PRIORITY,
                                       NULL );
+
+                 xTaskCreate( vOTAUpdateTask,
+                              "OTA",
+                              4096,
+                              ( void * ) ( 0x0U ),
+                              democonfigDEMO_TASK_PRIORITY,
+                              NULL );
+
                  xMQTTStatus = MQTTAgent_CommandLoop( &xGlobalMqttAgentContext );
 
                  if( xMQTTStatus == MQTTSuccess )

@@ -6579,6 +6579,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)
 {
     CK_RV xResult = CKR_OK;
     // printf("\n\n%s\n\n", __FUNCTION__);
+    CK_ULONG  offset = 0, updateLen = 0,  remainingLen = 0;
 
     if (!pData) {
         return CKR_ARGUMENTS_BAD;
@@ -6592,11 +6593,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)
         return xResult;
     }
 #if SSS_HAVE_ALT_SSS
-    uint8_t *input = (uint8_t *)SSS_MALLOC(ulDataLen * sizeof(uint8_t));
-    memset(input, 0, (ulDataLen * sizeof(uint8_t)));
     sss_status_t status = kStatus_SSS_Fail;
     uint8_t output[64]  = {0};
-    size_t inputLen     = ulDataLen;
     size_t outputLen    = sizeof(output);
 
     LOCK_MUTEX_FOR_RTOS
@@ -6638,13 +6636,20 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)
                 xResult = CKR_BUFFER_TOO_SMALL;
             }
             else {
-                memcpy(input, pData, inputLen);
-                status = sss_digest_update(&pxSessionObj->digest_ctx, input, inputLen);
-                if (status != kStatus_SSS_Success) {
-                    pxSessionObj->xOperationInProgress = pkcs11NO_OPERATION;
-                    xResult                            = CKR_DEVICE_ERROR;
-                    UNLOCK_MUTEX_FOR_RTOS
-                    goto cleanup;
+                remainingLen = ( ulDataLen );
+                while( remainingLen > 0)
+                {
+                    updateLen = ( remainingLen > 512) ? 512: remainingLen;
+                    status = sss_digest_update(&pxSessionObj->digest_ctx,  (pData + offset), updateLen);
+                    if (status != kStatus_SSS_Success) {
+                        pxSessionObj->xOperationInProgress = pkcs11NO_OPERATION;
+                        xResult                            = CKR_DEVICE_ERROR;
+                        UNLOCK_MUTEX_FOR_RTOS
+                        goto cleanup;
+                    }
+
+                    remainingLen = remainingLen - updateLen;
+                    offset = offset + updateLen;
                 }
                 status = sss_digest_finish(&pxSessionObj->digest_ctx, &output[0], &outputLen);
                 sss_digest_context_free(&pxSessionObj->digest_ctx);
@@ -6664,9 +6669,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)
     }
 
 cleanup:
-    if (input) {
-        SSS_FREE(input);
-    }
+
 #endif
 
     return xResult;

@@ -211,17 +211,6 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
                                       const char * pHostName,
                                       const NetworkCredentials_t * pNetworkCredentials );
 
-/**
- * @brief Perform the TLS handshake on a TCP connection.
- *
- * @param[in] pNetworkContext Network context.
- * @param[in] pNetworkCredentials TLS setup parameters.
- *
- * @return #TLS_TRANSPORT_SUCCESS, #TLS_TRANSPORT_HANDSHAKE_FAILED, or #TLS_TRANSPORT_INTERNAL_ERROR.
- */
-static TlsTransportStatus_t tlsHandshake( NetworkContext_t * pNetworkContext,
-                                          const NetworkCredentials_t * pNetworkCredentials );
-
 static int lwip_socket_connect( const char * pHostName,
 		                  uint16_t port,
 		                  uint32_t receiveTimeoutMs,
@@ -848,74 +837,6 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
 
 /*-----------------------------------------------------------*/
 
-
-static TlsTransportStatus_t tlsHandshake( NetworkContext_t * pNetworkContext,
-                                          const NetworkCredentials_t * pNetworkCredentials )
-{
-    TlsTransportStatus_t returnStatus = TLS_TRANSPORT_SUCCESS;
-    int32_t mbedtlsError = 0;
-
-    configASSERT( pNetworkContext != NULL );
-    configASSERT( pNetworkCredentials != NULL );
-
-    /* Initialize the mbed TLS secured connection context. */
-    mbedtlsError = mbedtls_ssl_setup( &( pNetworkContext->sslContext.context ),
-                                      &( pNetworkContext->sslContext.config ) );
-
-    if( mbedtlsError != 0 )
-    {
-        LogError( ( "Failed to set up mbed TLS SSL context: mbedTLSError= %s : %s.",
-                    mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                    mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
-
-        returnStatus = TLS_TRANSPORT_INTERNAL_ERROR;
-    }
-    else
-    {
-        /* Set the underlying IO for the TLS connection. */
-
-        /* MISRA Rule 11.2 flags the following line for casting the second
-         * parameter to void *. This rule is suppressed because
-         * #mbedtls_ssl_set_bio requires the second parameter as void *.
-         */
-        /* coverity[misra_c_2012_rule_11_2_violation] */
-
-        mbedtls_ssl_set_bio( &( pNetworkContext->sslContext.context ),
-                             ( void * ) pNetworkContext->tcpSocket,
-							 mbedtls_bio_lwip_send,
-							 mbedtls_bio_lwip_recv,
-                             NULL );
-    }
-
-    if( returnStatus == TLS_TRANSPORT_SUCCESS )
-    {
-        /* Perform the TLS handshake. */
-        do
-        {
-            mbedtlsError = mbedtls_ssl_handshake( &( pNetworkContext->sslContext.context ) );
-        } while( ( mbedtlsError == MBEDTLS_ERR_SSL_WANT_READ ) ||
-                 ( mbedtlsError == MBEDTLS_ERR_SSL_WANT_WRITE ) );
-
-        if( mbedtlsError != 0 )
-        {
-            LogError( ( "Failed to perform TLS handshake: mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                        mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
-
-            returnStatus = TLS_TRANSPORT_HANDSHAKE_FAILED;
-        }
-        else
-        {
-            LogInfo( ( "(Network connection %p) TLS handshake successful.",
-                       pNetworkContext ) );
-        }
-    }
-
-    return returnStatus;
-}
-
-/*-----------------------------------------------------------*/
-
 static int lwip_socket_connect( const char * pHostName,
 		                  uint16_t port,
 		                  uint32_t receiveTimeoutMs,
@@ -1049,6 +970,7 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
                                            uint32_t sendTimeoutMs )
 {
     TlsTransportStatus_t returnStatus = TLS_TRANSPORT_SUCCESS;
+    uint32_t nonBlockingTimeout = 100U;
 
     if( ( pNetworkContext == NULL ) ||
         ( pHostName == NULL ) ||
@@ -1078,7 +1000,6 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
         if( lwip_socket_connect( pHostName, port, receiveTimeoutMs, sendTimeoutMs, &pNetworkContext->tcpSocket ) < 0 )
         {
         	returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
-
         }
         else
         {
@@ -1092,12 +1013,20 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
         returnStatus = tlsSetup( pNetworkContext, pHostName, pNetworkCredentials );
     }
 
+    if( returnStatus == TLS_TRANSPORT_SUCCESS )
+    {
+        if( setsockopt( pNetworkContext->tcpSocket, SOL_SOCKET, SO_RCVTIMEO, &nonBlockingTimeout, sizeof( receiveTimeoutMs ) ) != 0 )
+        {
+            returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
+        }
+    }
+
     /* Clean up on failure. */
     if( returnStatus != TLS_TRANSPORT_SUCCESS )
     {
         if( ( pNetworkContext != NULL ) && ( pNetworkContext->tcpSocket >= 0 ) )
         {
-                ( void ) closesocket( pNetworkContext->tcpSocket );
+            ( void ) closesocket( pNetworkContext->tcpSocket );
         }
     }
     else

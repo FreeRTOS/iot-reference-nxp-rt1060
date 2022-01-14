@@ -142,7 +142,7 @@ extern const char * pcPkcs11GetThingName(void);
  *
  * Used by over-the-air update code to verify an incoming signed image.
  */
-#define pkcs11configLABEL_CODE_VERIFICATION_KEY            "Code Verify Key"
+#define pkcs11configLABEL_CODE_VERIFICATION_KEY            "sss:00223344"
 
 /**
  * @brief The PKCS #11 label for Just-In-Time-Provisioning.
