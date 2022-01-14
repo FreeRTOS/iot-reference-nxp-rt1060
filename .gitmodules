@@ -1,15 +1,15 @@
 [submodule "core"]
 	path = core
-	url = git@github.com:NXPmicro/mcux-sdk.git
+	url = https://github.com/NXPmicro/mcux-sdk.git
 [submodule "Middleware/FreeRTOS/kernel"]
 	path = Middleware/FreeRTOS/kernel
-	url = git@github.com:FreeRTOS/FreeRTOS-Kernel.git
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git 
 [submodule "Middleware/FreeRTOS/coreMQTT"]
 	path = Middleware/FreeRTOS/coreMQTT
 	url = https://github.com/FreeRTOS/coreMQTT.git
 [submodule "Middleware/lwip"]
 	path = Middleware/lwip
-	url = git@github.com:lwip-tcpip/lwip.git
+	url = https://github.com/lwip-tcpip/lwip.git
 [submodule "Middleware/mbedtls"]
 	path = Middleware/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
