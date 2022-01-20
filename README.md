@@ -1,4 +1,4 @@
-## Reference Integration of FreeRTOS LTS libraries with NXP IMXRT1060 platform
+## IoT Refrence Integration for NXP IMXRT1060 platform
 
 TODO: Fill this README out!
 
