@@ -39,7 +39,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/board</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/board</locationURI>
 		</link>
 		<link>
 			<name>component</name>
@@ -79,12 +79,12 @@
 		<link>
 			<name>linkscripts</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/linkscripts</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/linkscripts</locationURI>
 		</link>
 		<link>
 			<name>logging</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic/logging</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/logging</locationURI>
 		</link>
 		<link>
 			<name>lwip</name>
@@ -124,7 +124,7 @@
 		<link>
 			<name>source</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/aws_iot_generic</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples</locationURI>
 		</link>
 		<link>
 			<name>startup</name>
