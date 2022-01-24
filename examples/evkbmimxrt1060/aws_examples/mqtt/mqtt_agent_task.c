@@ -84,6 +84,8 @@
 
 #include "using_mbedtls.h"
 
+#include "kvStore.h"
+
 /**
  * @brief Dimensions the buffer used to serialize and deserialize MQTT packets.
  * @note Specified in bytes.  Must be large enough to hold the maximum
@@ -287,6 +289,14 @@ static MQTTAgentMessageContext_t xCommandQueue;
  */
 SubscriptionElement_t xGlobalSubscriptionList[ SUBSCRIPTION_MANAGER_MAX_SUBSCRIPTIONS ];
 
+static char *pcThingName = NULL;
+static size_t xThingNameLength = 0U;
+
+static char *pcBrokerEndpoint = NULL;
+static size_t xBrokerEndpointLength = 0U;
+
+uint32_t ulBrokerPort;
+
 /*-----------------------------------------------------------*/
 
 static MQTTStatus_t prvMQTTInit( void )
@@ -354,8 +364,8 @@ static MQTTStatus_t prvMQTTConnect( bool xCleanSession )
     /* The client identifier is used to uniquely identify this MQTT client to
      * the MQTT broker. In a production device the identifier can be something
      * unique, such as a device serial number. */
-    xConnectInfo.pClientIdentifier = democonfigCLIENT_IDENTIFIER;
-    xConnectInfo.clientIdentifierLength = ( uint16_t ) strlen( democonfigCLIENT_IDENTIFIER );
+    xConnectInfo.pClientIdentifier = pcThingName;
+    xConnectInfo.clientIdentifierLength = ( uint16_t ) xThingNameLength;
 
     /* Set MQTT keep-alive period. It is the responsibility of the application
      * to ensure that the interval between Control Packets being sent does not
@@ -574,12 +584,12 @@ static BaseType_t prvSocketConnect( NetworkContext_t * pxNetworkContext )
         /* Establish a TCP connection with the MQTT broker. This example connects to
          * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
          * democonfigMQTT_BROKER_PORT at the top of this file. */
-            LogInfo( ( "Creating a TLS connection to %s:%d.",
-                       democonfigMQTT_BROKER_ENDPOINT,
-                       democonfigMQTT_BROKER_PORT ) );
+            LogInfo( ( "Creating a TLS connection to %s:%u.",
+                       pcBrokerEndpoint,
+                       ulBrokerPort ) );
             xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
-            		democonfigMQTT_BROKER_ENDPOINT,
-					democonfigMQTT_BROKER_PORT,
+            		pcBrokerEndpoint,
+					ulBrokerPort,
 					&xNetworkCredentials,
 					mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
 					mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
@@ -662,18 +672,71 @@ void vOTAUpdateTask( void * pvParam );
 
 void vMQTTAgentTask( void * pvParameters )
 {
-    MQTTStatus_t xMQTTStatus = MQTTSuccess;
+	BaseType_t xStatus = pdFAIL;
+    MQTTStatus_t xMQTTStatus = MQTTBadParameter;
     BaseType_t xConnected = pdFALSE;
     bool xReconnect = false;
     MQTTContext_t * pMqttContext = &( xGlobalMqttAgentContext.mqttContext );
 
+    ( void ) pvParameters;
+
     /* Initialization of timestamp for MQTT. */
     ulGlobalEntryTimeMs = prvGetTimeMs();
 
-    ( void ) pvParameters;
+    /* Load broker endpoint and thing name for client connection, from the key store. */
+    xThingNameLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
+    if( xThingNameLength > 0 )
+    {
+    	pcThingName = pvPortMalloc( xThingNameLength + 1 );
+    	if( pcThingName != NULL )
+    	{
+    		( void ) KVStore_getString( KVS_CORE_THING_NAME, pcThingName, ( xThingNameLength + 1 ) );
+    		xStatus = pdPASS;
+    	}
+    	else
+    	{
+    		xStatus = pdFAIL;
+    	}
+
+    }
+    else
+    {
+    	xStatus = pdFAIL;
+    }
+
+    if( xStatus == pdPASS )
+    {
+    	xBrokerEndpointLength = KVStore_getValueLength( KVS_CORE_MQTT_ENDPOINT );
+    	if( xBrokerEndpointLength > 0 )
+    	{
+    		pcBrokerEndpoint = pvPortMalloc( xBrokerEndpointLength + 1 );
+    		if( pcBrokerEndpoint != NULL )
+    		{
+    			( void ) KVStore_getString( KVS_CORE_MQTT_ENDPOINT, pcBrokerEndpoint, ( xBrokerEndpointLength + 1 ) );
+    			xStatus = pdPASS;
+    		}
+    		else
+    		{
+    			xStatus = pdFAIL;
+    		}
+
+    	}
+    	else
+    	{
+    		xStatus = pdFAIL;
+    	}
+    }
+
+    if( xStatus == pdPASS )
+    {
+    	ulBrokerPort = KVStore_getUInt32( KVS_CORE_MQTT_PORT, &xStatus );
+    }
 
     /* Initialize the MQTT context with the buffer and transport interface. */
-     xMQTTStatus = prvMQTTInit();
+    if( xStatus == pdPASS )
+    {
+    	xMQTTStatus = prvMQTTInit();
+    }
 
      if( xMQTTStatus == MQTTSuccess )
      {
@@ -734,6 +797,20 @@ void vMQTTAgentTask( void * pvParameters )
      else
      {
          LogError(( "Failed to initialize MQTT." ));
+     }
+
+     if( pcThingName != NULL )
+     {
+    	 vPortFree( pcThingName );
+    	 pcThingName = NULL;
+    	 xThingNameLength = 0U;
+     }
+
+     if( pcBrokerEndpoint != NULL )
+     {
+    	 vPortFree( pcBrokerEndpoint );
+    	 pcBrokerEndpoint = NULL;
+    	 xBrokerEndpointLength = 0U;
      }
 
 

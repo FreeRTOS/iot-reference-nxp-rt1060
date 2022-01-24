@@ -103,6 +103,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\corePKCS11\source\dependency\3rdparty\mbedtls_utils&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\pkcs11&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\logging&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\cli&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\mqtt&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\NXP\sss\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\NXP\sss\plugin\pkcs11&quot;"/>
@@ -183,16 +184,6 @@
 								</inputType>
 							</tool>
 							<tool id="com.crt.advproject.tool.debug.debug.214473397" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.debug"/>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="com.crt.advproject.config.exe.debug.2067845682.204360784" name="/" resourcePath="board">
-						<toolChain id="com.crt.advproject.toolchain.exe.debug.975039925" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug" unusedChildren="">
-							<tool id="com.crt.advproject.cpp.exe.debug.1690442986" name="MCU C++ Compiler" superClass="com.crt.advproject.cpp.exe.debug.290736904"/>
-							<tool id="com.crt.advproject.gcc.exe.debug.1986173014" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.105390258"/>
-							<tool id="com.crt.advproject.gas.exe.debug.134459123" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug.1187433041"/>
-							<tool id="com.crt.advproject.link.cpp.exe.debug.1960234113" name="MCU C++ Linker" superClass="com.crt.advproject.link.cpp.exe.debug.1478857199"/>
-							<tool id="com.crt.advproject.link.exe.debug.1503258516" name="MCU Linker" superClass="com.crt.advproject.link.exe.debug.1218375916"/>
-							<tool id="com.crt.advproject.tool.debug.debug.897359642" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.debug.214473397"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>

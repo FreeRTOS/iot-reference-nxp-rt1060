@@ -152,6 +152,11 @@
 			<locationURI>WORKSPACE_LOC/core/components/lists</locationURI>
 		</link>
 		<link>
+			<name>component/mflash</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>component/serial_manager</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/core/components/serial_manager</locationURI>
@@ -420,6 +425,16 @@
 			<name>xip/fsl_flexspi_nor_boot.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.h</locationURI>
+		</link>
+		<link>
+			<name>component/mflash/mflash_file.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/components/flash/mflash/mflash_file.c</locationURI>
+		</link>
+		<link>
+			<name>component/mflash/mflash_file.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/components/flash/mflash/mflash_file.h</locationURI>
 		</link>
 		<link>
 			<name>lwip/port/arch</name>

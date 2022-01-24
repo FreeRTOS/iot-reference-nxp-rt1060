@@ -69,6 +69,9 @@
 /* Include platform abstraction header. */
 #include "ota_pal.h"
 
+/* Key Value store for fetching configuration info. */
+#include "kvstore.h"
+
 
 #define APP_VERSION_MAJOR   0
 #define APP_VERSION_MINOR   9
@@ -417,6 +420,14 @@ const AppVersion32_t appFirmwareVersion =
     .u.x.build = APP_VERSION_BUILD,
 };
 
+/*
+ * @brief The thing name used for creating OTA job topics.
+ * Thing name is retrieved from a key value store.
+ */
+static char *pcThingName = NULL;
+static size_t xThingNameLength = 0U;
+
+
 /*---------------------------------------------------------*/
 
 static void prvOTAEventBufferFree( OtaEventData_t * const pxBuffer )
@@ -592,8 +603,8 @@ static void prvProcessIncomingData( void * pxSubscriptionContext,
 
     isMatch = prvMatchClientIdentifierInTopic( pPublishInfo->pTopicName,
                                                pPublishInfo->topicNameLength,
-                                               democonfigCLIENT_IDENTIFIER,
-                                               strlen( democonfigCLIENT_IDENTIFIER ) );
+											   pcThingName,
+                                               xThingNameLength );
 
     if( isMatch == pdTRUE )
     {
@@ -647,8 +658,8 @@ static void prvProcessIncomingJobMessage( void * pxSubscriptionContext,
 
     isMatch = prvMatchClientIdentifierInTopic( pPublishInfo->pTopicName,
                                                pPublishInfo->topicNameLength,
-                                               democonfigCLIENT_IDENTIFIER,
-                                               strlen( democonfigCLIENT_IDENTIFIER ) );
+											   pcThingName,
+                                               xThingNameLength );
 
     if( isMatch == pdTRUE )
     {
@@ -1018,6 +1029,29 @@ void vOTAUpdateTask( void * pvParam )
 
     if( xResult == pdPASS )
     {
+    	xThingNameLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
+    	if( xThingNameLength > 0 )
+    	{
+    		pcThingName = pvPortMalloc( xThingNameLength + 1 );
+    		if( pcThingName != NULL )
+    		{
+    			( void ) KVStore_getString( KVS_CORE_THING_NAME, pcThingName, ( xThingNameLength + 1 ) );
+    			xResult = pdPASS;
+    		}
+    		else
+    		{
+    			xResult = pdFAIL;
+    		}
+
+    	}
+    	else
+    	{
+    		xResult = pdFAIL;
+    	}
+    }
+
+    if( xResult == pdPASS )
+    {
         /* Add subscriptions for OTA with subscription manger. */
         subscriptionsAdded = addSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                               OTA_JOB_NOTIFY_TOPIC_FILTER,
@@ -1117,6 +1151,12 @@ void vOTAUpdateTask( void * pvParam )
                                  OTA_DATA_STREAM_TOPIC_FILTER,
                                  OTA_DATA_STREAM_TOPIC_FILTER_LENGTH );
 
+    if( pcThingName != NULL )
+    {
+    	vPortFree( pcThingName );
+    	pcThingName = NULL;
+    	xThingNameLength = 0U;
+    }
     vTaskDelete( NULL );
 }
 

@@ -41,6 +41,9 @@
 #include "flash_info.h"
 #include "ota_pal.h"
 
+#include "mflash_file.h"
+#include "kvstore.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -95,6 +98,14 @@ static ex_sss_cloud_ctx_t gex_sss_demo_tls_ctx;
 ex_sss_cloud_ctx_t *pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
 
 const char *g_port_name = NULL;
+
+static mflash_file_t dir_template[] = {
+	{
+	    .path = KVSTORE_FILE_PATH,
+		.max_size = ( MFLASH_SECTOR_SIZE * 2U )
+	},
+	{}
+};
 
 /*******************************************************************************
  * Code
@@ -207,15 +218,42 @@ void vApplicationDaemonTaskStartupHook(void)
     Board_InitNetwork();
 
     /* Initialize Logging locks */
-    if (nLog_Init() != 0) {
+    if (nLog_Init() != 0)
+    {
         LOG_E("Logging initialization failed");
+        for (;;);
     }
+
+    if( mflash_init( dir_template, false ) != kStatus_Success )
+    {
+    	LOG_E("Failed to initialize file system" );
+    	for (;;)
+    		;
+    }
+
+    if( KVStore_init() != pdTRUE )
+    {
+    	LOG_E("Failed to initialize key value configuration store." );
+    	for (;;)
+    		;
+    }
+
+    /*
+    if( start_cli() != pdTRUE )
+    {
+    	LOG_E("CLI initialization Failed." );
+    	 for (;;)
+    		 ;
+
+    }
+*/
 
     if (xTaskCreate(vMQTTAgentTask, "MQTTAgent", 6144, NULL, demo_task_PRIORITY, NULL) !=
             pdPASS)
     {
         PRINTF("MQTT Agent Task creation failed!.\r\n");
-        while (1);
+        for (;;)
+        	;
     }
 
 }
