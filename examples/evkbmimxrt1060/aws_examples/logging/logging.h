@@ -1,5 +1,4 @@
 /*
- * FreeRTOS STM32 Reference Integration
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -30,10 +29,6 @@
 /* Standard Include. */
 #include <stdio.h>
 
-
-#include "fsl_debug_console.h"
-
-
 #ifndef LOG_LEVEL
 #define LOG_LEVEL LOG_INFO
 #endif
@@ -47,13 +42,21 @@
 #define REMOVE
 
 /* Generic logging macros */
-#define SdkLog( level, ... )    do { PRINTF( level ); PRINTF( __VA_ARGS__ ); PRINTF("\r\n"); } while( 0 )
+extern void vLoggingPrintfWarn( const char * pcFormat, ... );
+extern void vLoggingPrintfError( const char * pcFormat, ... );
+extern void vLoggingPrintfInfo( const char * pcFormat, ... );
+extern void vLoggingPrintfDebug( const char * pcFormat, ... );
+extern void vLoggingPrintf( const char * pcFormat, ... );
 
-#define LogAssert( ... )            do { SdkLog( "ASRT", __VA_ARGS__ ); } while( 0 )
+#define LogErrorInternal( ... )        do { vLoggingPrintfError( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
+#define LogWarnInternal( ... )         do { vLoggingPrintfWarn( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
+#define LogInfoInternal( ... )         do { vLoggingPrintfInfo( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
+#define LogDebugInternal( ... )        do { vLoggingPrintfDebug( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
 
-#define LogSys( ... )               do { PRINTF( __VA_ARGS__ ); } while( 0 )
+#define LogAssert( ... )            do { vLoggingPrintf(  __VA_ARGS__ ); } while( 0 )
 
-#define LogKernel( ... )            SdkLog( "KRN", __VA_ARGS__ )
+#define LogSys( ... )               do { vLoggingPrintf( __VA_ARGS__ ); } while( 0 )
+
 
 #if !defined( LOG_LEVEL ) ||       \
     ( ( LOG_LEVEL != LOG_NONE ) && \
@@ -66,25 +69,25 @@
 #else
 
     #if ( LOG_LEVEL >= LOG_ERROR )
-        #define LogError( ... )         SdkLog( "[ERR] ", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogError( ... )         LogErrorInternal( REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogError( ... )
     #endif
 
     #if ( LOG_LEVEL >= LOG_WARN )
-        #define LogWarn( ... )          SdkLog( "[WRN] ", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogWarn( ... )          LogWarnInternal( REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogWarn( ... )
     #endif
 
     #if ( LOG_LEVEL >= LOG_INFO )
-        #define LogInfo( ... )          SdkLog( "[INF] ", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogInfo( ... )          LogInfoInternal( REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogInfo( ... )
     #endif
 
     #if ( LOG_LEVEL >= LOG_DEBUG )
-        #define LogDebug( ... )         SdkLog( "[DBG] ", REMOVE_PARENS( __VA_ARGS__ ) )
+        #define LogDebug( ... )         LogDebugInternal( REMOVE_PARENS( __VA_ARGS__ ) )
     #else
         #define LogDebug( ... )
     #endif

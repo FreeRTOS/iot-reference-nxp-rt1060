@@ -1,9 +1,26 @@
 /*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
- * All rights reserved.
+ * Lab-Project-coreMQTT-Agent 201215
+ * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * http://www.FreeRTOS.org
+ * http://aws.amazon.com/freertos
  */
 
 /* FreeRTOS kernel includes. */
@@ -70,15 +87,11 @@
 /* ENET clock frequency. */
 #define EXAMPLE_CLOCK_FREQ CLOCK_GetFreq(kCLOCK_IpgClk)
 
-/* Task priorities. */
-#define demo_task_PRIORITY ( tskIDLE_PRIORITY + 1 )
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-extern void vMQTTAgentTask( void * pvParameters );
-
-
-extern void Board_InitNetwork(void);
+void Board_InitNetwork(void);
 
 /*******************************************************************************
  * Variables
@@ -206,15 +219,33 @@ int main(void)
     	}
     }
 
+    if( mflash_drv_init() != 0 )
+    {
+    	PRINTF(( "\r\nFailed to initialize flash driver.\r\n" ));
+    	while (1)
+    	{
+    		/* Empty while. */
+    	}
+    }
+
     vTaskStartScheduler();
+
+    /* Should not reach here. */
     for (;;)
         ;
 }
 
 void vApplicationDaemonTaskStartupHook(void)
 {
-    mflash_drv_init();
+	/* Initialize file system. */
+    if( mflash_init( dir_template, false ) != kStatus_Success )
+    {
+    	LOG_E("Failed to initialize file system" );
+    	for (;;)
+    		;
+    }
 
+    /* Initialize network. */
     Board_InitNetwork();
 
     /* Initialize Logging locks */
@@ -224,38 +255,11 @@ void vApplicationDaemonTaskStartupHook(void)
         for (;;);
     }
 
-    if( mflash_init( dir_template, false ) != kStatus_Success )
+    if( app_main() != pdPASS )
     {
-    	LOG_E("Failed to initialize file system" );
     	for (;;)
-    		;
+    	   ;
     }
-
-    if( KVStore_init() != pdTRUE )
-    {
-    	LOG_E("Failed to initialize key value configuration store." );
-    	for (;;)
-    		;
-    }
-
-    /*
-    if( start_cli() != pdTRUE )
-    {
-    	LOG_E("CLI initialization Failed." );
-    	 for (;;)
-    		 ;
-
-    }
-*/
-
-    if (xTaskCreate(vMQTTAgentTask, "MQTTAgent", 6144, NULL, demo_task_PRIORITY, NULL) !=
-            pdPASS)
-    {
-        PRINTF("MQTT Agent Task creation failed!.\r\n");
-        for (;;)
-        	;
-    }
-
 }
 
 /**

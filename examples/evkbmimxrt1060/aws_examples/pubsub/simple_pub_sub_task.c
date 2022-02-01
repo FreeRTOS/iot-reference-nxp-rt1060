@@ -252,7 +252,8 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
     {
         /* Add subscription so that incoming publishes are routed to the application
          * callback. */
-        xSubscriptionAdded = addSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+        xSubscriptionAdded = SubscriptionStore_Add(
+        		                             ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                               pxSubscribeArgs->pSubscribeInfo->pTopicFilter,
                                               pxSubscribeArgs->pSubscribeInfo->topicFilterLength,
                                               prvIncomingPublishCallback,

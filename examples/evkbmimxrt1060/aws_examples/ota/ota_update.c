@@ -72,6 +72,7 @@
 /* Key Value store for fetching configuration info. */
 #include "kvstore.h"
 
+#include "mqtt_agent_task.h"
 
 #define APP_VERSION_MAJOR   0
 #define APP_VERSION_MINOR   9
@@ -987,6 +988,33 @@ static void setOtaInterfaces( OtaInterfaces_t * pOtaInterfaces )
     pOtaInterfaces->pal.createFile = xOtaPalCreateFileForRx;
 }
 
+void vSuspendOTAUpdate( void )
+{
+    if( ( OTA_GetState() != OtaAgentStateSuspended ) && ( OTA_GetState() != OtaAgentStateStopped ) )
+    {
+        OTA_Suspend();
+
+        while( ( OTA_GetState() != OtaAgentStateSuspended ) &&
+               ( OTA_GetState() != OtaAgentStateStopped ) )
+        {
+            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
+        }
+    }
+}
+
+void vResumeOTAUpdate( void )
+{
+    if( OTA_GetState() == OtaAgentStateSuspended )
+    {
+        OTA_Resume();
+
+        while( OTA_GetState() == OtaAgentStateSuspended )
+        {
+            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
+        }
+    }
+}
+
 void vOTAUpdateTask( void * pvParam )
 {
     ( void ) pvParam;
@@ -1052,8 +1080,17 @@ void vOTAUpdateTask( void * pvParam )
 
     if( xResult == pdPASS )
     {
+    	if( xIsMQTTAgentRunning() == pdFALSE )
+    	{
+    		xWaitForMQTTAgentTask( 0U );
+    	}
+    	LogInfo( ( "MQTT Agent is up. Starting OTA agent task." ) );
+    }
+
+    if( xResult == pdPASS )
+    {
         /* Add subscriptions for OTA with subscription manger. */
-        subscriptionsAdded = addSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+        subscriptionsAdded = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                               OTA_JOB_NOTIFY_TOPIC_FILTER,
                                               OTA_JOB_NOTIFY_TOPIC_FILTER_LENGTH,
                                               prvProcessIncomingJobMessage,
@@ -1061,7 +1098,7 @@ void vOTAUpdateTask( void * pvParam )
 
         if( subscriptionsAdded == true )
         {
-            subscriptionsAdded = addSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+            subscriptionsAdded = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                                   OTA_JOB_ACCEPTED_RESPONSE_TOPIC_FILTER,
                                                   OTA_JOB_ACCEPTED_RESPONSE_TOPIC_FILTER_LENGTH,
                                                   prvProcessIncomingJobMessage,
@@ -1070,7 +1107,7 @@ void vOTAUpdateTask( void * pvParam )
 
         if( subscriptionsAdded == true )
         {
-            subscriptionsAdded = addSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+            subscriptionsAdded = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                                   OTA_DATA_STREAM_TOPIC_FILTER,
                                                   OTA_DATA_STREAM_TOPIC_FILTER_LENGTH,
                                                   prvProcessIncomingData,
@@ -1131,6 +1168,13 @@ void vOTAUpdateTask( void * pvParam )
                        otaStatistics.otaPacketsProcessed,
                        otaStatistics.otaPacketsDropped ) );
 
+            if( xIsMQTTAgentRunning() == pdFALSE )
+            {
+            	vSuspendOTAUpdate();
+            	xWaitForMQTTAgentTask( 0U );
+            	vResumeOTAUpdate();
+            }
+
             vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
         }
     }
@@ -1139,15 +1183,15 @@ void vOTAUpdateTask( void * pvParam )
 
 
     /* Unconditionally remove the subscriptions. */
-    ( void ) removeSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+    ( void ) SubscriptionStore_Remove( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                  OTA_JOB_NOTIFY_TOPIC_FILTER,
                                  OTA_JOB_NOTIFY_TOPIC_FILTER_LENGTH );
 
-    ( void ) removeSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+    ( void ) SubscriptionStore_Remove( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                  OTA_JOB_ACCEPTED_RESPONSE_TOPIC_FILTER,
                                  OTA_JOB_ACCEPTED_RESPONSE_TOPIC_FILTER_LENGTH );
 
-    ( void ) removeSubscription( ( SubscriptionElement_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+    ( void ) SubscriptionStore_Remove( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
                                  OTA_DATA_STREAM_TOPIC_FILTER,
                                  OTA_DATA_STREAM_TOPIC_FILTER_LENGTH );
 
@@ -1160,29 +1204,4 @@ void vOTAUpdateTask( void * pvParam )
     vTaskDelete( NULL );
 }
 
-void vSuspendOTAUpdate( void )
-{
-    if( ( OTA_GetState() != OtaAgentStateSuspended ) && ( OTA_GetState() != OtaAgentStateStopped ) )
-    {
-        OTA_Suspend();
 
-        while( ( OTA_GetState() != OtaAgentStateSuspended ) &&
-               ( OTA_GetState() != OtaAgentStateStopped ) )
-        {
-            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
-        }
-    }
-}
-
-void vResumeOTAUpdate( void )
-{
-    if( OTA_GetState() == OtaAgentStateSuspended )
-    {
-        OTA_Resume();
-
-        while( OTA_GetState() == OtaAgentStateSuspended )
-        {
-            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
-        }
-    }
-}

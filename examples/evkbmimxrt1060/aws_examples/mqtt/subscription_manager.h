@@ -56,25 +56,10 @@
 typedef void (* IncomingPubCallback_t )( void * pvIncomingPublishCallbackContext,
                                          MQTTPublishInfo_t * pxPublishInfo );
 
-/**
- * @brief An element in the list of subscriptions.
- *
- * This subscription manager implementation expects that the array of the
- * subscription elements used for storing subscriptions to be initialized to 0.
- *
- * @note This implementation allows multiple tasks to subscribe to the same topic.
- * In this case, another element is added to the subscription list, differing
- * in the intended publish callback. Also note that the topic filters are not
- * copied in the subscription manager and hence the topic filter strings need to
- * stay in scope until unsubscribed.
- */
-typedef struct subscriptionElement
-{
-    IncomingPubCallback_t pxIncomingPublishCallback;
-    void * pvIncomingPublishCallbackContext;
-    uint16_t usFilterStringLength;
-    const char * pcSubscriptionFilterString;
-} SubscriptionElement_t;
+
+typedef struct SubscriptionStore SubscriptionStore_t;
+
+SubscriptionStore_t * SubscriptionStore_Create( void );
 
 /**
  * @brief Add a subscription to the subscription list.
@@ -91,8 +76,9 @@ typedef struct subscriptionElement
  *
  * @return `true` if subscription added or exists, `false` if insufficient memory.
  */
-bool addSubscription( SubscriptionElement_t * pxSubscriptionList,
-                      const char * pcTopicFilterString,
+bool SubscriptionStore_Add(
+		              SubscriptionStore_t * pxStore,
+           	          const char * pcTopicFilterString,
                       uint16_t usTopicFilterLength,
                       IncomingPubCallback_t pxIncomingPublishCallback,
                       void * pvIncomingPublishCallbackContext );
@@ -107,7 +93,8 @@ bool addSubscription( SubscriptionElement_t * pxSubscriptionList,
  * @param[in] pcTopicFilterString Topic filter of subscription.
  * @param[in] usTopicFilterLength Length of topic filter.
  */
-void removeSubscription( SubscriptionElement_t * pxSubscriptionList,
+void SubscriptionStore_Remove(
+		                 SubscriptionStore_t * pxStore,
                          const char * pcTopicFilterString,
                          uint16_t usTopicFilterLength );
 
@@ -121,7 +108,7 @@ void removeSubscription( SubscriptionElement_t * pxSubscriptionList,
  * @return `true` if an application callback could be invoked;
  *  `false` otherwise.
  */
-bool handleIncomingPublishes( SubscriptionElement_t * pxSubscriptionList,
+bool SubscriptionStore_HandlePublish( SubscriptionStore_t * pxStore,
                               MQTTPublishInfo_t * pxPublishInfo );
 
 #endif /* SUBSCRIPTION_MANAGER_H */

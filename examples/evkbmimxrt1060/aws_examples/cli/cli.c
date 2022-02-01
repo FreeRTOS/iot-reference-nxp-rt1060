@@ -57,8 +57,7 @@ static BaseType_t prvParseConfigCommand( const char *pcCommandString,
 	size_t valueLength, commandIndex = 0;
 	const char * pKeyFound = NULL;
 
-
-	 parseResult = KVStore_getKey( pcCommandString, commandLength, &pKeyFound, pKeyType );
+	parseResult = KVStore_getKey( pcCommandString, commandLength, &pKeyFound, pKeyType );
 
 	if( parseResult == pdPASS )
 	{
@@ -144,8 +143,13 @@ static BaseType_t prvConfigCommandHandler( char *pcWriteBuffer, size_t xWriteBuf
 
 }
 
-void cliTask( void * pvParam )
+void vCLITask( void * pvParam )
 {
+	BaseType_t xResult;
+
+	xResult = FreeRTOS_CLIRegisterCommand( &xCommandConfig );
+	configASSERT( xResult == pdTRUE );
+
 
 	FreeRTOS_CLIEnterConsoleLoop( uartConsoleIO,
 			commandBuffer,
@@ -157,24 +161,4 @@ void cliTask( void * pvParam )
 	vTaskDelete( NULL );
 
 }
-
-BaseType_t start_cli( void )
-{
-	BaseType_t result = pdFAIL;
-
-	result = FreeRTOS_CLIRegisterCommand( &xCommandConfig );
-
-	if( result == pdPASS )
-	{
-		result = xTaskCreate( cliTask,
-				"CLI",
-                2048,
-                NULL,
-                ( tskIDLE_PRIORITY + 1 ),
-                NULL );
-	}
-
-	return result;
-}
-
 

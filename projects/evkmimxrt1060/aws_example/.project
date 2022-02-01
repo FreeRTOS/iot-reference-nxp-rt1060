@@ -82,11 +82,6 @@
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/linkscripts</locationURI>
 		</link>
 		<link>
-			<name>logging</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/logging</locationURI>
-		</link>
-		<link>
 			<name>lwip</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

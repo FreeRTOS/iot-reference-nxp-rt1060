@@ -109,14 +109,20 @@
     }
 
 /* Map the FreeRTOS printf() to the logging task printf. */
+extern void vLoggingPrintf( const char * pcFormat, ... );
 #define configPRINTF( x )          vLoggingPrintf x
 
+/* Non-format version thread-safe print. */
+extern void vLoggingPrint( const char * pcMessage );
+#define configPRINT( X )     vLoggingPrint( X )
+
 /* Map the logging task's printf to the board specific output function. */
-#define configPRINT_STRING    print_string
+extern int DbgConsole_Printf(const char *fmt_s, ...);
+#define configPRINT_STRING    DbgConsole_Printf
 
 /* Sets the length of the buffers into which logging messages are written - so
  * also defines the maximum length of each log message. */
-#define configLOGGING_MAX_MESSAGE_LENGTH            256
+#define configLOGGING_MAX_MESSAGE_LENGTH            512
 
 /* Set to 1 to prepend each log message with a message number, the task name,
  * and a time stamp. */
