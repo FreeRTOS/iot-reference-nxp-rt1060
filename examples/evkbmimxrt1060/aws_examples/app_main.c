@@ -1,5 +1,4 @@
 /*
- * Lab-Project-coreMQTT-Agent 201215
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -35,15 +34,17 @@
 #include "mqtt_agent_task.h"
 #include "logging_task.h"
 
-#define appmainINCLUDE_MQTT_PUBSUB_DEMO      ( 1 )
+#define appmainINCLUDE_MQTT_PUBSUB_DEMO      ( 0 )
 
-#define appmainINCLUDE_OTA_UPDATE_DEMO       ( 1 )
+#define appmainINCLUDE_OTA_UPDATE_DEMO       ( 0 )
 
 #define appmainINCLUDE_SHADOW_DEMO           ( 1 )
 
 #define appmainINCLUDE_DEVICE_DEFENDER_DEMO  ( 1 )
 
 #define appmainINCLUDE_CLI                   ( 0 )
+
+#define appmainINCLUDE_TEMP_MONITOR_DEMO     ( 1 )
 
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
@@ -57,6 +58,9 @@
 #define appmainCLI_TASK_STACK_SIZE                ( 2048 )
 #define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
 
+#define appmainTEMP_MONITOR_TASK_STACK_SIZE       ( 2048 )
+#define appmainTEMP_MONITOR_TASK_PRIORITY         ( tskIDLE_PRIORITY + 1 )
+
 #define appmainLOGGING_TASK_STACK_SIZE            ( 2048 )
 #define appmainLOGGING_TASK_PRIORITY              ( tskIDLE_PRIORITY + 1 )
 #define appmainLOGGING_QUEUE_SIZE                 ( 15 )
@@ -66,6 +70,8 @@ extern void vSimpleSubscribePublishTask( void * pvParameters );
 extern void vOTAUpdateTask( void * pvParam );
 
 extern void vCLITask( void * pvParam );
+
+extern void vTemperatureMonitorTask( void *pvParameters );
 
 int app_main( void )
 {
@@ -100,6 +106,21 @@ int app_main( void )
 					appmainCLI_TASK_STACK_SIZE,
 					NULL,
 					appmainCLI_TASK_PRIORITY,
+					NULL );
+
+    	}
+    }
+    #endif
+
+    #if( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 )
+    {
+    	if( xResult == pdPASS )
+    	{
+    		xResult = xTaskCreate( vTemperatureMonitorTask,
+    				"TEMPMON",
+					appmainTEMP_MONITOR_TASK_STACK_SIZE,
+					NULL,
+					appmainTEMP_MONITOR_TASK_PRIORITY,
 					NULL );
 
     	}

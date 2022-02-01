@@ -302,6 +302,16 @@
 			<locationURI>WORKSPACE_LOC/core/drivers/pit/fsl_pit.h</locationURI>
 		</link>
 		<link>
+			<name>drivers/fsl_tempmon.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/tempmon/fsl_tempmon.c</locationURI>
+		</link>
+		<link>
+			<name>drivers/fsl_tempmon.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/core/drivers/tempmon/fsl_tempmon.h</locationURI>
+		</link>
+		<link>
 			<name>drivers/fsl_trng.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/trng/fsl_trng.c</locationURI>
