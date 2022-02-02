@@ -38,17 +38,15 @@
  * Definitions
  ******************************************************************************/
 
+/* Logging configuration for the demo. */
+
 #include "logging_levels.h"
 
-/* Logging configuration for the MQTT library. */
-#ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME    "TEMP_MONITOR"
-#endif
+#undef LIBRARY_LOG_NAME
+#define LIBRARY_LOG_NAME    "TEMP_MONITOR"
 
-#ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_DEBUG
-#endif
-
+#undef LIBRARY_LOG_LEVEL
+#define LIBRARY_LOG_LEVEL    LOG_DEBUG
 
 #include "logging.h"
 
@@ -85,7 +83,7 @@
 
 #define DEMO_TEMP_MONITOR_TOPIC_QOS      ( MQTTQoS0 )
 
-#define DEMO_TEMP_MONITOR_INTERVAL_MS     ( 1000 )
+#define DEMO_TEMP_MONITOR_INTERVAL_MS     ( 10000 )
 
 #define DEMO_MQTT_PUBLISH_TIMEOUT_MS      ( 50 )
 
@@ -179,7 +177,7 @@ static BaseType_t prvMQTTPublish( const char * const pacTopic,
                                     &publishInfo,
                                     &xCommandParams );
 
-    /* Wait for command to complete so MQTTSubscribeInfo_t remains in scope for the
+    /* Wait for command to complete so MQTTPublishInfo_t remains in scope for the
      * duration of the command. */
     if( mqttStatus == MQTTSuccess )
     {

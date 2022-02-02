@@ -48,10 +48,10 @@ extern void vLoggingPrintfInfo( const char * pcFormat, ... );
 extern void vLoggingPrintfDebug( const char * pcFormat, ... );
 extern void vLoggingPrintf( const char * pcFormat, ... );
 
-#define LogErrorInternal( ... )        do { vLoggingPrintfError( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
-#define LogWarnInternal( ... )         do { vLoggingPrintfWarn( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
-#define LogInfoInternal( ... )         do { vLoggingPrintfInfo( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
-#define LogDebugInternal( ... )        do { vLoggingPrintfDebug( __VA_ARGS__ ); vLoggingPrintf("\r\n"); } while( 0 )
+#define LogErrorInternal( ... )        do { vLoggingPrintfError( __VA_ARGS__ ); } while( 0 )
+#define LogWarnInternal( ... )         do { vLoggingPrintfWarn( __VA_ARGS__ );  } while( 0 )
+#define LogInfoInternal( ... )         do { vLoggingPrintfInfo( __VA_ARGS__ );  } while( 0 )
+#define LogDebugInternal( ... )        do { vLoggingPrintfDebug( __VA_ARGS__ ); } while( 0 )
 
 #define LogAssert( ... )            do { vLoggingPrintf(  __VA_ARGS__ ); } while( 0 )
 

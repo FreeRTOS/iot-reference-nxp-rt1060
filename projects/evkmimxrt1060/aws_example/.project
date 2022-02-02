@@ -39,7 +39,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/board</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/board</locationURI>
 		</link>
 		<link>
 			<name>component</name>
@@ -119,7 +119,7 @@
 		<link>
 			<name>source</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples</locationURI>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>startup</name>
@@ -302,16 +302,6 @@
 			<locationURI>WORKSPACE_LOC/core/drivers/pit/fsl_pit.h</locationURI>
 		</link>
 		<link>
-			<name>drivers/fsl_tempmon.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/core/drivers/tempmon/fsl_tempmon.c</locationURI>
-		</link>
-		<link>
-			<name>drivers/fsl_tempmon.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/core/drivers/tempmon/fsl_tempmon.h</locationURI>
-		</link>
-		<link>
 			<name>drivers/fsl_trng.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/drivers/trng/fsl_trng.c</locationURI>
@@ -370,6 +360,51 @@
 			<name>secure_element/sss</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/Middleware/NXP/sss</locationURI>
+		</link>
+		<link>
+			<name>source/app_main.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/app_main.c</locationURI>
+		</link>
+		<link>
+			<name>source/cli</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/common/cli</locationURI>
+		</link>
+		<link>
+			<name>source/kvstore</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/common/kvstore</locationURI>
+		</link>
+		<link>
+			<name>source/logging</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/common/logging</locationURI>
+		</link>
+		<link>
+			<name>source/main.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/main.c</locationURI>
+		</link>
+		<link>
+			<name>source/mqtt_agent</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/common/mqtt_agent</locationURI>
+		</link>
+		<link>
+			<name>source/ota</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/common/ota</locationURI>
+		</link>
+		<link>
+			<name>source/semihost_hardfault.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/semihost_hardfault.c</locationURI>
+		</link>
+		<link>
+			<name>source/simple_pub_sub_task.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/simple_pub_sub_task.c</locationURI>
 		</link>
 		<link>
 			<name>startup/startup_mimxrt1062.c</name>
@@ -562,24 +597,6 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1642029018058</id>
-			<name>source</name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-board</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1642029018080</id>
-			<name>source</name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-linkscripts</arguments>
 			</matcher>
 		</filter>
 		<filter>

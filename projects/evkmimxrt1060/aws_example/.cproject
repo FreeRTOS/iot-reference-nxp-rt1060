@@ -62,7 +62,6 @@
 								<option id="com.crt.advproject.gcc.fpu.234476906" name="Floating point" superClass="com.crt.advproject.gcc.fpu" useByScannerDiscovery="true" value="com.crt.advproject.gcc.fpu.fpv5dp.hard" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.1072663552" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\drivers\common&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\drivers\tempmon&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\devices\MIMXRT1062&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\devices\MIMXRT1062\xip&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\boards\evkbmimxrt1060\xip&quot;"/>
@@ -102,9 +101,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\corePKCS11\source\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\corePKCS11\source\dependency\3rdparty\mbedtls_utils&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\pkcs11&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\logging&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\cli&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\mqtt&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\NXP\sss\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\NXP\sss\plugin\pkcs11&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\NXP\sss\plugin\mbedtls&quot;"/>
@@ -126,13 +122,16 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\AWS\ota\source\portable\os&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\tinycbor\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\FreeRTOS\coreJSON\source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\ota&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\Middleware\NXP\bootloader&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\drivers\flexspi&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\ota\ota_flag&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\board&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\core\components\flash\mflash&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\aws_examples\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\logging&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\mqtt_agent&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\kvstore&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\ota&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\cli&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\ota\ota_flag&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\pubsub\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\pubsub\board&quot;"/>
 								</option>
 								<option id="com.crt.advproject.c.misc.dialect.694419664" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.specs.604491904" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
