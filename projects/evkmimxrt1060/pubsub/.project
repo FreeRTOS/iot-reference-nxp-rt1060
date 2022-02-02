@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>aws_iot_example</name>
+	<name>aws_iot_pubsub</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -79,7 +79,7 @@
 		<link>
 			<name>linkscripts</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/aws_examples/linkscripts</locationURI>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/linkscripts</locationURI>
 		</link>
 		<link>
 			<name>lwip</name>
