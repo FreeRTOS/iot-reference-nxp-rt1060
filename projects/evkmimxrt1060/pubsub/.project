@@ -77,6 +77,11 @@
 			<locationURI>WORKSPACE_LOC/Middleware/FreeRTOS/kernel</locationURI>
 		</link>
 		<link>
+			<name>include</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/include</locationURI>
+		</link>
+		<link>
 			<name>linkscripts</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/examples/evkbmimxrt1060/pubsub/linkscripts</locationURI>
@@ -133,11 +138,6 @@
 		</link>
 		<link>
 			<name>utilities</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>xip</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -445,26 +445,6 @@
 			<name>utilities/fsl_str.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/core/utilities/debug_console/str/fsl_str.h</locationURI>
-		</link>
-		<link>
-			<name>xip/evkbmimxrt1060_flexspi_nor_config.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/core/boards/evkbmimxrt1060/xip/evkbmimxrt1060_flexspi_nor_config.c</locationURI>
-		</link>
-		<link>
-			<name>xip/evkbmimxrt1060_flexspi_nor_config.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/core/boards/evkbmimxrt1060/xip/evkbmimxrt1060_flexspi_nor_config.h</locationURI>
-		</link>
-		<link>
-			<name>xip/fsl_flexspi_nor_boot.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.c</locationURI>
-		</link>
-		<link>
-			<name>xip/fsl_flexspi_nor_boot.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.h</locationURI>
 		</link>
 		<link>
 			<name>component/mflash/mflash_file.c</name>

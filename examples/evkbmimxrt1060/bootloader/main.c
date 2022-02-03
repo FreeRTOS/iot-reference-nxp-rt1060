@@ -39,6 +39,13 @@ extern int isp_kboot_main(bool isInfiniteIsp);
 /*******************************************************************************
  * Code
  ******************************************************************************/
+
+void BOARD_InitModuleClock(void)
+{
+    const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1};
+    CLOCK_InitEnetPll(&config);
+}
+
 /*!
  * @brief Main function
  */
@@ -54,6 +61,7 @@ int main(void)
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
+    BOARD_InitModuleClock();
 
     SCB_DisableDCache();
 

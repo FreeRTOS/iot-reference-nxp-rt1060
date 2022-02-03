@@ -39,10 +39,8 @@
 
 /* MCU Flash layout. */
 #define BOOT_FLASH_BASE        0x60000000
-#define BOOT_FLASH_HEADER      0x60010000
-#define BOOT_FLASH_ACT_APP     0x60100000
-#define BOOT_FLASH_CAND_APP    0x60200000
-#define BOOT_FLASH_CUSTOMER    0x603f0000
+#define BOOT_FLASH_ACT_APP     0x60040000
+#define BOOT_FLASH_CAND_APP    0x60240000
 
 
 /* Offsets for each image slots used for OTA. */
