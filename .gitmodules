@@ -34,3 +34,6 @@
 [submodule "Middleware/FreeRTOS/coreJSON"]
 	path = Middleware/FreeRTOS/coreJSON
 	url = https://github.com/FreeRTOS/coreJSON.git
+[submodule "Middleware/mcuboot"]
+	path = Middleware/mcuboot
+	url = https://github.com/mcu-tools/mcuboot.git

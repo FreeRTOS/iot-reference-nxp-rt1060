@@ -8,8 +8,8 @@
 #ifndef _FLEXSPI_FLASH_CONFIG_H_
 #define _FLEXSPI_FLASH_CONFIG_H_
 
+#include <flash_partitioning.h>
 #include "fsl_flexspi.h"
-#include "flash_info.h"
 
 /*******************************************************************************
  * Definitions

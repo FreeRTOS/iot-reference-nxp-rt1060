@@ -28,8 +28,8 @@
  * @brief Header file containing platfrom abstraction layer APIS for OTA update.
  */
 
-#ifndef FLASH_INFO_H
-#define FLASH_INFO_H
+#ifndef FLASH_PARTITIONING_H
+#define FLASH_PARTITIONING_H
 
 /** Flash device type enabled */
 #define ISSI_IS25WPxxxA
@@ -45,11 +45,11 @@
 
 /* Offsets for each image slots used for OTA. */
 #define FLASH_AREA_IMAGE_1_OFFSET       (BOOT_FLASH_ACT_APP - BOOT_FLASH_BASE)  //MCUboot occupies 512KB
-#define FLASH_AREA_IMAGE_1_SIZE         (BOOT_FLASH_CAND_APP - BOOT_FLASH_ACT_APP)//image1 slot occupies 1.5MB
+#define FLASH_AREA_IMAGE_1_SIZE         (BOOT_FLASH_CAND_APP - BOOT_FLASH_ACT_APP)//image1 slot occupies 2MB
 #define FLASH_AREA_IMAGE_2_OFFSET       (FLASH_AREA_IMAGE_1_OFFSET + FLASH_AREA_IMAGE_1_SIZE)
-#define FLASH_AREA_IMAGE_2_SIZE         FLASH_AREA_IMAGE_1_SIZE //image2 slot occupies 1.5MB
+#define FLASH_AREA_IMAGE_2_SIZE         FLASH_AREA_IMAGE_1_SIZE //image2 slot occupies 2MB
 #define FLASH_AREA_IMAGE_3_OFFSET       (FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE)
-#define FLASH_AREA_IMAGE_3_SIZE         0x80000
+#define FLASH_AREA_IMAGE_3_SIZE          0x80000 // scratch slot occupies 512KB
 
 
-#endif /* FLASH_INFO_H */
+#endif /* FLASH_PARTITIONING_H */

@@ -81,10 +81,12 @@ static void prvCopyDefaultValue( KVStoreEntry_t * pEntry, const KVStoreDefaultEn
 		pEntry->u32 = pDefaultEntry->u32;
 		break;
 	case KV_TYPE_STRING:
-		memcpy(pEntry->value, pDefaultEntry->str, pDefaultEntry->length);
+		configASSERT( pEntry->valueLength < KVSTORE_VAL_MAX_LEN );
+		strncpy(pEntry->value, pDefaultEntry->str, KVSTORE_VAL_MAX_LEN );
 		break;
 	case KV_TYPE_BLOB:
-		memcpy(pEntry->value, pDefaultEntry->blob, pDefaultEntry->length);
+		configASSERT( pEntry->valueLength <= KVSTORE_VAL_MAX_LEN );
+		memcpy(pEntry->value, pDefaultEntry->blob, pEntry->valueLength );
 		break;
 	default:
 		break;
@@ -155,15 +157,7 @@ static BaseType_t prvLoadConfigStore( void )
 			prvCopyDefaultValue( &gKeyValueStore.table[keyIndex], &gDefaultValues[keyIndex] );
 		}
 
-		flashStatus = mflash_file_save( KVSTORE_FILE_PATH, ( uint8_t * ) &gKeyValueStore, sizeof( gKeyValueStore ) );
-		if( flashStatus == kStatus_Success )
-		{
-			result = pdPASS;
-		}
-		else
-		{
-			result = pdFAIL;
-		}
+		result = pdPASS;
 	}
 
 	return result;

@@ -35,7 +35,7 @@
 #include "logging_task.h"
 
 
-#define appmainINCLUDE_OTA_AGENT             ( 0 )
+#define appmainINCLUDE_OTA_AGENT             ( 1 )
 
 #define appmainINCLUDE_CLI                   ( 0 )
 

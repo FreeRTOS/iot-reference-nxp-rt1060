@@ -129,7 +129,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\kvstore&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\ota&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\cli&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\common\ota\ota_flag&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\pubsub\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\examples\evkbmimxrt1060\pubsub\board&quot;"/>
 								</option>

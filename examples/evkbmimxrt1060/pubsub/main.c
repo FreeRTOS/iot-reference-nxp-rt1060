@@ -55,7 +55,6 @@
 #include "mflash_drv.h"
 
 #include "ex_sss_boot.h"
-#include "flash_info.h"
 #include "ota_pal.h"
 
 #include "mflash_file.h"

@@ -1,8 +1,6 @@
 /*
  * FreeRTOS OTA PAL V1.0.0
- * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.
- * Copyright 2021 NXP
- * All Rights Reserved.
+ * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -25,311 +23,335 @@
  * http://www.FreeRTOS.org
  */
 
-/* OTA PAL implementation for NXP RT1xxx. */
+/* OTA PAL implementation for NXP MCUXpresso SDK. */
 
 #include <string.h>
 
-#include "ota.h"
-#include "ota_pal.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
-#include "flash_info.h"
+#include "ota_pal.h"
+#include "fsl_common.h"
 #include "mflash_drv.h"
 
-#include "sbl_ota_flag.h"
+#include "mcuboot_app_support.h"
 
-#include "flexspi_nor_flash_ops.h"
-
-#if defined(CONFIG_BOOT_ENCRYPTED_XIP)
-#include "update_key_context.h"
-#endif
 
 /* Specify the OTA signature algorithm we support on this platform. */
 const char OTA_JsonFileSignatureKey[OTA_FILE_SIG_KEY_STR_MAX_LENGTH] = "sig-sha256-ecdsa";
 
-/* low level file context structure */
+/* PAL file context structure */
 typedef struct
 {
     const OtaFileContext_t *FileXRef;
-    uint32_t Addr;
-    uint32_t Size;
-    uint32_t MaxSize;
-} LL_FileContext_t;
+    uint32_t partition_log_addr;
+    uint32_t partition_phys_addr;
+    uint32_t partition_size;
+    uint32_t next_erase_addr;
+    uint32_t file_size;
+    uint32_t page_size;
+} PAL_FileContext_t;
 
-static LL_FileContext_t prvPAL_CurrentFileContext;
+static PAL_FileContext_t prvPAL_CurrentFileContext;
 
-static LL_FileContext_t *prvPAL_GetLLFileContext(OtaFileContext_t *const C)
+static PAL_FileContext_t *prvPAL_GetPALFileContext(OtaFileContext_t *const C)
 {
-    LL_FileContext_t *FileContext;
+    PAL_FileContext_t *PalFileContext;
 
     if ((C == NULL) || (C->pFile == NULL))
     {
         return NULL;
     }
 
-    FileContext = (LL_FileContext_t *)C->pFile;
+    PalFileContext = (PAL_FileContext_t *)C->pFile;
 
-    if ((FileContext == NULL) || (FileContext->FileXRef != C))
+    if ((PalFileContext == NULL) || (PalFileContext->FileXRef != C))
     {
         return NULL;
     }
 
-    return FileContext;
-}
-
-OtaPalStatus_t xOtaPalAbort( OtaFileContext_t * const pFileContext )
-{
-    LogDebug("[OTA-NXP] Abort\r\n");
-
-    pFileContext->pFile = NULL;
-    return OTA_PAL_COMBINE_ERR( OtaPalSuccess, 0U );
+    return PalFileContext;
 }
 
 
-OtaPalStatus_t xOtaPalCreateFileForRx( OtaFileContext_t * const pOTAFileContext )
-{
-    LL_FileContext_t *FileContext = &prvPAL_CurrentFileContext;
-
-    LogDebug("[OTA-NXP] CreateFileForRx\r\n");
-
-    /* update partition address in FLASH memory and its size */
-#ifdef SOC_REMAP_ENABLE
-    uint8_t image_position;
-    sfw_flash_read_ipc(REMAP_FLAG_ADDRESS, &image_position, 1);
-    OTA_LOG_L1("[OTA-NXP] image_position= %d\r\n", image_position);
-    if(image_position == 0x01)
-    {
-        if (pOTAFileContext->fileSize > FLASH_AREA_IMAGE_2_SIZE)
-        {
-            return OTA_PAL_COMBINE_ERR( OtaPalRxFileTooLarge, 0U );
-        }
-        FileContext->Addr = FLASH_AREA_IMAGE_2_OFFSET;
-        FileContext->MaxSize = FLASH_AREA_IMAGE_2_SIZE;
-    }
-    else if(image_position == 0x02)
-    {
-        if (pOTAFileContext->fileSize > FLASH_AREA_IMAGE_1_SIZE)
-        {
-            return OTA_PAL_COMBINE_ERR( OtaPalRxFileTooLarge, 0U );
-        }
-        FileContext->Addr = FLASH_AREA_IMAGE_1_OFFSET;
-        FileContext->MaxSize = FLASH_AREA_IMAGE_1_SIZE;
-    }
-    else
-    {
-        return kStatus_Fail;
-    }
-#else
-    if (pOTAFileContext->fileSize > FLASH_AREA_IMAGE_2_SIZE)
-    {
-        return OTA_PAL_COMBINE_ERR( OtaPalRxFileTooLarge, 0U );
-    }
-    FileContext->Addr = FLASH_AREA_IMAGE_2_OFFSET;
-    FileContext->MaxSize = FLASH_AREA_IMAGE_2_SIZE;
-#endif
-
-    LogDebug("[OTA-NXP] File_Addr = 0x%08x, File_Size = 0x%08x\r\n", FileContext->Addr, FileContext->MaxSize);
-
-    /* actual size of the file according to data received */
-    FileContext->Size     = 0;
-
-    FileContext->FileXRef = pOTAFileContext; /* pointer cross reference for integrity check */
-    pOTAFileContext->pFile = (uint8_t *)FileContext;
-
-    return OTA_PAL_COMBINE_ERR( OtaPalSuccess, 0U );
-}
-
-
-OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const pOTAContext )
+OtaPalStatus_t xOtaPalAbort(OtaFileContext_t *const C)
 {
     OtaPalStatus_t result = OtaPalSuccess;
-    LL_FileContext_t *FileContext;
-#ifdef SOC_REMAP_ENABLE
-#ifdef SOC_IMXRT1170_SERIES
-    uint32_t remap_offset = (*(uint32_t *)0x400CC428) & 0xFFFFF000;
-#else //RT1060, RT1064
-    uint32_t remap_offset = IOMUXC_GPR->GPR32 & 0xFFFFF000;
-#endif
-    uint8_t image_position;
-#endif
 
-#ifdef MCUBOOT_IMAGE
-    struct image_version *cur_ver;
-    struct image_version *new_ver;
-    uint8_t cur_version[8];
-    uint8_t new_version[8];
-    int8_t cmp_result;
-#endif
+    LogInfo(("[OTA-NXP] Abort"));
 
-    LogDebug("[OTA-NXP] CloseFile\r\n");
-
-    FileContext = prvPAL_GetLLFileContext(pOTAContext);
-    if (FileContext == NULL)
-    {
-        return OTA_PAL_COMBINE_ERR( OtaPalFileClose, 0U );
-    }
-
-#ifdef SOC_REMAP_ENABLE
-    //should disable remap when check signature.
-    if (remap_offset != 0)
-    {
-        SBL_DisableRemap();
-    }
-#endif
-
-    result = xFlashPalValidateSignature( ( void * ) (FileContext->Addr + MFLASH_BASE_ADDRESS ),
-                                         FileContext->Size,
-                                         pOTAContext->pCertFilepath,
-                                         pOTAContext->pSignature->data,
-                                         pOTAContext->pSignature->size );
-    if (result != OtaPalSuccess)
-    {
-        LogDebug("[OTA-NXP] CheckFileSignature failed\r\n");
-        return OTA_PAL_COMBINE_ERR( result, 0U );
-    }
-
-#ifdef MCUBOOT_IMAGE
-
-#ifdef SOC_REMAP_ENABLE
-    sfw_flash_read_ipc(REMAP_FLAG_ADDRESS, &image_position, 1);
-    LogDebug("[prvPAL_CloseFile] image_position= %d\r\n", image_position);
-    if(image_position == 0x01)
-    {
-        sfw_flash_read_ipc(FLASH_AREA_IMAGE_1_OFFSET + IMAGE_VERSION_OFFSET, cur_version, 8);
-        cur_ver = (struct image_version *)cur_version;
-        sfw_flash_read_ipc(FLASH_AREA_IMAGE_2_OFFSET + IMAGE_VERSION_OFFSET, new_version, 8);
-        new_ver = (struct image_version *)new_version;
-    }
-    else if(image_position == 0x02)
-    {
-        //after check, enable remap
-        SBL_EnableRemap(BOOT_FLASH_ACT_APP, BOOT_FLASH_ACT_APP+FLASH_AREA_IMAGE_1_SIZE, FLASH_AREA_IMAGE_1_SIZE);
-        sfw_flash_read_ipc(FLASH_AREA_IMAGE_2_OFFSET + IMAGE_VERSION_OFFSET, cur_version, 8);
-        cur_ver = (struct image_version *)cur_version;
-        sfw_flash_read_ipc(FLASH_AREA_IMAGE_1_OFFSET + IMAGE_VERSION_OFFSET, new_version, 8);
-        new_ver = (struct image_version *)new_version;
-    }
-    else
-    {
-        return OTA_PAL_COMBINE_ERR( OtaPalFileClose, 0U );
-    }
-#else
-    sfw_flash_read(FLASH_AREA_IMAGE_1_OFFSET + IMAGE_VERSION_OFFSET, cur_version, 8);
-    cur_ver = (struct image_version *)cur_version;
-    sfw_flash_read(FLASH_AREA_IMAGE_2_OFFSET + IMAGE_VERSION_OFFSET, new_version, 8);
-    new_ver = (struct image_version *)new_version;
-#endif
-
-    //check image version
-    cmp_result = compare_image_version(new_ver, cur_ver);
-    LogDebug("[OTA-NXP] cmp_result=%d\r\n", cmp_result);
-    if(cmp_result > 0)
-    {
-        OTA_LOG_L1("[OTA-NXP] new image verison: %d.%d.%d\r\n", new_ver->iv_major, new_ver->iv_minor, new_ver->iv_revision);
-    }
-    else
-    {
-        OTA_LOG_L1("[OTA-NXP] The version number of the new image is not greater than the current image version number!\r\n");
-        return OTA_PAL_COMBINE_ERR( OtaPalFileClose, 0U );
-    }
-#endif
-
-    pOTAContext->pFile = NULL;
-    return OTA_PAL_COMBINE_ERR( result, 0U );
-}
-
-
-int16_t xOtaPalWriteBlock( OtaFileContext_t * const pOTAFileContext,
-                           uint32_t offset,
-                           uint8_t * const pData,
-                           uint32_t blockSize )
-{
-    int32_t result;
-    LL_FileContext_t *FileContext;
-
-    LogDebug("[OTA-NXP] WriteBlock %x : %x\r\n", offset, blockSize);
-
-    FileContext = prvPAL_GetLLFileContext(pOTAFileContext);
-    if (FileContext == NULL)
-    {
-        return -1;
-    }
-
-    if (offset + blockSize > FileContext->MaxSize)
-    {
-        return -1;
-    }
-
-    result = mflash_drv_write(FileContext->Addr + offset, pData, blockSize);
-    if (result == 0)
-    {
-        /* zero indicates no error, return number of bytes written to the caller */
-        result = blockSize;
-        if (FileContext->Size < offset + blockSize)
-        {
-            /* extend file size according to highest offset */
-            FileContext->Size = offset + blockSize;
-        }
-    }
+    C->pFile = NULL;
     return result;
 }
 
 
-OtaPalStatus_t xOtaPalActivateNewImage( OtaFileContext_t * const pFileContext )
+OtaPalStatus_t xOtaPalCreateFileForRx(OtaFileContext_t *const C)
 {
-    LogDebug("[OTA-NXP] Write update type\r\n");
-    write_update_type(UPDATE_TYPE_AWS_CLOUD);
-    LogDebug("[OTA-NXP] Write image trailer\r\n");
+    partition_t update_partition;
+    PAL_FileContext_t *PalFileContext = &prvPAL_CurrentFileContext;
 
-    enable_image();
-#if defined(CONFIG_BOOT_ENCRYPTED_XIP)
-    update_key_context();
-#endif
-    LogDebug("[OTA-NXP] ActivateNewImage\r\n");
+    LogDebug(("[OTA-NXP] CreateFileForRx"));
 
-    /* go for reboot */
-    return xOtaPalResetDevice( pFileContext );
+    if (bl_get_update_partition_info(&update_partition) != kStatus_Success)
+    {
+        LogError(("[OTA-NXP] Could not get update partition information"));
+        return OtaPalRxFileCreateFailed;
+    }
+
+    /* Keep partition info in the file context */
+    PalFileContext->partition_log_addr = update_partition.start;
+    PalFileContext->partition_size = update_partition.size;
+
+    /* Obtain physical address to perform flash operations with */
+    PalFileContext->partition_phys_addr = mflash_drv_log2phys((void *)update_partition.start, update_partition.size);
+    if (PalFileContext->partition_phys_addr == MFLASH_INVALID_ADDRESS)
+    {
+        LogError(("[OTA-NXP] Could not get update partition FLASH address"));
+        return OTA_PAL_COMBINE_ERR( OtaPalRxFileCreateFailed, 0U );
+    }
+
+    /* Check partition alignment */
+    if (!mflash_drv_is_sector_aligned(PalFileContext->partition_phys_addr) || !mflash_drv_is_sector_aligned(PalFileContext->partition_size))
+    {
+        LogError(("[OTA-NXP] Invalid update partition"));
+        return OTA_PAL_COMBINE_ERR( OtaPalRxFileCreateFailed, 0U );
+    }
+
+    /* Check whether the file fits at all */
+    if (C->fileSize > update_partition.size)
+    {
+        LogError(("[OTA-NXP] File too large"));
+        return OTA_PAL_COMBINE_ERR( OtaPalRxFileTooLarge, 0U );
+    }
+
+    /* Actual size of the file according to data received */
+    PalFileContext->file_size = 0;
+
+    /* Allocate buffer to keep data for the page containing image header until the rest of the image is received */
+    PalFileContext->page_size = MFLASH_PAGE_SIZE;
+
+    /* Pre-set address of area not erased so far */
+    PalFileContext->next_erase_addr = PalFileContext->partition_phys_addr;
+
+    PalFileContext->FileXRef = C; /* pointer cross reference for integrity check */
+    C->pFile = (uint8_t *)PalFileContext;
+
+    return OtaPalSuccess;
 }
 
 
-OtaPalStatus_t xOtaPalResetDevice( OtaFileContext_t * const pFileContext )
-{
-    (void) pFileContext;
-    LogDebug("[OTA-NXP] ResetDevice\r\n");
-
-    NVIC_SystemReset(); /* this should never return */
-
-    return OTA_PAL_COMBINE_ERR( OtaPalActivateFailed, 0U );
-}
-
-
-OtaPalStatus_t xOtaPalSetPlatformImageState( OtaFileContext_t * const pFileContext,
-                                             OtaImageState_t eState )
+OtaPalStatus_t xOtaPalCloseFile(OtaFileContext_t *const C)
 {
     OtaPalStatus_t result = OtaPalSuccess;
-    uint8_t ota_type;
+    PAL_FileContext_t *PalFileContext;
+    uint8_t * file_data = NULL;
 
-    LogDebug("[OTA-NXP] SetPlatformImageState %d\r\n", eState);
+    LogDebug(("[OTA-NXP] CloseFile"));
 
-    if (xOtaPalGetPlatformImageState(pFileContext) == OtaPalImageStatePendingCommit)
+    PalFileContext = prvPAL_GetPALFileContext(C);
+    if (PalFileContext == NULL)
+    {
+        return OTA_PAL_COMBINE_ERR( OtaPalFileClose, 0U );
+    }
+
+    if (PalFileContext->file_size != C->fileSize)
+    {
+        LogWarn(("[OTA-NXP] Actual file size is not as expected"));
+    }
+
+    file_data = mflash_drv_phys2log(PalFileContext->partition_phys_addr, PalFileContext->file_size);
+    if( file_data == NULL )
+    {
+    	return OTA_PAL_COMBINE_ERR( OtaPalSignatureCheckFailed, 0U);
+    }
+
+    result = xFlashPalValidateSignature( ( void * ) file_data,
+             PalFileContext->file_size,
+             ( char * ) C->pCertFilepath,
+             C->pSignature->data,
+             C->pSignature->size );
+    if (result != OtaPalSuccess)
+    {
+        LogError(("[OTA-NXP] CheckFileSignature failed"));
+    }
+
+    /* Sanity check of the image and its header solely from the flash as the bootloader would do */
+    if (result == OtaPalSuccess)
+    {
+        if ( bl_verify_image(file_data, PalFileContext->file_size) <= 0 )
+        {
+            LogError(("[OTA-NXP] Invalid image"));
+            result = OtaPalBootInfoCreateFailed;
+        }
+    }
+
+    /* Prepare image to be booted in test mode */
+    if ((result == OtaPalSuccess) && (bl_update_image_state(kSwapType_ReadyForTest) != kStatus_Success))
+    {
+        LogError(("[OTA-NXP] Failed to set image state"));
+        result = OtaPalBootInfoCreateFailed;
+    }
+
+    C->pFile = NULL;
+    return OTA_PAL_COMBINE_ERR( result, 0U );
+}
+
+
+int16_t xOtaPalWriteBlock(OtaFileContext_t *const C, uint32_t ulOffset, uint8_t *const pcData, uint32_t ulBlockSize)
+{
+    int16_t retval = 0;
+    int32_t mflash_result = 0;
+
+    uint8_t *data;
+    uint32_t data_offset;
+    uint32_t data_remaining;
+
+    PAL_FileContext_t *PalFileContext;
+
+    LogDebug(("[OTA-NXP] WriteBlock 0x%x : 0x%x", ulOffset, ulBlockSize));
+
+    PalFileContext = prvPAL_GetPALFileContext(C);
+    if (PalFileContext == NULL)
+    {
+        return -1;
+    }
+
+    /* Check for possible partition boundary overrun */
+    if (ulOffset + ulBlockSize > PalFileContext->partition_size)
+    {
+        return -1;
+    }
+
+    /*
+     * The block is expected to be page aligned. The otaconfigLOG2_FILE_BLOCK_SIZE should be set so that the blocks are at least of page size (or larger).
+     * That way all blocks except for the last one would be block aligned in both offset and size
+     */
+    if (!mflash_drv_is_page_aligned(ulOffset))
+    {
+        LogError(("[OTA-NXP] Block is not page aligned"));
+        return -1;
+    }
+
+    data = pcData;
+    data_offset = ulOffset;
+    data_remaining = ulBlockSize;
+
+    /* The block may span multiple pages, process in a loop */
+    while (data_remaining)
+    {
+        uint32_t len = data_remaining <  PalFileContext->page_size ? data_remaining : PalFileContext->page_size;
+
+        /* Perform erase when encountering next sector */
+        while (PalFileContext->partition_phys_addr + data_offset >= PalFileContext->next_erase_addr)
+        {
+            LogDebug(("[OTA-NXP] Erasing sector 0x%x", PalFileContext->next_erase_addr));
+            mflash_result = mflash_drv_sector_erase(PalFileContext->next_erase_addr);
+            if (mflash_result != 0)
+                break;
+
+            PalFileContext->next_erase_addr += MFLASH_SECTOR_SIZE;
+        }
+
+        if (mflash_result != 0)
+        {
+            retval = -1;
+            break;
+        }
+
+        if (len == PalFileContext->page_size && (((uint32_t)data % 4) == 0))
+        {
+            mflash_result = mflash_drv_page_program(PalFileContext->partition_phys_addr + data_offset, (void *)data);
+        }
+        else
+        {
+            /* Data size not aligned to page size, use temporary buffer */
+            uint32_t *page_buffer = pvPortMalloc(PalFileContext->page_size);
+            if (page_buffer == NULL)
+            {
+                LogError(("[OTA-NXP] Could not allocate page buffer"));
+                retval = -1;
+                break;
+            }
+            memset(page_buffer, 0xff, PalFileContext->page_size);
+            memcpy(page_buffer, data, len);
+            mflash_result = mflash_drv_page_program(PalFileContext->partition_phys_addr + data_offset, page_buffer);
+            vPortFree(page_buffer);
+        }
+
+        if (mflash_result != 0)
+        {
+            retval = -1;
+            break;
+        }
+
+        data += len;
+        data_offset += len;
+        data_remaining -= len;
+        retval += len;
+    }
+
+    /* Update size of file received so far */
+    if ((retval > 0) && (PalFileContext->file_size < data_offset))
+    {
+        PalFileContext->file_size = data_offset;
+    }
+
+    return retval;
+}
+
+
+OtaPalStatus_t xOtaPalActivateNewImage(OtaFileContext_t * const C)
+{
+    LogInfo(("[OTA-NXP] ActivateNewImage"));
+    xOtaPalResetDevice(C); /* go for reboot */
+    return OtaPalSuccess;
+}
+
+
+OtaPalStatus_t xOtaPalResetDevice(OtaFileContext_t * const C)
+{
+    LogInfo(("[OTA-NXP] SystemReset"));
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    NVIC_SystemReset(); /* this should never return */
+}
+
+
+OtaPalStatus_t xOtaPalSetPlatformImageState(OtaFileContext_t * const C, OtaImageState_t eState)
+{
+    OtaPalStatus_t result = OtaPalSuccess;
+
+    LogDebug(("[OTA-NXP] SetPlatformImageState %d", eState));
+
+    if (xOtaPalGetPlatformImageState(C) == OtaPalImageStatePendingCommit)
     {
         /* Device in test mode */
         switch (eState)
         {
             case OtaImageStateAccepted:
-                /* iamge is ok */
-                sfw_flash_read(UPDATE_TYPE_FLAG_ADDRESS, &ota_type, 1);
-                if (UPDATE_TYPE_AWS_CLOUD == ota_type)
+                /* Request the bootloader to switch the image permanently */
+                if (bl_update_image_state(kSwapType_Permanent) != kStatus_Success)
                 {
-                    write_image_ok();
+                    /* Override result code by a state specific one */
+                    result = OtaPalCommitFailed;
                 }
                 break;
 
             case OtaImageStateRejected:
                 /* Invalidate the image */
+                if (bl_update_image_state(kSwapType_Fail) != kStatus_Success)
+                {
+                    /* Override result code by a state specific one */
+                    result = OtaPalRejectFailed;
+                }
                 break;
 
             case OtaImageStateAborted:
                 /* Invalidate the image */
+                if (bl_update_image_state(kSwapType_Fail) != kStatus_Success)
+                {
+                    /* Override result code by a state specific one */
+                    result = OtaPalAbortFailed;
+                }
                 break;
 
             case OtaImageStateTesting:
@@ -373,27 +395,25 @@ OtaPalStatus_t xOtaPalSetPlatformImageState( OtaFileContext_t * const pFileConte
 }
 
 
-OtaPalImageState_t xOtaPalGetPlatformImageState( OtaFileContext_t * const pFileContext )
+OtaPalImageState_t xOtaPalGetPlatformImageState(OtaFileContext_t * const C)
 {
-    uint8_t ota_status = 0;
+    uint32_t state;
 
-    ( void ) pFileContext;
-
-    LogDebug("[OTA-NXP] GetPlatformImageState\r\n");
-
-    ota_status = read_ota_status();
-    LogDebug("[OTA-NXP] ota_status = 0x%x\r\n", ota_status);
-
-    if (ota_status == 0x00)
-    {
-        return OtaPalImageStateValid;
-    }
-    else if (ota_status == 0x01)
-    {
-        return OtaPalImageStatePendingCommit;
-    }
-    else
+    if (bl_get_image_state(&state) != kStatus_Success)
     {
         return OtaPalImageStateInvalid;
     }
+
+    switch (state)
+    {
+        case kSwapType_ReadyForTest:
+            return OtaPalImageStateValid;
+            break;
+
+        case kSwapType_Testing:
+            return OtaPalImageStatePendingCommit;
+            break;
+    }
+
+    return OtaPalImageStateInvalid;
 }
