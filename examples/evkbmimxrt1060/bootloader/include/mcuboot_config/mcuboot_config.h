@@ -29,7 +29,7 @@
 
 /* Uncomment to enable RSA signature */
 #ifdef CONFIG_BOOT_SIGNATURE_TYPE_RSA
-#define MCUBOOT_SIGN_RSA
+//#define MCUBOOT_SIGN_RSA
 #if (CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN != 2048 && CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN != 3072)
 #error "Invalid RSA key size (must be 2048 or 3072)"
 #else
