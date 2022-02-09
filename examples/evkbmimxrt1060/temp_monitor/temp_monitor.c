@@ -43,45 +43,45 @@
 #include "logging_levels.h"
 
 #undef LIBRARY_LOG_NAME
-#define LIBRARY_LOG_NAME    "TEMP_MONITOR"
+#define LIBRARY_LOG_NAME     "TEMP_MONITOR"
 
 #undef LIBRARY_LOG_LEVEL
 #define LIBRARY_LOG_LEVEL    LOG_DEBUG
 
 #include "logging.h"
 
-#define DEMO_TEMP_MONITOR             TEMPMON
-#define DEMO_TEMP_LOW_HIGH_IRQn       TEMP_LOW_HIGH_IRQn
-#define DEMO_TEMP_PANIC_IRQn          TEMP_PANIC_IRQn
-#define DEMO_TEMP_LOW_HIGH_IRQHandler TEMP_LOW_HIGH_IRQHandler
-#define DEMO_TEMP_PANIC_IRQHandler    TEMP_PANIC_IRQHandler
+#define DEMO_TEMP_MONITOR                TEMPMON
+#define DEMO_TEMP_LOW_HIGH_IRQn          TEMP_LOW_HIGH_IRQn
+#define DEMO_TEMP_PANIC_IRQn             TEMP_PANIC_IRQn
+#define DEMO_TEMP_LOW_HIGH_IRQHandler    TEMP_LOW_HIGH_IRQHandler
+#define DEMO_TEMP_PANIC_IRQHandler       TEMP_PANIC_IRQHandler
 
-#define DEMO_HIGH_ALARM_TEMP 42U
-#define DEMO_LOW_ALARM_TEMP  35U
+#define DEMO_HIGH_ALARM_TEMP             42U
+#define DEMO_LOW_ALARM_TEMP              35U
 
-#define DEMO_CLOCK_SOURCE kCLOCK_AhbClk
-#define DEMO_CLOCK_DIV    kCLOCK_AhbDiv
+#define DEMO_CLOCK_SOURCE                kCLOCK_AhbClk
+#define DEMO_CLOCK_DIV                   kCLOCK_AhbDiv
 
-#define DEMO_TEMP_MONITOR_JSON           \
-   	"{"                                  \
-        "\"value\":%0.1f,"               \
-		"\"unit\":\"celsius\","          \
-		"\"range\":{"                    \
-        	"\"low\":%3u,"               \
-			"\"high\":%3u"               \
-        "},"                             \
-		"\"alarm\": %1d"                 \
-     "}"
+#define DEMO_TEMP_MONITOR_JSON \
+    "{"                        \
+    "\"value\":%0.1f,"         \
+    "\"unit\":\"celsius\","    \
+    "\"range\":{"              \
+    "\"low\":%3u,"             \
+    "\"high\":%3u"             \
+    "},"                       \
+    "\"alarm\": %1d"           \
+    "}"
 
-#define DEMO_JSON_VALUE_LENGTH      ( 12 )
+#define DEMO_JSON_VALUE_LENGTH            ( 12 )
 
-#define DEMO_TEMP_MONITOR_JSON_LENGTH    ( sizeof( DEMO_TEMP_MONITOR_JSON ) + DEMO_JSON_VALUE_LENGTH )
+#define DEMO_TEMP_MONITOR_JSON_LENGTH     ( sizeof( DEMO_TEMP_MONITOR_JSON ) + DEMO_JSON_VALUE_LENGTH )
 
-#define DEMO_TEMP_MONITOR_TOPIC         ( "/demo/temperature" )
+#define DEMO_TEMP_MONITOR_TOPIC           ( "/demo/temperature" )
 
 #define DEMO_TEMP_MONITOR_TOPIC_LENGTH    sizeof( DEMO_TEMP_MONITOR_TOPIC )
 
-#define DEMO_TEMP_MONITOR_TOPIC_QOS      ( MQTTQoS0 )
+#define DEMO_TEMP_MONITOR_TOPIC_QOS       ( MQTTQoS0 )
 
 #define DEMO_TEMP_MONITOR_INTERVAL_MS     ( 10000 )
 
@@ -109,15 +109,16 @@ static BaseType_t prvMQTTPublish( const char * const pacTopic,
 
 static void prvCommandCallback( MQTTAgentCommandContext_t * pCommandContext,
                                 MQTTAgentReturnInfo_t * pxReturnInfo );
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
 float temperature = 0U;
 
-volatile bool temperatureReach     = false;
+volatile bool temperatureReach = false;
 uint32_t temperatureReachHighCount = 0x01U;
-uint32_t temperatureReachLowCount  = 0x01U;
+uint32_t temperatureReachLowCount = 0x01U;
 
 /**
  * @brief Static handle used for MQTT agent context.
@@ -128,7 +129,7 @@ extern MQTTAgentContext_t xGlobalMqttAgentContext;
  * Code
  ******************************************************************************/
 
-void DEMO_TEMP_LOW_HIGH_IRQHandler(void)
+void DEMO_TEMP_LOW_HIGH_IRQHandler( void )
 {
     temperatureReach = true;
     SDK_ISR_EXIT_BARRIER;
@@ -187,23 +188,22 @@ static BaseType_t prvMQTTPublish( const char * const pacTopic,
         {
             if( xCommandContext.xReturnStatus != MQTTSuccess )
             {
-            	LogError( ( "Failed to send PUBLISH packet to broker with error = %u.", xCommandContext.xReturnStatus ) );
-            	result = pdFALSE;
+                LogError( ( "Failed to send PUBLISH packet to broker with error = %u.", xCommandContext.xReturnStatus ) );
+                result = pdFALSE;
             }
             else
             {
-            	LogDebug( ( "Successfully published message to topic %.*s.", topicLen, pacTopic ) );
+                LogDebug( ( "Successfully published message to topic %.*s.", topicLen, pacTopic ) );
             }
-
         }
         else
         {
-        	LogError( ( "Failed to receive publish acknowledgment within %u ms.", DEMO_MQTT_PUBLISH_TIMEOUT_MS ) );
+            LogError( ( "Failed to receive publish acknowledgment within %u ms.", DEMO_MQTT_PUBLISH_TIMEOUT_MS ) );
         }
     }
     else
     {
-    	LogError( ( "Failed to send PUBLISH packet to broker with error = %u.", mqttStatus ) );
+        LogError( ( "Failed to send PUBLISH packet to broker with error = %u.", mqttStatus ) );
     }
 
     return result;
@@ -213,87 +213,85 @@ static BaseType_t prvMQTTPublish( const char * const pacTopic,
 /*!
  * @brief Main function
  */
-void vTemperatureMonitorTask( void *pvParameters )
+void vTemperatureMonitorTask( void * pvParameters )
 {
     tempmon_config_t config;
     static char temperatureJson[ DEMO_TEMP_MONITOR_JSON_LENGTH ] = { 0 };
     size_t temperatureJsonLength = 0U;
 
-    EnableIRQ(DEMO_TEMP_LOW_HIGH_IRQn);
+    EnableIRQ( DEMO_TEMP_LOW_HIGH_IRQn );
 
-    LogInfo("Temperature monitor example. \r\n");
+    LogInfo( "Temperature monitor example. \r\n" );
 
-    TEMPMON_GetDefaultConfig(&config);
-    config.frequency     = 0x03U;
+    TEMPMON_GetDefaultConfig( &config );
+    config.frequency = 0x03U;
     config.highAlarmTemp = DEMO_HIGH_ALARM_TEMP;
-    config.lowAlarmTemp  = DEMO_LOW_ALARM_TEMP;
+    config.lowAlarmTemp = DEMO_LOW_ALARM_TEMP;
 
-    TEMPMON_Init(DEMO_TEMP_MONITOR, &config);
+    TEMPMON_Init( DEMO_TEMP_MONITOR, &config );
 
     if( xIsMQTTAgentRunning() == pdFALSE )
     {
-    	( void ) xWaitForMQTTAgentTask( 0U );
+        ( void ) xWaitForMQTTAgentTask( 0U );
     }
 
-    TEMPMON_StartMeasure(DEMO_TEMP_MONITOR);
+    TEMPMON_StartMeasure( DEMO_TEMP_MONITOR );
 
     /* Get temperature */
-    temperature = TEMPMON_GetCurrentTemperature(DEMO_TEMP_MONITOR);
+    temperature = TEMPMON_GetCurrentTemperature( DEMO_TEMP_MONITOR );
 
-    LogInfo("The chip initial temperature is %.1f degrees celsius. \r\n", temperature);
+    LogInfo( "The chip initial temperature is %.1f degrees celsius. \r\n", temperature );
 
-    for( ;; )
+    for( ; ; )
     {
         /* Get current temperature */
-        temperature = TEMPMON_GetCurrentTemperature(DEMO_TEMP_MONITOR);
+        temperature = TEMPMON_GetCurrentTemperature( DEMO_TEMP_MONITOR );
 
-        LogInfo("The chip current temperature is %.1f degrees celsius. \r\n", temperature);
+        LogInfo( "The chip current temperature is %.1f degrees celsius. \r\n", temperature );
 
 
         temperatureJsonLength = snprintf( temperatureJson,
-        		                          DEMO_TEMP_MONITOR_JSON_LENGTH,
-										  DEMO_TEMP_MONITOR_JSON,
-										  temperature,
-										  DEMO_LOW_ALARM_TEMP,
-										  DEMO_HIGH_ALARM_TEMP,
-										  temperatureReach );
+                                          DEMO_TEMP_MONITOR_JSON_LENGTH,
+                                          DEMO_TEMP_MONITOR_JSON,
+                                          temperature,
+                                          DEMO_LOW_ALARM_TEMP,
+                                          DEMO_HIGH_ALARM_TEMP,
+                                          temperatureReach );
 
         if( temperatureJsonLength <= DEMO_TEMP_MONITOR_JSON_LENGTH )
         {
-
-        	( void ) prvMQTTPublish( DEMO_TEMP_MONITOR_TOPIC,
-        			                 DEMO_TEMP_MONITOR_TOPIC_LENGTH,
-					                 temperatureJson,
-					                 temperatureJsonLength,
-					                 DEMO_TEMP_MONITOR_TOPIC_QOS );
+            ( void ) prvMQTTPublish( DEMO_TEMP_MONITOR_TOPIC,
+                                     DEMO_TEMP_MONITOR_TOPIC_LENGTH,
+                                     temperatureJson,
+                                     temperatureJsonLength,
+                                     DEMO_TEMP_MONITOR_TOPIC_QOS );
         }
 
-        if (temperatureReach && (temperature - DEMO_HIGH_ALARM_TEMP > 0))
+        if( temperatureReach && ( temperature - DEMO_HIGH_ALARM_TEMP > 0 ) )
         {
             temperatureReach = false;
 
-            if (0x01U == temperatureReachHighCount)
+            if( 0x01U == temperatureReachHighCount )
             {
-            	LogWarn("The chip temperature has reached high temperature that is %.1f degrees celsius. \r\n",
-                       temperature);
+                LogWarn( "The chip temperature has reached high temperature that is %.1f degrees celsius. \r\n",
+                         temperature );
 
                 temperatureReachHighCount++;
             }
         }
 
-        if (temperatureReach && (temperature - DEMO_LOW_ALARM_TEMP < 0))
+        if( temperatureReach && ( temperature - DEMO_LOW_ALARM_TEMP < 0 ) )
         {
             temperatureReach = false;
 
-            if (0x01U == temperatureReachLowCount)
+            if( 0x01U == temperatureReachLowCount )
             {
-            	LogWarn("The chip temperature has reached low temperature that is %.1f degrees celsius. \r\n",
-                       temperature);
+                LogWarn( "The chip temperature has reached low temperature that is %.1f degrees celsius. \r\n",
+                         temperature );
 
                 temperatureReachLowCount++;
             }
         }
-
 
         vTaskDelay( pdMS_TO_TICKS( DEMO_TEMP_MONITOR_INTERVAL_MS ) );
     }

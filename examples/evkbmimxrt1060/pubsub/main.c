@@ -65,7 +65,7 @@
  ******************************************************************************/
 #ifndef EXAMPLE_NETIF_INIT_FN
 /*! @brief Network interface initialization function. */
-#define EXAMPLE_NETIF_INIT_FN ethernetif0_init
+    #define EXAMPLE_NETIF_INIT_FN    ethernetif0_init
 #endif /* EXAMPLE_NETIF_INIT_FN */
 
 /* MAC address configuration. */
@@ -75,28 +75,28 @@
     }
 
 /* Address of PHY interface. */
-#define EXAMPLE_PHY_ADDRESS BOARD_ENET0_PHY_ADDRESS
+#define EXAMPLE_PHY_ADDRESS    BOARD_ENET0_PHY_ADDRESS
 
 /* MDIO operations. */
-#define EXAMPLE_MDIO_OPS enet_ops
+#define EXAMPLE_MDIO_OPS       enet_ops
 
 /* PHY operations. */
-#define EXAMPLE_PHY_OPS phyksz8081_ops
+#define EXAMPLE_PHY_OPS        phyksz8081_ops
 
 /* ENET clock frequency. */
-#define EXAMPLE_CLOCK_FREQ CLOCK_GetFreq(kCLOCK_IpgClk)
+#define EXAMPLE_CLOCK_FREQ     CLOCK_GetFreq( kCLOCK_IpgClk )
 
 
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-void Board_InitNetwork(void);
+void Board_InitNetwork( void );
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-static mdio_handle_t mdioHandle = {.ops = &EXAMPLE_MDIO_OPS};
-static phy_handle_t phyHandle   = {.phyAddr = EXAMPLE_PHY_ADDRESS, .mdioHandle = &mdioHandle, .ops = &EXAMPLE_PHY_OPS};
+static mdio_handle_t mdioHandle = { .ops = &EXAMPLE_MDIO_OPS };
+static phy_handle_t phyHandle = { .phyAddr = EXAMPLE_PHY_ADDRESS, .mdioHandle = &mdioHandle, .ops = &EXAMPLE_PHY_OPS };
 
 struct netif netif;
 
@@ -104,79 +104,84 @@ struct netif netif;
  * Secure element contexts
  ******************************************************************************/
 static ex_sss_boot_ctx_t gex_sss_demo_boot_ctx;
-ex_sss_boot_ctx_t *pex_sss_demo_boot_ctx = &gex_sss_demo_boot_ctx;
+ex_sss_boot_ctx_t * pex_sss_demo_boot_ctx = &gex_sss_demo_boot_ctx;
 
 static ex_sss_cloud_ctx_t gex_sss_demo_tls_ctx;
-ex_sss_cloud_ctx_t *pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
+ex_sss_cloud_ctx_t * pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
 
-const char *g_port_name = NULL;
+const char * g_port_name = NULL;
 
-static mflash_file_t dir_template[] = {
-	{
-	    .path = KVSTORE_FILE_PATH,
-		.max_size = ( MFLASH_SECTOR_SIZE * 2U )
-	},
-	{}
+static mflash_file_t dir_template[] =
+{
+    {
+        .path = KVSTORE_FILE_PATH,
+        .max_size = ( MFLASH_SECTOR_SIZE * 2U )
+    },
+    {}
 };
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
-void Board_InitNetwork(void)
+void Board_InitNetwork( void )
 {
     ip4_addr_t netif_ipaddr, netif_netmask, netif_gw;
-    ethernetif_config_t enet_config = {
+    ethernetif_config_t enet_config =
+    {
         .phyHandle  = &phyHandle,
         .macAddress = configMAC_ADDR,
     };
 
     mdioHandle.resource.csrClock_Hz = EXAMPLE_CLOCK_FREQ;
 
-    IP4_ADDR(&netif_ipaddr, 0, 0, 0, 0);
-    IP4_ADDR(&netif_netmask, 0, 0, 0, 0);
-    IP4_ADDR(&netif_gw, 0, 0, 0, 0);
+    IP4_ADDR( &netif_ipaddr, 0, 0, 0, 0 );
+    IP4_ADDR( &netif_netmask, 0, 0, 0, 0 );
+    IP4_ADDR( &netif_gw, 0, 0, 0, 0 );
 
-    tcpip_init(NULL, NULL);
+    tcpip_init( NULL, NULL );
 
-    netifapi_netif_add(&netif, &netif_ipaddr, &netif_netmask, &netif_gw, &enet_config, EXAMPLE_NETIF_INIT_FN,
-                       tcpip_input);
-    netifapi_netif_set_default(&netif);
-    netifapi_netif_set_up(&netif);
+    netifapi_netif_add( &netif, &netif_ipaddr, &netif_netmask, &netif_gw, &enet_config, EXAMPLE_NETIF_INIT_FN,
+                        tcpip_input );
+    netifapi_netif_set_default( &netif );
+    netifapi_netif_set_up( &netif );
 
-    PRINTF("Getting IP address from DHCP ...\r\n");
-    netifapi_dhcp_start(&netif);
+    PRINTF( "Getting IP address from DHCP ...\r\n" );
+    netifapi_dhcp_start( &netif );
 
-    struct dhcp *dhcp;
-    dhcp = (struct dhcp *)netif_get_client_data(&netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
+    struct dhcp * dhcp;
 
-    while (dhcp->state != DHCP_STATE_BOUND)
+    dhcp = ( struct dhcp * ) netif_get_client_data( &netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP );
+
+    while( dhcp->state != DHCP_STATE_BOUND )
     {
-    	PRINTF("Waiting to receive an IP address through DHCP.\r\n");
+        PRINTF( "Waiting to receive an IP address through DHCP.\r\n" );
 
-        vTaskDelay(1000);
+        vTaskDelay( 1000 );
     }
 
-    if (dhcp->state == DHCP_STATE_BOUND)
+    if( dhcp->state == DHCP_STATE_BOUND )
     {
-        PRINTF("IPv4 Address: %u.%u.%u.%u\r\n", ((u8_t *)&netif.ip_addr.addr)[0],
-                      ((u8_t *)&netif.ip_addr.addr)[1], ((u8_t *)&netif.ip_addr.addr)[2],
-                      ((u8_t *)&netif.ip_addr.addr)[3]);
+        PRINTF( "IPv4 Address: %u.%u.%u.%u\r\n", ( ( u8_t * ) &netif.ip_addr.addr )[ 0 ],
+                ( ( u8_t * ) &netif.ip_addr.addr )[ 1 ], ( ( u8_t * ) &netif.ip_addr.addr )[ 2 ],
+                ( ( u8_t * ) &netif.ip_addr.addr )[ 3 ] );
     }
-    PRINTF("DHCP OK\r\n");
 
+    PRINTF( "DHCP OK\r\n" );
 }
-void BOARD_InitModuleClock(void)
+void BOARD_InitModuleClock( void )
 {
-    const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1};
-    CLOCK_InitEnetPll(&config);
+    const clock_enet_pll_config_t config = { .enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1 };
+
+    CLOCK_InitEnetPll( &config );
 }
 
-void delay(void)
+void delay( void )
 {
     volatile uint32_t i = 0;
-    for (i = 0; i < 1000000; ++i)
+
+    for( i = 0; i < 1000000; ++i )
     {
-        __asm("NOP"); /* delay */
+        __asm( "NOP" ); /* delay */
     }
 }
 
@@ -187,9 +192,9 @@ void delay(void)
 /*!
  * @brief Application entry point.
  */
-int main(void)
+int main( void )
 {
-    gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
+    gpio_pin_config_t gpio_config = { kGPIO_DigitalOutput, 0, kGPIO_NoIntmode };
 
     /* Init board hardware. */
     BOARD_ConfigMPU();
@@ -199,65 +204,74 @@ int main(void)
     BOARD_InitModuleClock();
     SCB_DisableDCache();
 
-    IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
+    IOMUXC_EnableMode( IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true );
 
-    GPIO_PinInit(GPIO1, 9, &gpio_config);
-    GPIO_PinInit(GPIO1, 10, &gpio_config);
+    GPIO_PinInit( GPIO1, 9, &gpio_config );
+    GPIO_PinInit( GPIO1, 10, &gpio_config );
     /* pull up the ENET_INT before RESET. */
-    GPIO_WritePinOutput(GPIO1, 10, 1);
-    GPIO_WritePinOutput(GPIO1, 9, 0);
+    GPIO_WritePinOutput( GPIO1, 10, 1 );
+    GPIO_WritePinOutput( GPIO1, 9, 0 );
     delay();
-    GPIO_WritePinOutput(GPIO1, 9, 1);
+    GPIO_WritePinOutput( GPIO1, 9, 1 );
 
     if( CRYPTO_InitHardware() != 0 )
     {
-    	PRINTF(( "\r\nFailed to initialize MBEDTLS crypto.\r\n" ));
-    	while (1)
-    	{
-    	    /* Empty while. */
-    	}
+        PRINTF( ( "\r\nFailed to initialize MBEDTLS crypto.\r\n" ) );
+
+        while( 1 )
+        {
+            /* Empty while. */
+        }
     }
 
     if( mflash_drv_init() != 0 )
     {
-    	PRINTF(( "\r\nFailed to initialize flash driver.\r\n" ));
-    	while (1)
-    	{
-    		/* Empty while. */
-    	}
+        PRINTF( ( "\r\nFailed to initialize flash driver.\r\n" ) );
+
+        while( 1 )
+        {
+            /* Empty while. */
+        }
     }
 
     vTaskStartScheduler();
 
     /* Should not reach here. */
-    for (;;)
-        ;
+    for( ; ; )
+    {
+    }
 }
 
-void vApplicationDaemonTaskStartupHook(void)
+void vApplicationDaemonTaskStartupHook( void )
 {
-	/* Initialize file system. */
+    /* Initialize file system. */
     if( mflash_init( dir_template, false ) != kStatus_Success )
     {
-    	LOG_E("Failed to initialize file system" );
-    	for (;;)
-    		;
+        LOG_E( "Failed to initialize file system" );
+
+        for( ; ; )
+        {
+        }
     }
 
     /* Initialize network. */
     Board_InitNetwork();
 
     /* Initialize Logging locks */
-    if (nLog_Init() != 0)
+    if( nLog_Init() != 0 )
     {
-        LOG_E("Logging initialization failed");
-        for (;;);
+        LOG_E( "Logging initialization failed" );
+
+        for( ; ; )
+        {
+        }
     }
 
     if( app_main() != pdPASS )
     {
-    	for (;;)
-    	   ;
+        for( ; ; )
+        {
+        }
     }
 }
 
@@ -273,19 +287,19 @@ void vApplicationDaemonTaskStartupHook(void)
  *
  */
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
-		char * pcTaskName )
+                                    char * pcTaskName )
 {
-	PRINTF( "ERROR: stack overflow\r\n" );
-	portDISABLE_INTERRUPTS();
+    PRINTF( "ERROR: stack overflow\r\n" );
+    portDISABLE_INTERRUPTS();
 
-	/* Unused Parameters */
-	( void ) xTask;
-	( void ) pcTaskName;
+    /* Unused Parameters */
+    ( void ) xTask;
+    ( void ) pcTaskName;
 
-	/* Loop forever */
-	for( ; ; )
-	{
-	}
+    /* Loop forever */
+    for( ; ; )
+    {
+    }
 }
 
 /**
@@ -300,13 +314,13 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask,
  */
 void vApplicationMallocFailedHook()
 {
-	PRINTF( "ERROR: Malloc failed to allocate memory\r\n" );
-	taskDISABLE_INTERRUPTS();
+    PRINTF( "ERROR: Malloc failed to allocate memory\r\n" );
+    taskDISABLE_INTERRUPTS();
 
-	/* Loop forever */
-	for( ; ; )
-	{
-	}
+    /* Loop forever */
+    for( ; ; )
+    {
+    }
 }
 
 /*-----------------------------------------------------------*/

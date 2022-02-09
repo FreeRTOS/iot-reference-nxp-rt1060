@@ -35,13 +35,12 @@
 /**
  * @brief The crypto algorithm used for the digital signature.
  */
-#define CRYPTO_ALGORITHM          cryptoASYMMETRIC_ALGORITHM_ECDSA
+#define CRYPTO_ALGORITHM    cryptoASYMMETRIC_ALGORITHM_ECDSA
 
 /**
  * @brief The signature method used for calculating the signature.
  */
-#define SIGNATURE_METHOD          cryptoHASH_ALGORITHM_SHA256
-
+#define SIGNATURE_METHOD    cryptoHASH_ALGORITHM_SHA256
 
 /**
  * @brief Opens a PKCS11 Session.
@@ -199,10 +198,9 @@ CK_RV xVerifyImageSignatureUsingPKCS11( CK_SESSION_HANDLE session,
     result = C_GetFunctionList( &functionList );
     configASSERT( result == CKR_OK );
 
-
     if( ( xMbedtlsRet = mbedtls_sha256_starts_ret( &xSHA256Context, 0 ) ) != 0 )
     {
-        LogError("Failed to start mbedtls digest update, error = %d", xMbedtlsRet );
+        LogError( "Failed to start mbedtls digest update, error = %d", xMbedtlsRet );
         result = CKR_FUNCTION_FAILED;
     }
 
@@ -210,7 +208,7 @@ CK_RV xVerifyImageSignatureUsingPKCS11( CK_SESSION_HANDLE session,
     {
         if( ( xMbedtlsRet = mbedtls_sha256_update_ret( &xSHA256Context, pData, length ) ) != 0 )
         {
-            LogError("Failed to create mbedtls digest, error = %d", xMbedtlsRet );
+            LogError( "Failed to create mbedtls digest, error = %d", xMbedtlsRet );
             result = CKR_FUNCTION_FAILED;
         }
     }
@@ -219,7 +217,7 @@ CK_RV xVerifyImageSignatureUsingPKCS11( CK_SESSION_HANDLE session,
     {
         if( ( xMbedtlsRet = mbedtls_sha256_finish_ret( &xSHA256Context, digestResult ) ) != 0 )
         {
-            LogError("Failed to finalize mbedtls digest, error = %d", xMbedtlsRet );
+            LogError( "Failed to finalize mbedtls digest, error = %d", xMbedtlsRet );
             result = CKR_FUNCTION_FAILED;
         }
     }
@@ -288,7 +286,6 @@ OtaPalStatus_t xFlashPalValidateSignature( uint8_t * pMappedAddress,
             status = OtaPalSignatureCheckFailed;
         }
     }
-
 
     if( session != CKR_SESSION_HANDLE_INVALID )
     {

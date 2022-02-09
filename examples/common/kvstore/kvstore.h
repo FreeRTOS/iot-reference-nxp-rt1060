@@ -31,24 +31,24 @@
 
 
 #define KV_DFLT_KV_TYPE_BASE_T( value ) \
-	{  KV_TYPE_BASE_T, sizeof( value ), .bt = value }
+    { KV_TYPE_BASE_T, sizeof( value ), .bt = value }
 
 #define KV_DFLT_KV_TYPE_UBASE_T( value ) \
-	{  KV_TYPE_UBASE_T, sizeof( value ), .ubt = value }
+    { KV_TYPE_UBASE_T, sizeof( value ), .ubt = value }
 
 #define KV_DFLT_KV_TYPE_INT32( value ) \
-	{  KV_TYPE_INT32, sizeof( value ), .i32 = value }
+    { KV_TYPE_INT32, sizeof( value ), .i32 = value }
 
 #define KV_DFLT_KV_TYPE_UINT32( value ) \
-	{  KV_TYPE_UINT32, sizeof( value ), .u32 = value }
+    { KV_TYPE_UINT32, sizeof( value ), .u32 = value }
 
 #define KV_DFLT_KV_TYPE_STRING( value ) \
-	{  KV_TYPE_STRING, sizeof( value ) - 1U, .str = value }
+    { KV_TYPE_STRING, sizeof( value ) - 1U, .str = value }
 
 #define KV_DFLT_KV_TYPE_BLOB( value ) \
-	{  KV_TYPE_BLOB, sizeof( value ), .blob = value }
+    { KV_TYPE_BLOB, sizeof( value ), .blob = value }
 
-#define KV_DFLT( type, value ) KV_DFLT_##type( value )
+#define KV_DFLT( type, value )    KV_DFLT_ ## type( value )
 
 typedef enum KVStoreValueType
 {
@@ -64,16 +64,17 @@ typedef enum KVStoreValueType
 
 typedef struct
 {
-	const KVStoreValueType_t type;
-	const size_t length;
-	union{
-		const uint32_t u32;
-		const int32_t i32;
-		const BaseType_t bt;
-		const UBaseType_t ubt;
-		const void * const blob;
-		const char * const str;
-	};
+    const KVStoreValueType_t type;
+    const size_t length;
+    union
+    {
+        const uint32_t u32;
+        const int32_t i32;
+        const BaseType_t bt;
+        const UBaseType_t ubt;
+        const void * const blob;
+        const char * const str;
+    };
 } KVStoreDefaultEntry_t;
 
 typedef enum KVStoreKey KVStoreKey_t;
@@ -81,27 +82,45 @@ typedef enum KVStoreKey KVStoreKey_t;
 /* Public function definitions */
 BaseType_t KVStore_init( void );
 
-size_t KVStore_getBlob( KVStoreKey_t key, void * pvBuffer, size_t xMaxLength );
-BaseType_t KVStore_setBlob( KVStoreKey_t key, size_t xLength, const void * pvNewValue );
+size_t KVStore_getBlob( KVStoreKey_t key,
+                        void * pvBuffer,
+                        size_t xMaxLength );
+BaseType_t KVStore_setBlob( KVStoreKey_t key,
+                            size_t xLength,
+                            const void * pvNewValue );
 
-size_t KVStore_getString( KVStoreKey_t key, char * pvBuffer, size_t xMaxLength );
-BaseType_t KVStore_setString( KVStoreKey_t key,  size_t xLength, const char * pcNewValue );
+size_t KVStore_getString( KVStoreKey_t key,
+                          char * pvBuffer,
+                          size_t xMaxLength );
+BaseType_t KVStore_setString( KVStoreKey_t key,
+                              size_t xLength,
+                              const char * pcNewValue );
 
-uint32_t KVStore_getUInt32( KVStoreKey_t key, BaseType_t * pxSuccess );
-BaseType_t KVStore_setUInt32( KVStoreKey_t key, uint32_t ulNewVal );
+uint32_t KVStore_getUInt32( KVStoreKey_t key,
+                            BaseType_t * pxSuccess );
+BaseType_t KVStore_setUInt32( KVStoreKey_t key,
+                              uint32_t ulNewVal );
 
-int32_t KVStore_getInt32( KVStoreKey_t key, BaseType_t * pxSuccess );
-BaseType_t KVStore_setInt32( KVStoreKey_t key, int32_t lNewVal );
+int32_t KVStore_getInt32( KVStoreKey_t key,
+                          BaseType_t * pxSuccess );
+BaseType_t KVStore_setInt32( KVStoreKey_t key,
+                             int32_t lNewVal );
 
-UBaseType_t KVStore_getUBase( KVStoreKey_t key, BaseType_t * pxSuccess );
-BaseType_t KVStore_setUBase( KVStoreKey_t key, UBaseType_t uxNewVal );
+UBaseType_t KVStore_getUBase( KVStoreKey_t key,
+                              BaseType_t * pxSuccess );
+BaseType_t KVStore_setUBase( KVStoreKey_t key,
+                             UBaseType_t uxNewVal );
 
-BaseType_t KVStore_getBase( KVStoreKey_t key, BaseType_t * pxSuccess );
-BaseType_t KVStore_setBase( KVStoreKey_t key, BaseType_t xNewVal );
+BaseType_t KVStore_getBase( KVStoreKey_t key,
+                            BaseType_t * pxSuccess );
+BaseType_t KVStore_setBase( KVStoreKey_t key,
+                            BaseType_t xNewVal );
 
 size_t KVStore_getValueLength( KVStoreKey_t key );
 
-BaseType_t KVStore_getKey( const char * pInput, size_t length, const char ** pKey, KVStoreKey_t * pKeyType );
+BaseType_t KVStore_getKey( const char * pInput,
+                           size_t length,
+                           const char ** pKey,
+                           KVStoreKey_t * pKeyType );
 
-#endif
-
+#endif /* ifndef _KVSTORE_H */

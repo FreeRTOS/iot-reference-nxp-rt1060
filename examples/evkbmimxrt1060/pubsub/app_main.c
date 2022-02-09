@@ -34,10 +34,12 @@
 #include "mqtt_agent_task.h"
 #include "logging_task.h"
 
+/**
+ * @brief Flag which enables OTA update task along with the demo.
+ */
+#define appmainINCLUDE_OTA_UPDATE_TASK              ( 1 )
 
-#define appmainINCLUDE_OTA_AGENT             ( 1 )
-
-#define appmainINCLUDE_CLI                   ( 0 )
+#define appmainINCLUDE_CLI                          ( 0 )
 
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )

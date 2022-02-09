@@ -40,7 +40,8 @@
  * @param[in] uxStackSize Stack size for MQTT agent task.
  * @param[in] uxPriority Priority of MQTT agent task.
  */
-BaseType_t xStartMQTTAgent( configSTACK_DEPTH_TYPE uxStackSize, UBaseType_t uxPriority );
+BaseType_t xStartMQTTAgent( configSTACK_DEPTH_TYPE uxStackSize,
+                            UBaseType_t uxPriority );
 
 /**
  * @brief Function to check if the MQTT agent is running or not.
@@ -58,4 +59,4 @@ BaseType_t xIsMQTTAgentRunning( void );
  */
 BaseType_t xWaitForMQTTAgentTask( uint32_t ulWaitTimeMS );
 
-#endif
+#endif /* ifndef _MQTT_AGENT_TASK_H_ */

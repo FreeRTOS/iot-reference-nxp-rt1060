@@ -34,20 +34,8 @@
 #include "mqtt_agent_task.h"
 #include "logging_task.h"
 
-#define appmainINCLUDE_MQTT_PUBSUB_DEMO      ( 0 )
 
-#define appmainINCLUDE_OTA_UPDATE_DEMO       ( 0 )
-
-#define appmainINCLUDE_SHADOW_DEMO           ( 1 )
-
-#define appmainINCLUDE_DEVICE_DEFENDER_DEMO  ( 1 )
-
-#define appmainINCLUDE_CLI                   ( 0 )
-
-#define appmainINCLUDE_TEMP_MONITOR_DEMO     ( 1 )
-
-#define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
-#define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
+#define appmainINCLUDE_CLI                        ( 0 )
 
 #define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
 #define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
@@ -65,97 +53,61 @@
 #define appmainLOGGING_TASK_PRIORITY              ( tskIDLE_PRIORITY + 1 )
 #define appmainLOGGING_QUEUE_SIZE                 ( 15 )
 
-extern void vSimpleSubscribePublishTask( void * pvParameters );
-
-extern void vOTAUpdateTask( void * pvParam );
-
 extern void vCLITask( void * pvParam );
 
-extern void vTemperatureMonitorTask( void *pvParameters );
+extern void vTemperatureMonitorTask( void * pvParameters );
 
 int app_main( void )
 {
-	BaseType_t xResult = pdFAIL;
+    BaseType_t xResult = pdFAIL;
 
-	xResult =  xLoggingTaskInitialize( appmainLOGGING_TASK_STACK_SIZE,
-			                           appmainLOGGING_TASK_PRIORITY,
-									   appmainLOGGING_QUEUE_SIZE );
+    xResult = xLoggingTaskInitialize( appmainLOGGING_TASK_STACK_SIZE,
+                                      appmainLOGGING_TASK_PRIORITY,
+                                      appmainLOGGING_QUEUE_SIZE );
 
-
-	if( xResult == pdPASS )
-	{
-		xResult = KVStore_init();
-		if( xResult == pdFAIL )
-		{
-			configPRINTF(( "Failed to initialize key value configuration store.\r\n" ));
-		}
-	}
-
-	if( xResult == pdPASS )
-	{
-		xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-	}
-
-    #if( appmainINCLUDE_CLI == 1 )
+    if( xResult == pdPASS )
     {
+        xResult = KVStore_init();
 
-    	if( xResult == pdPASS )
-    	{
-    		xResult = xTaskCreate( vCLITask,
-    				"CLI",
-					appmainCLI_TASK_STACK_SIZE,
-					NULL,
-					appmainCLI_TASK_PRIORITY,
-					NULL );
-
-    	}
+        if( xResult == pdFAIL )
+        {
+            configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
+        }
     }
-    #endif
 
-    #if( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 )
+    if( xResult == pdPASS )
     {
-    	if( xResult == pdPASS )
-    	{
-    		xResult = xTaskCreate( vTemperatureMonitorTask,
-    				"TEMPMON",
-					appmainTEMP_MONITOR_TASK_STACK_SIZE,
-					NULL,
-					appmainTEMP_MONITOR_TASK_PRIORITY,
-					NULL );
-
-    	}
+        xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
     }
-    #endif
 
-    #if( appmainINCLUDE_MQTT_PUBSUB_DEMO == 1 )
-	{
-		if( xResult == pdPASS )
-		{
-			xResult = xTaskCreate( vSimpleSubscribePublishTask,
-					               "PUBSUB",
-								   appmainMQTT_PUBSUB_TASK_STACK_SIZE,
-								   NULL,
-								   appmainMQTT_PUBSUB_TASK_PRIORITY,
-					               NULL );
+    #if ( appmainINCLUDE_CLI == 1 )
+        {
+            if( xResult == pdPASS )
+            {
+                xResult = xTaskCreate( vCLITask,
+                                       "CLI",
+                                       appmainCLI_TASK_STACK_SIZE,
+                                       NULL,
+                                       appmainCLI_TASK_PRIORITY,
+                                       NULL );
+            }
+        }
+    #endif /* if ( appmainINCLUDE_CLI == 1 ) */
 
-		}
-	}
-    #endif
+    #if ( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 )
+        {
+            if( xResult == pdPASS )
+            {
+                xResult = xTaskCreate( vTemperatureMonitorTask,
+                                       "TEMPMON",
+                                       appmainTEMP_MONITOR_TASK_STACK_SIZE,
+                                       NULL,
+                                       appmainTEMP_MONITOR_TASK_PRIORITY,
+                                       NULL );
+            }
+        }
+    #endif /* if ( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 ) */
 
-    #if( appmainINCLUDE_OTA_UPDATE_DEMO == 1 )
-	{
-		if( xResult == pdPASS )
-		{
-			xResult = xTaskCreate( vOTAUpdateTask,
-					               "MQTT",
-								   appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-								   NULL,
-								   appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
-					               NULL );
 
-		}
-	}
-    #endif
-
-	return pdPASS;
+    return pdPASS;
 }

@@ -52,7 +52,7 @@ int32_t uart_read( char * const pcInputBuffer,
     charRead = DbgConsole_Getchar();
 
 
-    pcInputBuffer[0] = charRead;
+    pcInputBuffer[ 0 ] = charRead;
 
     return 1U;
 }
@@ -65,18 +65,16 @@ void uart_write( const char * const pcOutputBuffer,
 
     if( xOutputBufferLen > 0 )
     {
-    	for( index = 0; index < xOutputBufferLen; index++ )
-    	{
-    		status = DbgConsole_Putchar(pcOutputBuffer[index]);
-			if( status < 0 )
-			{
-				break;
-			}
-    	}
+        for( index = 0; index < xOutputBufferLen; index++ )
+        {
+            status = DbgConsole_Putchar( pcOutputBuffer[ index ] );
 
-    	( void ) DbgConsole_Flush();
+            if( status < 0 )
+            {
+                break;
+            }
+        }
+
+        ( void ) DbgConsole_Flush();
     }
 }
-
-
-
