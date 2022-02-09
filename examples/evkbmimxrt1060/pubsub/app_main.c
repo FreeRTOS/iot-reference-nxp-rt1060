@@ -37,9 +37,9 @@
 /**
  * @brief Flag which enables OTA update task along with the demo.
  */
-#define appmainINCLUDE_OTA_UPDATE_TASK              ( 1 )
+#define appmainINCLUDE_OTA_UPDATE_TASK            ( 1 )
 
-#define appmainINCLUDE_CLI                          ( 0 )
+#define appmainINCLUDE_CLI                        ( 0 )
 
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
@@ -65,69 +65,64 @@ extern void vCLITask( void * pvParam );
 
 int app_main( void )
 {
-	BaseType_t xResult = pdFAIL;
+    BaseType_t xResult = pdFAIL;
 
-	xResult =  xLoggingTaskInitialize( appmainLOGGING_TASK_STACK_SIZE,
-			                           appmainLOGGING_TASK_PRIORITY,
-									   appmainLOGGING_QUEUE_SIZE );
+    xResult = xLoggingTaskInitialize( appmainLOGGING_TASK_STACK_SIZE,
+                                      appmainLOGGING_TASK_PRIORITY,
+                                      appmainLOGGING_QUEUE_SIZE );
 
-
-	if( xResult == pdPASS )
-	{
-		xResult = KVStore_init();
-		if( xResult == pdFAIL )
-		{
-			configPRINTF(( "Failed to initialize key value configuration store.\r\n" ));
-		}
-	}
-
-	if( xResult == pdPASS )
-	{
-        xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-	}
-
-    #if( appmainINCLUDE_CLI == 1 )
+    if( xResult == pdPASS )
     {
+        xResult = KVStore_init();
 
-    	if( xResult == pdPASS )
-    	{
-    		xResult = xTaskCreate( vCLITask,
-    				"CLI",
-					appmainCLI_TASK_STACK_SIZE,
-					NULL,
-					appmainCLI_TASK_PRIORITY,
-					NULL );
-
-    	}
+        if( xResult == pdFAIL )
+        {
+            configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
+        }
     }
-    #endif
 
-    #if( appmainINCLUDE_OTA_AGENT == 1 )
-	{
-		if( xResult == pdPASS )
-		{
-			xResult = xTaskCreate( vOTAUpdateTask,
-					               "OTA",
-								   appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-								   NULL,
-								   appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
-					               NULL );
+    if( xResult == pdPASS )
+    {
+        xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+    }
 
-		}
-	}
-   #endif
+    #if ( appmainINCLUDE_CLI == 1 )
+        {
+            if( xResult == pdPASS )
+            {
+                xResult = xTaskCreate( vCLITask,
+                                       "CLI",
+                                       appmainCLI_TASK_STACK_SIZE,
+                                       NULL,
+                                       appmainCLI_TASK_PRIORITY,
+                                       NULL );
+            }
+        }
+    #endif /* if ( appmainINCLUDE_CLI == 1 ) */
 
+    #if ( appmainINCLUDE_OTA_AGENT == 1 )
+        {
+            if( xResult == pdPASS )
+            {
+                xResult = xTaskCreate( vOTAUpdateTask,
+                                       "OTA",
+                                       appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                                       NULL,
+                                       appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                                       NULL );
+            }
+        }
+    #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
 
-	if( xResult == pdPASS )
-	{
-		xResult = xTaskCreate( vSimpleSubscribePublishTask,
-				               "PUBSUB",
-				               appmainMQTT_PUBSUB_TASK_STACK_SIZE,
-				               NULL,
-				               appmainMQTT_PUBSUB_TASK_PRIORITY,
-				               NULL );
+    if( xResult == pdPASS )
+    {
+        xResult = xTaskCreate( vSimpleSubscribePublishTask,
+                               "PUBSUB",
+                               appmainMQTT_PUBSUB_TASK_STACK_SIZE,
+                               NULL,
+                               appmainMQTT_PUBSUB_TASK_PRIORITY,
+                               NULL );
+    }
 
-	}
-
-	return pdPASS;
+    return pdPASS;
 }
