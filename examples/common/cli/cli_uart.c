@@ -67,6 +67,8 @@ void uart_write( const char * const pcOutputBuffer,
     {
         for( index = 0; index < xOutputBufferLen; index++ )
         {
+            /*configPRINTF(( "%.*s", xOutputBufferLen, pcOutputBuffer )); */
+
             status = DbgConsole_Putchar( pcOutputBuffer[ index ] );
 
             if( status < 0 )

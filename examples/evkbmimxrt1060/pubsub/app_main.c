@@ -39,7 +39,7 @@
  */
 #define appmainINCLUDE_OTA_UPDATE_TASK            ( 1 )
 
-#define appmainINCLUDE_CLI                        ( 0 )
+#define appmainPROVISIONING_MODE                  ( 1 )
 
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
@@ -50,7 +50,7 @@
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
-#define appmainCLI_TASK_STACK_SIZE                ( 2048 )
+#define appmainCLI_TASK_STACK_SIZE                ( 4096 )
 #define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
 
 #define appmainLOGGING_TASK_STACK_SIZE            ( 2048 )
@@ -81,12 +81,7 @@ int app_main( void )
         }
     }
 
-    if( xResult == pdPASS )
-    {
-        xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-    }
-
-    #if ( appmainINCLUDE_CLI == 1 )
+    #if ( appmainPROVISIONING_MODE == 1 )
         {
             if( xResult == pdPASS )
             {
@@ -98,31 +93,38 @@ int app_main( void )
                                        NULL );
             }
         }
-    #endif /* if ( appmainINCLUDE_CLI == 1 ) */
-
-    #if ( appmainINCLUDE_OTA_AGENT == 1 )
+    #else /* if ( appmainPROVISIONING_MODE == 1 ) */
         {
             if( xResult == pdPASS )
             {
-                xResult = xTaskCreate( vOTAUpdateTask,
-                                       "OTA",
-                                       appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+            }
+
+            #if ( appmainINCLUDE_OTA_AGENT == 1 )
+                {
+                    if( xResult == pdPASS )
+                    {
+                        xResult = xTaskCreate( vOTAUpdateTask,
+                                               "OTA",
+                                               appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                                               NULL,
+                                               appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                                               NULL );
+                    }
+                }
+            #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
+
+            if( xResult == pdPASS )
+            {
+                xResult = xTaskCreate( vSimpleSubscribePublishTask,
+                                       "PUBSUB",
+                                       appmainMQTT_PUBSUB_TASK_STACK_SIZE,
                                        NULL,
-                                       appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                                       appmainMQTT_PUBSUB_TASK_PRIORITY,
                                        NULL );
             }
         }
-    #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
-
-    if( xResult == pdPASS )
-    {
-        xResult = xTaskCreate( vSimpleSubscribePublishTask,
-                               "PUBSUB",
-                               appmainMQTT_PUBSUB_TASK_STACK_SIZE,
-                               NULL,
-                               appmainMQTT_PUBSUB_TASK_PRIORITY,
-                               NULL );
-    }
+    #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 
     return pdPASS;
 }

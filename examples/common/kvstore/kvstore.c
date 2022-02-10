@@ -484,7 +484,8 @@ BaseType_t KVStore_getKey( const char * pInput,
 
     for( index = 0; index < KVS_NUM_KEYS; index++ )
     {
-        if( strncmp( pInput, keys[ index ], length ) == 0 )
+        if( ( length >= strlen( keys[ index ] ) ) &&
+            ( strncmp( pInput, keys[ index ], strlen( keys[ index ] ) ) == 0 ) )
         {
             ( *pKey ) = keys[ index ];
             ( *pKeyType ) = ( KVStoreKey_t ) ( index );
