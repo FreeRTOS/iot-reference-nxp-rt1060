@@ -100,7 +100,7 @@ int app_main( void )
                 xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
             }
 
-            #if ( appmainINCLUDE_OTA_AGENT == 1 )
+            #if ( appmainINCLUDE_OTA_UPDATE_TASK == 1 )
                 {
                     if( xResult == pdPASS )
                     {
