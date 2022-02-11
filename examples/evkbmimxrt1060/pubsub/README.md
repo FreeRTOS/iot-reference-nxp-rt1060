@@ -1,4 +1,4 @@
-## MQTT publish Subscribe Demo
+## MQTT Publish Subscribe Demo
 
 ### Introduction
 This example demonstrates an MQTT publish subscribe task running concurrently with Over-The-Air firmware update background task, using coreMQTT agent libary to manage the thread safety for the MQTT connection.The publish subscribe task runs in a loop to publish a message to AWS IoT MQTT broker on a topic, and echoes back the same message, by subscribing to the same topic with the broker. OTA firmware update task runs OTA Agent loop which polls for and subscribes to OTA job requests from AWS IoT OTA service. The OTA agent task receives firmware chunks and sends control packets over MQTT, concurrently using coreMQTT agent task for thread safety.
@@ -11,10 +11,11 @@ This example demonstrates an MQTT publish subscribe task running concurrently wi
 - Personal Computer with Windows platform
 - Network cable RJ45 standard (Network with Internet access)
 
-### ToolChain Requirements
+### Toolchain Requirements
 
 - MCUXpresso IDE
 - python3 and pip
+- openssl
 
 ### Board Setup
 
@@ -63,3 +64,40 @@ conf set THINGNAME <thing name>
 ### Runnning the demo
 
 The device should be successfully provisioned at this time. Provisioning mode should be turned off by seting `appmainPROVISIONING_MODE` to `0` in `examples/evkbmimxrt1060/pubsub/app_main.c`.  Demo on startup, establishes a TLS connection with AWS IoT MQTT broker and runs the publish subscribe demo task using coreMQTT agent. The demo also runs the OTA firmware update task in the background polling for the firmware update jobs from AWS IoT service. 
+
+### Perform Firmware Over-The-Air Updates with AWS IoT
+
+The demo leverages OTA client library and AWS IoT OTA service for code signing and secure download of firmware updates. Safe and secure boot process along with root of trust verification is performed using opensource MCUBoot secondary bootloader. As a pre requisite you should have built and flash the bootloader project from this repository.
+
+#### Setup
+This is a one time setup required for performin OTA updates.
+
+1. Perform AWS IoT OTA service pre requisites as mentioned in the doc [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-prereqs.html).
+2. Create ECDSA credentials to perform code signing of the new firmware. You can refer to the doc [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-code-sign-cert-win.html) on how to create the credentials and register a new code signing profile in your AWS account.
+3.  Provision the code signining public key to the device:
+      1. Get the ECDSA public key from the code signing credentials generated in step 2:
+      ```
+      openssl ec -in ecdsasigner.key  -outform PEM -out ecdsasigner-pub-key.pem
+      ```
+      3. Switch to device provisioning mode by setting `appmainPROVISIONING_MODE` to `1`, recompiling and downloading the firmware.
+      4. On the CLI prompt from the terminal, run:
+      ```
+      pki set pub_key sss:00223344
+      ```
+     5. CLI waits to input the public key. Copy the PEM public key created in above step line by line and paste it to serial terminal. Press `Enter` after each line.
+     6. On successful provisioning, the CLI should print `OK`. At this point you can switch back to device normal mode by turning off `appmainPROVISIONING_MODE` flag.
+
+#### Creating new firmware update job
+
+1. Go to `examples/common/ota/ota_update.c` and increment the version number `APP_VERSION_MAJOR` for the new image.
+2. Build the new image. Create a bin file -  From the MCUXpresso IDE. goto `Binaries/` folder, right click on the `.axf` binary created and then choose `Binary Utilities` then choose `Create a binary`.
+3. Sign the new binary image with MCUBoot private key generated as part of the bootloader project. From the repository root folder execute following command:
+```
+python3 Middleware/mcuboot/scripts/imgtool.py sign -k examples/evkbmimxrt1060/bootloader/keys/<signing private key pem> --align 4  --header-size 0x400 --pad-header --slot-size 0x200000 --max-sectors 800 --version "1.0" projects/evkmimxrt1060/pubsub/Debug/aws_iot_pubsub.bin aws_iot_pubsub_signed.bin
+```
+This should create a new signed MCUboot image `aws_iot_pubsub_signed.bin`
+4. Create a firmware update job using the signed image following the steps [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-console-workflow.html)
+5. Once the job is create successfully, the demo should start downloading the firmware chunks. The process can be monitored using logs from the console. 
+
+#### Verification and Bootup of new Image
+Once all the firmware image chunks are downloaded and the signature is validated, the demo resets by itself. MCUBoot loader verifies the new image using the signing public key created as part of bootloader project. Once the image is verified, the bootloader swaps the image and boots up the new image. The new image on booting up verifies the image version with AWS IoT and marks the job as completed successfully. 
