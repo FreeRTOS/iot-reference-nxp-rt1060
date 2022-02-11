@@ -47,9 +47,29 @@ Root of the repository contains following top level folders:
 
 ### Getting Started
 
+#### Cloning the Repository
+
+To clone using HTTPS:
+```
+git clone https://github.com/FreeRTOS/lab-iot-reference-nxp-rt1060.git --recurse-submodules
+```
+Using SSH:
+
+```
+git clone git@github.com:FreeRTOS/lab-iot-reference-nxp-rt1060.git --recurse-submodules
+```
+
+If you have downloaded the repo without using the `--recurse-submodules` argument, you need to run:
+
+```
+git submodule update --init --recursive
+```
+
+#### Running the demo
+
 To get started running a coreMQTT Agent demo that publishes and subscribes messages with AWS IoT MQTT broker, along with over-the-air updates functionality, see the [README](https://github.com/FreeRTOS/lab-iot-reference-nxp-rt1060/blob/main/examples/evkbmimxrt1060/pubsub/README.md).
 
 
 ### License
 
-Example source code under `./examples/` and libraries under `./Middleware/AWS` and ./Middleware/FreeRTOS are licensed under the MIT-0 License. See the LICENSE file. For all other source code licenses including core/ and Middleware/NXP folders, see source header documentation.
+Example source code under `./examples/` and libraries under `./Middleware/AWS` and ./Middleware/FreeRTOS are licensed under the MIT-0 License. See the `LICENSE` file. For all other source code licenses including `core/` and `Middleware/NXP` folders, see source header documentation.
