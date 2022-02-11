@@ -40,7 +40,7 @@ The folder structure for the repo is organized as follows:
 |_ LICENSE
 ```
 Root of the repository contains following top level folders:
-1. `core` submodules to NXP's MCUX SDK repository. The repository hosts the MCUXpresso software development package which contains AMR CMSIS core files, board support packages for devices, shared peripheral drivers and components.
+1. `core` submodules to NXP's MCUX SDK repository. The repository hosts the MCUXpresso software development package which contains ARM CMSIS core files, board support packages for devices, shared peripheral drivers and components.
 2. `Middleware` folder hosts NXPs middleware SDKs such as Plug and Trust Middleware stack, FreeRTOS Kernel and modular software libraries, AWS connectivity libraries, and other third party libraries required for the project.
 3. `examples` folder hosts the IoT reference sample for the board. The common demo tasks such as MQTT Agent, OTA Agent which are shared across different board examples are placed under `common` folder. Folder `evkbmimxrt1060` contains each of demo samples for the board.
 4. `projects` folder contains MCUXpresso IDE projects for the examples provided. Currently all projects are tested on MCUXpresso IDE on windows platform.
