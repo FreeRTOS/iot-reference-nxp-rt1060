@@ -22,7 +22,7 @@ The project shows how to run multiple demo IoT application tasks concurrently us
 
 ### Folder Structure
 
-The folder structure for the repo is organized as follows:
+The folder inside the repository is organized as follows:
 
 ```
 |— core/
