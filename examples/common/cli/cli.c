@@ -349,7 +349,7 @@ CK_RV prvProvisionPublicKey( uint8_t * pucKey,
         mbedtls_pk_init( &xMbedPkContext );
 
         /* Try parsing the private key using mbedtls_pk_parse_key. */
-        lMbedResult = mbedtls_pk_parse_key( &xMbedPkContext, ( uint8_t * ) pucKey, xKeyLength, NULL, 0 );
+        lMbedResult = mbedtls_pk_parse_key( &xMbedPkContext, pucKey, xKeyLength, NULL, 0 );
 
         /* If mbedtls_pk_parse_key didn't work, maybe the private key is not included in the input passed in.
          * Try to parse just the public key. */
@@ -469,6 +469,8 @@ CK_RV prvReadAndProvisionPublicKey( uint8_t * pucPublicKeyLabel,
     BaseType_t readComplete = pdFALSE;
     CK_RV result = CKR_FUNCTION_FAILED;
 
+    memset( pubKey, 0x00, MAX_PKCS11_OBJECT_LENGTH );
+
     for( ; ; )
     {
         if( readOffset < 256 )
@@ -477,13 +479,14 @@ CK_RV prvReadAndProvisionPublicKey( uint8_t * pucPublicKeyLabel,
 
             if( ( readLine[ readOffset ] == '\r' ) || ( readLine[ readOffset ] == '\n' ) )
             {
-                if( pubKeyLength + readOffset <= MAX_PKCS11_OBJECT_LENGTH )
+                if( pubKeyLength + readOffset < MAX_PKCS11_OBJECT_LENGTH )
                 {
                     if( readOffset > 1U )
                     {
                         readLine[ readOffset ] = '\n';
                         readOffset++;
-                        uartConsoleIO.write( readLine, readOffset );
+                        uartConsoleIO.write( readLine, readOffset - 1U );
+                        uartConsoleIO.write( "\r\n", 2U );
                         memcpy( ( pubKey + pubKeyLength ), readLine, readOffset );
                         pubKeyLength += readOffset;
 
@@ -516,8 +519,8 @@ CK_RV prvReadAndProvisionPublicKey( uint8_t * pucPublicKeyLabel,
     if( readComplete == pdTRUE )
     {
         result = prvProvisionPublicKey( pubKey,
-                                        pubKeyLength,
-                                        CKK_ECDSA,
+                                        pubKeyLength + 1U,
+                                        CKK_EC,
                                         pucPublicKeyLabel,
                                         xPublicKeyLabeLength );
     }

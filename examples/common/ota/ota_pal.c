@@ -317,11 +317,6 @@ OtaPalStatus_t xOtaPalActivateNewImage( OtaFileContext_t * const C )
 {
     LogInfo( ( "[OTA-NXP] ActivateNewImage" ) );
 
-    while( 1 )
-    {
-        vTaskDelay( 100 );
-    }
-
     xOtaPalResetDevice( C ); /* go for reboot */
     return OtaPalSuccess;
 }

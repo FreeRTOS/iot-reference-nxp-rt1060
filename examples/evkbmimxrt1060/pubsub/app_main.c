@@ -50,7 +50,7 @@
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
-#define appmainCLI_TASK_STACK_SIZE                ( 4096 )
+#define appmainCLI_TASK_STACK_SIZE                ( 6144 )
 #define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
 
 #define appmainLOGGING_TASK_STACK_SIZE            ( 2048 )
