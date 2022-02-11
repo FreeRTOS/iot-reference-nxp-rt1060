@@ -19,10 +19,37 @@ Hardware root of trust verification is provided using a two stage bootloading pr
 #### IoT Application Multitasking using coreMQTT Agent
 The project shows how to run multiple demo IoT application tasks concurrently using coreMQTT agent task. CoreMQTT agent manages the MQTT connection and performs serialization of MQTT messages from different tasks, over a single TLS connection to MQTT broker.
 
-## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+### Folder Structure
 
-## License
+The folder structure for the repo is organized as follows:
+
+```
+|— core/
+|- Middleware/
+   |- NXP/
+   |- AWS/
+   |- FreeRTOS/
+   |- third_party libs
+|- examples/
+  |- evkbmimxrt1060/ 
+  |_ common/
+|- projects/
+   |_evkbmimxrt1060/ 
+|- README.md
+|_ LICENSE
+```
+Root of the repository contains following top level folders:
+1. `core` submodules to NXP's MCUX SDK repository. The repository hosts the MCUXpresso software development package which contains AMR CMSIS core files, board support packages for devices, shared peripheral drivers and components.
+2. `Middleware` folder hosts NXPs middleware SDKs such as Plug and Trust Middleware stack, FreeRTOS Kernel and modular software libraries, AWS connectivity libraries, and other third party libraries required for the project.
+3. `examples` folder hosts the IoT reference sample for the board. The common demo tasks such as MQTT Agent, OTA Agent which are shared across different board examples are placed under `common` folder. Folder `evkbmimxrt1060` contains each of demo samples for the board.
+4. `projects` folder contains MCUXpresso IDE projects for the examples provided. Currently all projects are tested on MCUXpresso IDE on windows platform.
+
+### Getting Started
+
+To get started running a coreMQTT Agent demo that publishes and subscribes messages with AWS IoT MQTT broker, along with over-the-air updates functionality, see the [README](https://github.com/FreeRTOS/lab-iot-reference-nxp-rt1060/blob/main/examples/evkbmimxrt1060/pubsub/README.md).
+
+
+### License
 
 Example source code under `./examples/` and libraries under `./Middleware/AWS` and ./Middleware/FreeRTOS are licensed under the MIT-0 License. See the LICENSE file. For all other source code licenses including core/ and Middleware/NXP folders, see source header documentation.
