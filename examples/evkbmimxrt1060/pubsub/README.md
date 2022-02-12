@@ -50,7 +50,9 @@ The project requires a one time setup of MQTT broker endpoint and device credent
 pki get cert sss:F0000001
 ```
 `sss:F0000001` is the slot where the certificate is stored in secure element.
+
 5. Copy the PEM certificate from console and register the certificate with AWS IoT without a CA using doc [here](https://docs.aws.amazon.com/iot/latest/developerguide/manual-cert-registration.html#manual-cert-registration-console-noca).
+
 6. Get the AWS IoT MQTT broker endpoint from `Settings` tab in AWS IoT console. Provision the endpoint by executing the following command:
 ```
 conf set ENDPOINT <endpoint string>
