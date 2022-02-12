@@ -27,7 +27,7 @@ This example demonstrates an MQTT publish subscribe task running concurrently wi
 
 #### Setting up the bootloader project
 
-The demo contains firmware over the air updates functionality for which the secure bootloader is required. To setup, build and flash bootloader project see the README.
+The demo contains firmware over the air updates functionality for which the secure bootloader is required. To setup, build and flash bootloader project see the [README](https://github.com/FreeRTOS/lab-iot-reference-nxp-rt1060/tree/main/examples/evkbmimxrt1060/bootloader/README.md).
 
 #### Setting up the demo project
 
@@ -38,7 +38,7 @@ The demo contains firmware over the air updates functionality for which the secu
    a. Launch the application as normal from the debugger IDE. The debugger goes into an endless loop after flashing the image.
    b. Pause the debugger. Go to `Debugger Console` in the bottom pane and type `jump ResetISR` to jump to application starting address. From then, application   execution can be continued normally.
 
-### Device Provisioning
+### Provisioning the board
 
 The project requires a one time setup of MQTT broker endpoint and device credentials required for connecting to AWS IoT core, and also the thing name by which the device is registered with AWS IoT.
 
@@ -63,18 +63,18 @@ conf set THINGNAME <thing name>
 
 ### Runnning the demo
 
-The device should be successfully provisioned at this time. Provisioning mode should be turned off by seting `appmainPROVISIONING_MODE` to `0` in `examples/evkbmimxrt1060/pubsub/app_main.c`.  Demo on startup, establishes a TLS connection with AWS IoT MQTT broker and runs the publish subscribe demo task using coreMQTT agent. The demo also runs the OTA firmware update task in the background polling for the firmware update jobs from AWS IoT service. 
+The board should be successfully provisioned at this time. Provisioning mode should be turned off by seting `appmainPROVISIONING_MODE` to `0` in `examples/evkbmimxrt1060/pubsub/app_main.c`.  Demo on startup, establishes a TLS connection with AWS IoT MQTT broker and runs the publish subscribe demo task using coreMQTT agent. The demo also runs the OTA firmware update task in the background polling for the firmware update jobs from AWS IoT service. 
 
 ### Perform Firmware Over-The-Air Updates with AWS IoT
 
 The demo leverages OTA client library and AWS IoT OTA service for code signing and secure download of firmware updates. Safe and secure boot process along with root of trust verification is performed using opensource MCUBoot secondary bootloader. As a pre requisite you should have built and flash the bootloader project from this repository.
 
 #### Setup
-This is a one time setup required for performin OTA updates.
+This is a one time setup required for performing OTA firmware updates.
 
-1. Perform AWS IoT OTA service pre requisites as mentioned in the doc [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-prereqs.html).
-2. Create ECDSA credentials to perform code signing of the new firmware. You can refer to the doc [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-code-sign-cert-win.html) on how to create the credentials and register a new code signing profile in your AWS account.
-3.  Provision the code signining public key to the device:
+1. Setup AWS IoT OTA service resources as mentioned in pre-requisites doc [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-prereqs.html).
+2. Create ECDSA credentials to perform code signing verification by the OTA library. You can refer to the doc [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-code-sign-cert-win.html) on how to create the credentials and register a new code signing profile in your AWS account.
+3.  Provision the code signining public key to the board using the steps below.
       1. Get the ECDSA public key from the code signing credentials generated in step 2:
       ```
       openssl ec -in ecdsasigner.key  -outform PEM -out ecdsasigner-pub-key.pem
@@ -87,15 +87,15 @@ This is a one time setup required for performin OTA updates.
      5. CLI waits to input the public key. Copy the PEM public key created in above step line by line and paste it to serial terminal. Press `Enter` after each line.
      6. On successful provisioning, the CLI should print `OK`. At this point you can switch back to device normal mode by turning off `appmainPROVISIONING_MODE` flag.
 
-#### Creating new firmware update job
+#### Creating a new firmware update job
 
 1. Go to `examples/common/ota/ota_update.c` and increment the version number `APP_VERSION_MAJOR` for the new image.
 2. Build the new image. Create a bin file -  From the MCUXpresso IDE. goto `Binaries/` folder, right click on the `.axf` binary created and then choose `Binary Utilities` then choose `Create a binary`.
-3. Sign the new binary image with MCUBoot private key generated as part of the bootloader project. From the repository root folder execute following command:
+3. Sign the new binary image using MCUBoot key-pair generated as part of setting up the bootloader project. From the repository root folder execute following command:
 ```
-python3 Middleware/mcuboot/scripts/imgtool.py sign -k examples/evkbmimxrt1060/bootloader/keys/<signing private key pem> --align 4  --header-size 0x400 --pad-header --slot-size 0x200000 --max-sectors 800 --version "1.0" projects/evkmimxrt1060/pubsub/Debug/aws_iot_pubsub.bin aws_iot_pubsub_signed.bin
+python3 Middleware/mcuboot/scripts/imgtool.py sign -k examples/evkbmimxrt1060/bootloader/keys/<signing key generated in bootloader project> --align 4  --header-size 0x400 --pad-header --slot-size 0x200000 --max-sectors 800 --version "1.0" projects/evkmimxrt1060/pubsub/Debug/aws_iot_pubsub.bin aws_iot_pubsub_signed.bin
 ```
-This should create a new signed MCUboot image `aws_iot_pubsub_signed.bin`
+This should create a new signed MCUboot image named `aws_iot_pubsub_signed.bin`
 4. Create a firmware update job using the signed image following the steps [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-console-workflow.html)
 5. Once the job is create successfully, the demo should start downloading the firmware chunks. The process can be monitored using logs from the console. 
 
