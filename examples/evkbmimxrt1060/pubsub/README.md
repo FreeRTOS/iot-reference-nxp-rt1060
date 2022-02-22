@@ -31,7 +31,7 @@ The demo contains firmware over the air updates functionality for which the secu
 
 #### Setting up the demo project
 
-1. Open the MCUXpresso IDE and choose the repository root path as the workspace path.
+1. Open the MCUXpresso IDE and choose a workspace location in your filesystem. 
 2. Click on `File` then `Open Projects from the FileSystem`. Choose the project from folder `projects/evkmimxrt1060/pubsub`. Import the project into the workspace.
 3. Build and flash the demo from the IDE.
 4. The project is configured to flash the demo to an address known to the bootloader. To boot a new application image from IDE, we have to jump start the application from the debugger. To do so:

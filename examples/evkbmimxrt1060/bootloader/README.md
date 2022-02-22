@@ -47,7 +47,7 @@ You will need to use the `signing_key.pem` created above for signing the applica
 
 #### Building and Running the bootloader
 
-1. Open MCUXpresso IDE. When prompted for a workspace folder, give the repository root folder as the workspace path.
+1. Open MCUXpresso IDE and choose a workspace location in your file system.
 2. From `File` menu choose `Open Projects from FileSytem` and then choose the project from folder `projects/evkmimxrt1060/bootloader`.
 3. Build and flash the program through MCUXpresso IDE debugger.
 4. Upon boot the bootloader checks for any image in the primary slot, if there is no image it simply waits in an infinite loop. Now you can go ahead and flash the application image to be booted. 
