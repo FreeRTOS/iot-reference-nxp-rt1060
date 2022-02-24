@@ -37,3 +37,6 @@
 [submodule "Middleware/mcuboot"]
 	path = Middleware/mcuboot
 	url = https://github.com/mcu-tools/mcuboot.git
+[submodule "Middleware/AWS/device-shadow"]
+	path = Middleware/AWS/device-shadow
+	url = https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git

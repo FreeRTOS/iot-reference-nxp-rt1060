@@ -89,7 +89,8 @@ static void prvCopyDefaultValue( KVStoreEntry_t * pEntry,
 
         case KV_TYPE_STRING:
             configASSERT( pEntry->valueLength < KVSTORE_VAL_MAX_LEN );
-            strncpy( pEntry->value, pDefaultEntry->str, KVSTORE_VAL_MAX_LEN );
+            memcpy( pEntry->value, pDefaultEntry->str, pEntry->valueLength );
+            pEntry->value[ pEntry->valueLength ] = '\0';
             break;
 
         case KV_TYPE_BLOB:
