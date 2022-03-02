@@ -29,6 +29,10 @@
  * in CBOR format. The report is then published, and the demo waits for a response from the device
  * defender service.
  */
+
+/* Standard includes. */
+#include <string.h>
+
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 
@@ -62,35 +66,35 @@
 /* MQTT Topic subscription store APIs. */
 #include "subscription_manager.h"
 
-#if ( ! defined( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS ) || ( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS < 300 ) )
-#error "Defender metrics publish interval should be greater than or equal to 300 seconds"
+#if ( !defined( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS ) || ( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS < 300 ) )
+    #error "Defender metrics publish interval should be greater than or equal to 300 seconds"
 #endif
 
 /**
  * @brief The maximum length of thing name supported by AWS IoT.
  * This is used to pre-allocate the buffer for device defender topics.
  */
-#define MAX_THING_NAME_LENGTH                           ( 256 )
+#define MAX_THING_NAME_LENGTH             ( 256 )
 
 /**
  * @brief Maximum length of the topics used by the device defender service.
  */
-#define DEFENDER_MAX_TOPIC_LENGTH              DEFENDER_API_MAX_LENGTH( MAX_THING_NAME_LENGTH )
+#define DEFENDER_MAX_TOPIC_LENGTH         DEFENDER_API_MAX_LENGTH( MAX_THING_NAME_LENGTH )
 
 /**
  * @brief Number of milliseconds to wait for the response from AWS IoT Device
  * Defender service.
  */
-#define DEFENDER_RESPONSE_WAIT_MS              ( 2000U )
+#define DEFENDER_RESPONSE_WAIT_MS         ( 2000U )
 
 /**
  * @brief Number of milliseconds to wait for the response from coreMQTT agent for a command sent.
  */
-#define MAX_COMMAND_SEND_BLOCK_TIME_MS         ( 200U )
+#define MAX_COMMAND_SEND_BLOCK_TIME_MS    ( 200U )
 
 
-#define DEFENDER_REPORT_ACCEPTED_EVENT           ( 1UL << 0 )
-#define DEFENDER_REPORT_REJECTED_EVENT           ( 1UL << 1 )
+#define DEFENDER_REPORT_ACCEPTED_EVENT    ( 1UL << 0 )
+#define DEFENDER_REPORT_REJECTED_EVENT    ( 1UL << 1 )
 
 /*-----------------------------------------------------------*/
 
@@ -141,7 +145,7 @@ uint16_t usReportRejectedTopicLength = 0U;
 static char cReportPublishTopic[ DEFENDER_MAX_TOPIC_LENGTH ] = { 0 };
 uint16_t usReportPublishTopicLength = 0U;
 
-static char cThingName[ MAX_THING_NAME_LENGTH + 1] = { 0 };
+static char cThingName[ MAX_THING_NAME_LENGTH + 1 ] = { 0 };
 size_t xThingNameLength = 0U;
 
 /*-----------------------------------------------------------*/
@@ -203,7 +207,7 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
  * @return true if the defender topics are created successfully, false otherwise.
  */
 static bool prvCreateDefenderTopics( const char * pcThingName,
-                               size_t xThingNameLength );
+                                     size_t xThingNameLength );
 
 
 /**
@@ -215,7 +219,8 @@ static bool prvCreateDefenderTopics( const char * pcThingName,
  * @return true if the Publish report was accepted by defender.
  *         false if the report was rejected or request/response timedout.
  */
-static bool prvPublishMetricsReport( void * pvMetricsReport, size_t xMetricsReportLength );
+static bool prvPublishMetricsReport( void * pvMetricsReport,
+                                     size_t xMetricsReportLength );
 
 
 /*-----------------------------------------------------------*/
@@ -223,14 +228,14 @@ static bool prvPublishMetricsReport( void * pvMetricsReport, size_t xMetricsRepo
 static void prvReportAcceptedCallback( void * pxSubscriptionContext,
                                        MQTTPublishInfo_t * pxPublishInfo )
 {
-	TaskHandle_t xTaskToNotify = NULL;
+    TaskHandle_t xTaskToNotify = NULL;
 
-	configASSERT( pxSubscriptionContext != NULL );
-	configASSERT( pxPublishInfo != NULL );
+    configASSERT( pxSubscriptionContext != NULL );
+    configASSERT( pxPublishInfo != NULL );
 
-	xTaskToNotify = ( TaskHandle_t ) ( pxSubscriptionContext );
+    xTaskToNotify = ( TaskHandle_t ) ( pxSubscriptionContext );
 
-	( void ) xTaskNotify( xTaskToNotify, DEFENDER_REPORT_ACCEPTED_EVENT, eSetBits );
+    ( void ) xTaskNotify( xTaskToNotify, DEFENDER_REPORT_ACCEPTED_EVENT, eSetBits );
 }
 
 /*-----------------------------------------------------------*/
@@ -238,14 +243,14 @@ static void prvReportAcceptedCallback( void * pxSubscriptionContext,
 static void prvReportRejectedCallback( void * pxSubscriptionContext,
                                        MQTTPublishInfo_t * pxPublishInfo )
 {
-	TaskHandle_t xTaskToNotify = NULL;
+    TaskHandle_t xTaskToNotify = NULL;
 
-	configASSERT( pxSubscriptionContext != NULL );
-	configASSERT( pxPublishInfo != NULL );
+    configASSERT( pxSubscriptionContext != NULL );
+    configASSERT( pxPublishInfo != NULL );
 
-	xTaskToNotify = ( TaskHandle_t ) ( pxSubscriptionContext );
+    xTaskToNotify = ( TaskHandle_t ) ( pxSubscriptionContext );
 
-	( void ) xTaskNotify( xTaskToNotify, DEFENDER_REPORT_REJECTED_EVENT, eSetBits );
+    ( void ) xTaskNotify( xTaskToNotify, DEFENDER_REPORT_REJECTED_EVENT, eSetBits );
 }
 
 static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
@@ -259,34 +264,35 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
         /* Add subscriptions so that incoming publishes are routed to the application
          * callback. */
         xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-        		                          cReportAcceptedTopic,
-										  usReportAcceptedTopicLength,
-										  prvReportAcceptedCallback,
+                                          cReportAcceptedTopic,
+                                          usReportAcceptedTopicLength,
+                                          prvReportAcceptedCallback,
                                           ( void * ) pxCommandContext->xDefenderTaskHandle );
 
         if( xSuccess == false )
         {
             LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-            		usReportAcceptedTopicLength,
-					cReportAcceptedTopic ) );
+                        usReportAcceptedTopicLength,
+                        cReportAcceptedTopic ) );
         }
     }
 
     if( xSuccess == true )
     {
         xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-        		                          cReportRejectedTopic,
-				                          usReportRejectedTopicLength,
-										  prvReportRejectedCallback,
+                                          cReportRejectedTopic,
+                                          usReportRejectedTopicLength,
+                                          prvReportRejectedCallback,
                                           ( void * ) pxCommandContext->xDefenderTaskHandle );
 
         if( xSuccess == false )
         {
             LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-            		usReportRejectedTopicLength,
-					cReportRejectedTopic ) );
+                        usReportRejectedTopicLength,
+                        cReportRejectedTopic ) );
         }
     }
+
     /* Store the result in the application defined context so the calling task
      * can check it. */
     pxCommandContext->xReturnStatus = xSuccess;
@@ -307,12 +313,12 @@ static bool prvSubscribeToDeviceDefenderTopics( void )
     MQTTSubscribeInfo_t xSubscribeInfo[ 2 ];
     MQTTAgentCommandContext_t xCommandContext = { 0 };
 
-    /* Subscribe to shadow topic for responses for incoming delta updates. */
+    /* Subscribe to defender topic for responses for incoming delta updates. */
     xSubscribeInfo[ 0 ].pTopicFilter = cReportAcceptedTopic;
     xSubscribeInfo[ 0 ].topicFilterLength = usReportAcceptedTopicLength;
     xSubscribeInfo[ 0 ].qos = MQTTQoS1;
 
-    /* Subscribe to shadow topic for responses for incoming delta updates. */
+    /* Subscribe to defender topic for responses for incoming delta updates. */
     xSubscribeInfo[ 1 ].pTopicFilter = cReportRejectedTopic;
     xSubscribeInfo[ 1 ].topicFilterLength = usReportRejectedTopicLength;
     xSubscribeInfo[ 1 ].qos = MQTTQoS1;
@@ -335,7 +341,7 @@ static bool prvSubscribeToDeviceDefenderTopics( void )
     xCommandParams.blockTimeMs = MAX_COMMAND_SEND_BLOCK_TIME_MS;
     xCommandParams.cmdCompleteCallback = prvSubscribeCommandCallback;
     xCommandParams.pCmdCompleteCallbackContext = &xCommandContext;
-    LogInfo( ( "Sending subscribe request to agent for shadow topics." ) );
+    LogInfo( ( "Sending subscribe request to agent for defender topics." ) );
 
     do
     {
@@ -355,18 +361,18 @@ static bool prvSubscribeToDeviceDefenderTopics( void )
         /* The callback sets the xReturnStatus member of the context. */
         if( xCommandContext.xReturnStatus != true )
         {
-            LogError( ( "Failed to subscribe to shadow update topics." ) );
+            LogError( ( "Failed to subscribe to defender update topics." ) );
             xReturnStatus = false;
         }
         else
         {
-            LogInfo( ( "Successfully subscribed to shadow update topics." ) );
+            LogInfo( ( "Successfully subscribed to defender update topics." ) );
             xReturnStatus = true;
         }
     }
     else
     {
-        LogError( ( "Timed out to subscribe to shadow update topics." ) );
+        LogError( ( "Timed out to subscribe to defender update topics." ) );
         xReturnStatus = false;
     }
 
@@ -383,12 +389,12 @@ static bool prvCreateDefenderTopics( const char * pcThingName,
 
     if( xStatus == true )
     {
-    	xDefenderStatus = Defender_GetTopic( cReportPublishTopic,
-    			DEFENDER_MAX_TOPIC_LENGTH,
-				pcThingName,
-				xThingNameLength,
-				DefenderCborReportPublish,
-				&usReportPublishTopicLength );
+        xDefenderStatus = Defender_GetTopic( cReportPublishTopic,
+                                             DEFENDER_MAX_TOPIC_LENGTH,
+                                             pcThingName,
+                                             xThingNameLength,
+                                             DefenderCborReportPublish,
+                                             &usReportPublishTopicLength );
 
         if( xDefenderStatus != DefenderSuccess )
         {
@@ -399,28 +405,28 @@ static bool prvCreateDefenderTopics( const char * pcThingName,
 
     if( xStatus == true )
     {
-    	xDefenderStatus = Defender_GetTopic( cReportAcceptedTopic,
-    			DEFENDER_MAX_TOPIC_LENGTH,
-				pcThingName,
-				xThingNameLength,
-				DefenderCborReportAccepted,
-				&usReportAcceptedTopicLength );
+        xDefenderStatus = Defender_GetTopic( cReportAcceptedTopic,
+                                             DEFENDER_MAX_TOPIC_LENGTH,
+                                             pcThingName,
+                                             xThingNameLength,
+                                             DefenderCborReportAccepted,
+                                             &usReportAcceptedTopicLength );
 
-    	if( xDefenderStatus != DefenderSuccess )
-    	{
-    		LogError( ( "Fail to construct defender report accepted  topic, error = %u.", xDefenderStatus ) );
-    		xStatus = false;
-    	}
+        if( xDefenderStatus != DefenderSuccess )
+        {
+            LogError( ( "Fail to construct defender report accepted  topic, error = %u.", xDefenderStatus ) );
+            xStatus = false;
+        }
     }
 
     if( xStatus == true )
     {
         xDefenderStatus = Defender_GetTopic( cReportRejectedTopic,
-    			DEFENDER_MAX_TOPIC_LENGTH,
-				pcThingName,
-				xThingNameLength,
-				DefenderCborReportRejected,
-				&usReportRejectedTopicLength );
+                                             DEFENDER_MAX_TOPIC_LENGTH,
+                                             pcThingName,
+                                             xThingNameLength,
+                                             DefenderCborReportRejected,
+                                             &usReportRejectedTopicLength );
 
         if( xDefenderStatus != DefenderSuccess )
         {
@@ -429,7 +435,6 @@ static bool prvCreateDefenderTopics( const char * pcThingName,
         }
     }
 
-
     return xStatus;
 }
 
@@ -437,48 +442,52 @@ static bool prvCreateDefenderTopics( const char * pcThingName,
 
 static MetricsCollectorStatus_t prvCollectMetrics( DefenderMetrics_t * pxMetrics )
 {
-	MetricsCollectorStatus_t xStatus;
-	size_t usNumOpenPorts = 0;
-	size_t usNumConnections = 0;
+    MetricsCollectorStatus_t xStatus;
+    size_t usNumOpenPorts = 0;
+    size_t usNumConnections = 0;
 
-	xStatus = GetNetworkStats( &pxMetrics->xNetworkStats );
-	if( xStatus == MetricsCollectorSuccess )
-	{
-		xStatus = GetOpenTcpPorts( usOpenTCPPorts, democonfigOPEN_TCP_PORTS_ARRAY_SIZE, &usNumOpenPorts );
-		if( xStatus == MetricsCollectorSuccess )
-		{
-			pxMetrics->pusOpenTCPPortsList = usOpenTCPPorts;
-			pxMetrics->ulNumOpenTCPPorts = usNumOpenPorts;
-		}
-	}
+    xStatus = GetNetworkStats( &pxMetrics->xNetworkStats );
 
-	if( xStatus == MetricsCollectorSuccess )
-	{
-		xStatus = GetOpenUdpPorts( usOpenUDPPorts, democonfigOPEN_UDP_PORTS_ARRAY_SIZE, &usNumOpenPorts );
-		if( xStatus == MetricsCollectorSuccess )
-		{
-			pxMetrics->pusOpenUDPPortsList = usOpenUDPPorts;
-			pxMetrics->ulNumOpenUDPPorts = usNumOpenPorts;
-		}
-	}
+    if( xStatus == MetricsCollectorSuccess )
+    {
+        xStatus = GetOpenTcpPorts( usOpenTCPPorts, democonfigOPEN_TCP_PORTS_ARRAY_SIZE, &usNumOpenPorts );
 
-	if( xStatus == MetricsCollectorSuccess )
-	{
-		xStatus = GetEstablishedConnections( xEstablishedTCPConnections, democonfigESTABLISHED_CONNECTIONS_ARRAY_SIZE, &usNumConnections );
-		if( xStatus == MetricsCollectorSuccess )
-		{
-			pxMetrics->pxEstablishedConnectionsList = xEstablishedTCPConnections;
-			pxMetrics->ulEstablishedConnectionsListLength = usNumConnections;
-		}
-	}
+        if( xStatus == MetricsCollectorSuccess )
+        {
+            pxMetrics->pusOpenTCPPortsList = usOpenTCPPorts;
+            pxMetrics->ulNumOpenTCPPorts = usNumOpenPorts;
+        }
+    }
 
-	return xStatus;
+    if( xStatus == MetricsCollectorSuccess )
+    {
+        xStatus = GetOpenUdpPorts( usOpenUDPPorts, democonfigOPEN_UDP_PORTS_ARRAY_SIZE, &usNumOpenPorts );
 
+        if( xStatus == MetricsCollectorSuccess )
+        {
+            pxMetrics->pusOpenUDPPortsList = usOpenUDPPorts;
+            pxMetrics->ulNumOpenUDPPorts = usNumOpenPorts;
+        }
+    }
+
+    if( xStatus == MetricsCollectorSuccess )
+    {
+        xStatus = GetEstablishedConnections( xEstablishedTCPConnections, democonfigESTABLISHED_CONNECTIONS_ARRAY_SIZE, &usNumConnections );
+
+        if( xStatus == MetricsCollectorSuccess )
+        {
+            pxMetrics->pxEstablishedConnectionsList = xEstablishedTCPConnections;
+            pxMetrics->ulEstablishedConnectionsListLength = usNumConnections;
+        }
+    }
+
+    return xStatus;
 }
 
 /*-----------------------------------------------------------*/
 
-static bool prvPublishMetricsReport( void * pvMetricsReport, size_t xMetricsReportLength )
+static bool prvPublishMetricsReport( void * pvMetricsReport,
+                                     size_t xMetricsReportLength )
 {
     static MQTTPublishInfo_t xPublishInfo = { 0 };
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
@@ -501,7 +510,7 @@ static bool prvPublishMetricsReport( void * pvMetricsReport, size_t xMetricsRepo
     xCommandParams.cmdCompleteCallback = NULL;
 
     /* Send update. */
-    LogInfo( ( "Publishing new metrics report to device defender topic.") );
+    LogInfo( ( "Publishing new metrics report to device defender topic." ) );
 
     xCommandStatus = MQTTAgent_Publish( &xGlobalMqttAgentContext,
                                         &xPublishInfo,
@@ -528,7 +537,7 @@ static bool prvPublishMetricsReport( void * pvMetricsReport, size_t xMetricsRepo
         {
             if( ( ulNotifiedValue & DEFENDER_REPORT_ACCEPTED_EVENT ) != 0 )
             {
-                LogInfo( ( "Successfully received a report accepted message from defender. " ) );
+                LogInfo( ( "Received a report accepted message from defender. " ) );
             }
             else if( ( ulNotifiedValue & DEFENDER_REPORT_REJECTED_EVENT ) != 0 )
             {
@@ -556,127 +565,128 @@ static bool prvPublishMetricsReport( void * pvMetricsReport, size_t xMetricsRepo
 
 void vDeviceDefenderTask( void * pvParameters )
 {
-	bool xStatus = false;
-	void *pvMetricsReport = NULL;
-	size_t xMetricsReportLength = 0;
-	ReportBuilderStatus_t xReportStatus;
-	MetricsCollectorStatus_t xCollectStatus;
-	uint32_t ulReportID = 0;
-	DefenderMetrics_t xMetrics = { 0 };
+    bool xStatus = false;
+    void * pvMetricsReport = NULL;
+    size_t xMetricsReportLength = 0;
+    ReportBuilderStatus_t xReportStatus;
+    MetricsCollectorStatus_t xCollectStatus;
+    uint32_t ulReportID = 0;
+    DefenderMetrics_t xMetrics = { 0 };
 
-	/* Remove compiler warnings about unused parameters. */
-	( void ) pvParameters;
+    /* Remove compiler warnings about unused parameters. */
+    ( void ) pvParameters;
 
-	xThingNameLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
+    xThingNameLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
 
-	if( ( xThingNameLength > 0 ) && ( xThingNameLength <= MAX_THING_NAME_LENGTH ) )
-	{
-		memset( cThingName, 0x00, sizeof( cThingName ) );
-		( void ) KVStore_getString( KVS_CORE_THING_NAME, cThingName, sizeof( cThingName ) );
-		xStatus = true;
-	}
-	else
-	{
-		LogError( ( "Failed to get thing name from KV store, thing name length received = %u, "
-				"max thing name length supported = %u", xThingNameLength, MAX_THING_NAME_LENGTH ) );
-		xStatus = false;
-	}
+    if( ( xThingNameLength > 0 ) && ( xThingNameLength <= MAX_THING_NAME_LENGTH ) )
+    {
+        memset( cThingName, 0x00, sizeof( cThingName ) );
+        ( void ) KVStore_getString( KVS_CORE_THING_NAME, cThingName, sizeof( cThingName ) );
+        xStatus = true;
+    }
+    else
+    {
+        LogError( ( "Failed to get thing name from KV store, thing name length received = %u, "
+                    "max thing name length supported = %u", xThingNameLength, MAX_THING_NAME_LENGTH ) );
+        xStatus = false;
+    }
 
-	if( xStatus == true )
-	{
-		if( xIsMQTTAgentRunning() == pdFALSE )
-		{
-			xWaitForMQTTAgentTask( 0U );
-		}
+    if( xStatus == true )
+    {
+        if( xIsMQTTAgentRunning() == pdFALSE )
+        {
+            xWaitForMQTTAgentTask( 0U );
+        }
 
-		LogInfo( ( "MQTT Agent is up. Initializing shadow update task." ) );
-	}
+        LogInfo( ( "MQTT Agent is up. Initializing device defender task." ) );
+    }
 
-	if( xStatus == true )
-	{
-		xStatus = prvCreateDefenderTopics( cThingName, xThingNameLength );
-	}
+    if( xStatus == true )
+    {
+        xStatus = prvCreateDefenderTopics( cThingName, xThingNameLength );
+    }
 
-	if( xStatus == true )
-	{
-		/* Subscribe to Defender topics. */
-		xStatus = prvSubscribeToDeviceDefenderTopics();
-	}
+    if( xStatus == true )
+    {
+        /* Subscribe to Defender topics. */
+        xStatus = prvSubscribeToDeviceDefenderTopics();
+    }
 
-	if( xStatus == true )
-	{
-		for( ;; )
-		{
-			xCollectStatus = prvCollectMetrics( &xMetrics );
-			if( xCollectStatus == MetricsCollectorSuccess )
-			{
-				xStatus = true;
-			}
-			else
-			{
-				LogError(("Failed to collect metrics for defender report, collector error = %d.", xCollectStatus ));
-				xStatus = false;
-			}
+    if( xStatus == true )
+    {
+        for( ; ; )
+        {
+            xCollectStatus = prvCollectMetrics( &xMetrics );
 
-			if( xStatus == true )
-			{
-				ulReportID = xTaskGetTickCount();
-				xReportStatus = xBuildDefenderMetricsReport( ulReportID,
-						democonfigDEVICE_METRICS_REPORT_VERSION,
-						&xMetrics,
-						pvMetricsReport,
-						xMetricsReportLength,
-						&xMetricsReportLength );
+            if( xCollectStatus == MetricsCollectorSuccess )
+            {
+                xStatus = true;
+            }
+            else
+            {
+                LogError( ( "Failed to collect metrics for defender report, collector error = %d.", xCollectStatus ) );
+                xStatus = false;
+            }
 
-				if( ( xReportStatus == REPORT_BUILDER_BUFFER_TOO_SMALL ) && ( xMetricsReportLength > 0 ) )
-				{
-					pvMetricsReport = pvPortMalloc( xMetricsReportLength );
-					if( pvMetricsReport == NULL )
-					{
-						LogError(("Failed to allocate memory for defender metrics report of size %u.", xMetricsReportLength ));
-						xStatus = false;
-					}
-					else
-					{
-						xReportStatus = xBuildDefenderMetricsReport( ulReportID,
-								democonfigDEVICE_METRICS_REPORT_VERSION,
-								&xMetrics,
-								pvMetricsReport,
-								xMetricsReportLength,
-								&xMetricsReportLength );
-					}
-				}
+            if( xStatus == true )
+            {
+                ulReportID = xTaskGetTickCount();
+                xReportStatus = xBuildDefenderMetricsReport( ulReportID,
+                                                             democonfigDEVICE_METRICS_REPORT_VERSION,
+                                                             &xMetrics,
+                                                             pvMetricsReport,
+                                                             xMetricsReportLength,
+                                                             &xMetricsReportLength );
 
-				if( xReportStatus != REPORT_BUILDER_SUCCESS )
-				{
-					LogError(("Failed to create defender metrics report, report build error = %d.", xReportStatus ));
-					xStatus = false;
-				}
-			}
+                if( ( xReportStatus == REPORT_BUILDER_BUFFER_TOO_SMALL ) && ( xMetricsReportLength > 0 ) )
+                {
+                    pvMetricsReport = pvPortMalloc( xMetricsReportLength );
 
-			if( xStatus == true )
-			{
-				( void ) prvPublishMetricsReport( pvMetricsReport, xMetricsReportLength );
-			}
+                    if( pvMetricsReport == NULL )
+                    {
+                        LogError( ( "Failed to allocate memory for defender metrics report of size %u.", xMetricsReportLength ) );
+                        xStatus = false;
+                    }
+                    else
+                    {
+                        xReportStatus = xBuildDefenderMetricsReport( ulReportID,
+                                                                     democonfigDEVICE_METRICS_REPORT_VERSION,
+                                                                     &xMetrics,
+                                                                     pvMetricsReport,
+                                                                     xMetricsReportLength,
+                                                                     &xMetricsReportLength );
+                    }
+                }
 
-			if( pvMetricsReport != NULL )
-			{
-				vPortFree( pvMetricsReport );
-				pvMetricsReport = NULL;
-				xMetricsReportLength = 0;
-			}
+                if( xReportStatus != REPORT_BUILDER_SUCCESS )
+                {
+                    LogError( ( "Failed to create defender metrics report, report build error = %d.", xReportStatus ) );
+                    xStatus = false;
+                }
+            }
 
-			LogInfo(("Waiting for %u seconds before publishing next metrics report.", democonfigMETRICS_PUBLISH_INTERVAL_SECONDS  ));
+            if( xStatus == true )
+            {
+                ( void ) prvPublishMetricsReport( pvMetricsReport, xMetricsReportLength );
+            }
 
-			vTaskDelay( pdMS_TO_TICKS( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS * 1000 ) );
+            if( pvMetricsReport != NULL )
+            {
+                vPortFree( pvMetricsReport );
+                pvMetricsReport = NULL;
+                xMetricsReportLength = 0;
+            }
 
-			if( xIsMQTTAgentRunning() == pdFALSE )
-			{
-				xWaitForMQTTAgentTask( 0U );
-			}
+            LogInfo( ( "Waiting for %u seconds before publishing next metrics report.", democonfigMETRICS_PUBLISH_INTERVAL_SECONDS ) );
 
-		}
-	}
+            vTaskDelay( pdMS_TO_TICKS( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS * 1000 ) );
 
-	vTaskDelete( NULL );
+            if( xIsMQTTAgentRunning() == pdFALSE )
+            {
+                xWaitForMQTTAgentTask( 0U );
+            }
+        }
+    }
+
+    vTaskDelete( NULL );
 }

@@ -37,11 +37,10 @@
  */
 typedef struct NetworkStats
 {
-	uint32_t ulBytesReceived;   /**< Number of bytes received. */
-	uint32_t ulBytesSent;       /**< Number of bytes sent. */
-	uint32_t ulPacketsReceived; /**< Number of packets (ethernet frames) received. */
-	uint32_t ulPacketsSent;     /**< Number of packets (ethernet frames) sent. */
-
+    uint32_t ulBytesReceived;   /**< Number of bytes received. */
+    uint32_t ulBytesSent;       /**< Number of bytes sent. */
+    uint32_t ulPacketsReceived; /**< Number of packets (ethernet frames) received. */
+    uint32_t ulPacketsSent;     /**< Number of packets (ethernet frames) sent. */
 } NetworkStats_t;
 
 /**
@@ -49,22 +48,26 @@ typedef struct NetworkStats
  */
 typedef struct TCPConnection
 {
-	uint32_t ulLocalIPAddr;
-	uint32_t ulRemoteIPAddr;
-	uint16_t usLocalPort;
-	uint16_t usRemotePort;
+    uint32_t ulLocalIPAddr;  /**< Local IPV4 address of a connection in network-byte order. */
+    uint32_t ulRemoteIPAddr; /**< Remote IPV4 address of a connection in network-byte order. */
+    uint16_t usLocalPort;    /**< Local port for a connection. */
+    uint16_t usRemotePort;   /**< Remote port for a connection. */
 } TCPConnection_t;
 
+
+/**
+ * @brief Struct represents all the metrics sent to device defender service.
+ */
 typedef struct DefenderMetrics
 {
-	TCPConnection_t * pxEstablishedConnectionsList;
-	uint32_t ulEstablishedConnectionsListLength;
-	uint16_t *pusOpenTCPPortsList;
-	uint32_t ulNumOpenTCPPorts;
-	uint16_t *pusOpenUDPPortsList;
-	uint32_t ulNumOpenUDPPorts;
-	NetworkStats_t xNetworkStats;
+    TCPConnection_t * pxEstablishedConnectionsList;
+    uint32_t ulEstablishedConnectionsListLength;
+    uint16_t * pusOpenTCPPortsList;
+    uint32_t ulNumOpenTCPPorts;
+    uint16_t * pusOpenUDPPortsList;
+    uint32_t ulNumOpenUDPPorts;
+    NetworkStats_t xNetworkStats;
 } DefenderMetrics_t;
 
 
-#endif
+#endif /* ifndef _DEFENDER_METRICS_H */

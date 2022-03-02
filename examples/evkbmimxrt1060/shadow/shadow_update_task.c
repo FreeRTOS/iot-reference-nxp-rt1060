@@ -723,6 +723,16 @@ void vShadowUpdateTask( void * pvParameters )
 
     if( xStatus == true )
     {
+        if( xIsMQTTAgentRunning() == pdFALSE )
+        {
+            xWaitForMQTTAgentTask( 0U );
+        }
+
+        LogInfo( ( "MQTT Agent is up. Initializing shadow device task." ) );
+    }
+
+    if( xStatus == true )
+    {
         /* Subscribe to Shadow topics. */
         xStatus = prvSubscribeToShadowUpdateTopics();
     }

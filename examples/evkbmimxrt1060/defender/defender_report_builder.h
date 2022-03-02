@@ -29,19 +29,19 @@
  */
 typedef enum ReportBuilderStatus
 {
-	REPORT_BUILDER_SUCCESS           = 0,
-	REPORT_BUILDER_BUFFER_TOO_SMALL  = 1,
-	REPORT_BUILDER_INVALID_PARAM     = 2,
-	REPORT_BUILDER_INTERNAL_ERROR    = 3
+    REPORT_BUILDER_SUCCESS = 0,
+    REPORT_BUILDER_BUFFER_TOO_SMALL = 1,
+    REPORT_BUILDER_INVALID_PARAM = 2,
+    REPORT_BUILDER_INTERNAL_ERROR = 3
 } ReportBuilderStatus_t;
 
 
 ReportBuilderStatus_t xBuildDefenderMetricsReport( uint32_t ulReportID,
-		                                            const char * pcReportVersion,
-													DefenderMetrics_t * pxMetrics,
-													uint8_t * pBuffer,
-													size_t xBufferLength,
-													size_t *pxOutBufferLength );
+                                                   const char * pcReportVersion,
+                                                   DefenderMetrics_t * pxMetrics,
+                                                   uint8_t * pBuffer,
+                                                   size_t xBufferLength,
+                                                   size_t * pxOutBufferLength );
 
 
-#endif
+#endif /* ifndef _DEFENDER_REPORT_BUILDER_H */

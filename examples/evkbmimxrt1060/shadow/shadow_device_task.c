@@ -466,7 +466,7 @@ static bool prvSubscribeToShadowUpdateTopics( void )
      * duration of subscription - although in this case it is a static const so
      * will persist for the lifetime of the application. */
     xSubscribeArgs.pSubscribeInfo = xSubscribeInfo;
-    xSubscribeArgs.numSubscriptions = 3;
+    xSubscribeArgs.numSubscriptions = 5;
 
     /* Loop in case the queue used to communicate with the MQTT agent is full and
      * attempts to post to it time out.  The queue will not become full if the
@@ -1438,7 +1438,7 @@ void vShadowDeviceTask( void * pvParameters )
             xWaitForMQTTAgentTask( 0U );
         }
 
-        LogInfo( ( "MQTT Agent is up. Initializing shadow update task." ) );
+        LogInfo( ( "MQTT Agent is up. Initializing shadow device task." ) );
     }
 
     if( xStatus == true )

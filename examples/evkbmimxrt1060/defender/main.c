@@ -154,7 +154,7 @@ void Board_InitNetwork( void )
 
     while( dhcp->state != DHCP_STATE_BOUND )
     {
-    	PRINTF( "DHCP Current State:%u, Intended state:%u.\r\n", dhcp->state, DHCP_STATE_BOUND );
+    	PRINTF( "DHCP Current state:%u, Intended state:%u.\r\n", dhcp->state, DHCP_STATE_BOUND );
         vTaskDelay( 1000 );
     }
 

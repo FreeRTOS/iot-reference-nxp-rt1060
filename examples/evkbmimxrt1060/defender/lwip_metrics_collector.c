@@ -43,10 +43,10 @@
 #endif
 
 /* Helper macros to get bytes in/out and packets in/out. */
-#define LWIP_GET_PACKETS_IN()   ( lwip_stats.mib2.ipinreceives )
-#define LWIP_GET_PACKETS_OUT()  ( lwip_stats.mib2.ipoutrequests )
-#define LWIP_GET_BYTES_IN()     ( ethernet_netif.mib2_counters.ifinoctets )
-#define LWIP_GET_BYTES_OUT()    ( ethernet_netif.mib2_counters.ifoutoctets )
+#define LWIP_GET_PACKETS_IN()     ( lwip_stats.mib2.ipinreceives )
+#define LWIP_GET_PACKETS_OUT()    ( lwip_stats.mib2.ipoutrequests )
+#define LWIP_GET_BYTES_IN()       ( ethernet_netif.mib2_counters.ifinoctets )
+#define LWIP_GET_BYTES_OUT()      ( ethernet_netif.mib2_counters.ifoutoctets )
 
 /* Variables defined in the LWIP source code. */
 extern struct tcp_pcb * tcp_active_pcbs;        /* List of all TCP PCBs that are in a state in which they accept or send data. */
@@ -242,8 +242,8 @@ MetricsCollectorStatus_t GetEstablishedConnections( TCPConnection_t * pOutConnec
                         pEstablishedConnection->remoteIp = pCurrPcb->remote_ip.u_addr.ip4.addr; /* Network byte order. */
                         pEstablishedConnection->localIp = pCurrPcb->local_ip.u_addr.ip4.addr;   /* Network byte order. */
                     #elif LWIP_IPV4
-                        pEstablishedConnection->ulRemoteIPAddr = pCurrPcb->remote_ip.addr;            /* Network byte order. */
-                        pEstablishedConnection->ulLocalIPAddr = pCurrPcb->local_ip.addr;              /* Network byte order. */
+                        pEstablishedConnection->ulRemoteIPAddr = pCurrPcb->remote_ip.addr;      /* Network byte order. */
+                        pEstablishedConnection->ulLocalIPAddr = pCurrPcb->local_ip.addr;        /* Network byte order. */
                     #else
                     #error "IPV6 only is not supported."
                     #endif

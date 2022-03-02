@@ -118,9 +118,9 @@ int app_main( void )
             {
                 xResult = xTaskCreate( vDeviceDefenderTask,
                                        "DEFENDER",
-									   appmainDEVICE_DEFENDER_TASK_STACK_SIZE,
+                                       appmainDEVICE_DEFENDER_TASK_STACK_SIZE,
                                        NULL,
-									   appmainDEVICE_DEFENDER_TASK_PRIORITY,
+                                       appmainDEVICE_DEFENDER_TASK_PRIORITY,
                                        NULL );
             }
         }
