@@ -566,20 +566,6 @@ static struct pbuf *ethernetif_rx_frame_to_pbufs(struct ethernetif *ethernetif, 
 
     LWIP_ASSERT("p->tot_len != rxFrame->totLen", p->tot_len == rxFrame->totLen);
 
-    MIB2_STATS_NETIF_ADD(netif, ifinoctets, p->tot_len);
-    if (((u8_t *)p->payload)[0] & 1)
-    {
-        /* broadcast or multicast packet */
-        MIB2_STATS_NETIF_INC(netif, ifinnucastpkts);
-    }
-    else
-    {
-        /* unicast packet */
-        MIB2_STATS_NETIF_INC(netif, ifinucastpkts);
-    }
-
-    LINK_STATS_INC(link.recv);
-
     return p;
 }
 
@@ -599,6 +585,21 @@ struct pbuf *ethernetif_linkinput(struct netif *netif)
         case kStatus_Success:
             /* Frame read, process it into pbufs. */
             p = ethernetif_rx_frame_to_pbufs(ethernetif, &rxFrame);
+
+            MIB2_STATS_NETIF_ADD(netif, ifinoctets, p->tot_len);
+            if (((u8_t *)p->payload)[0] & 1)
+            {
+                /* broadcast or multicast packet */
+                MIB2_STATS_NETIF_INC(netif, ifinnucastpkts);
+            }
+            else
+            {
+                /* unicast packet */
+                MIB2_STATS_NETIF_INC(netif, ifinucastpkts);
+            }
+
+            LINK_STATS_INC(link.recv);
+
             break;
 
         case kStatus_ENET_RxFrameEmpty:

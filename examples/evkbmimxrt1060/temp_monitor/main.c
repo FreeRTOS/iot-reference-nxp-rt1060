@@ -55,7 +55,6 @@
 #include "mflash_drv.h"
 
 #include "ex_sss_boot.h"
-#include "flash_info.h"
 #include "ota_pal.h"
 
 #include "mflash_file.h"
@@ -99,7 +98,7 @@ void Board_InitNetwork( void );
 static mdio_handle_t mdioHandle = { .ops = &EXAMPLE_MDIO_OPS };
 static phy_handle_t phyHandle = { .phyAddr = EXAMPLE_PHY_ADDRESS, .mdioHandle = &mdioHandle, .ops = &EXAMPLE_PHY_OPS };
 
-struct netif netif;
+struct netif ethernet_netif;
 
 /*******************************************************************************
  * Secure element contexts
@@ -141,34 +140,33 @@ void Board_InitNetwork( void )
 
     tcpip_init( NULL, NULL );
 
-    netifapi_netif_add( &netif, &netif_ipaddr, &netif_netmask, &netif_gw, &enet_config, EXAMPLE_NETIF_INIT_FN,
+    netifapi_netif_add( &ethernet_netif, &netif_ipaddr, &netif_netmask, &netif_gw, &enet_config, EXAMPLE_NETIF_INIT_FN,
                         tcpip_input );
-    netifapi_netif_set_default( &netif );
-    netifapi_netif_set_up( &netif );
+    netifapi_netif_set_default( &ethernet_netif );
+    netifapi_netif_set_up( &ethernet_netif );
 
-    PRINTF( "Getting IP address from DHCP ...\r\n" );
-    netifapi_dhcp_start( &netif );
+    PRINTF( "Getting an IP address from DHCP ...\r\n" );
+    netifapi_dhcp_start( &ethernet_netif );
 
     struct dhcp * dhcp;
 
-    dhcp = ( struct dhcp * ) netif_get_client_data( &netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP );
+    dhcp = ( struct dhcp * ) netif_get_client_data( &ethernet_netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP );
 
     while( dhcp->state != DHCP_STATE_BOUND )
     {
-        PRINTF( "Waiting to receive an IP address through DHCP.\r\n" );
-
+    	PRINTF( "DHCP Current State:%u, Intended state:%u.\r\n", dhcp->state, DHCP_STATE_BOUND );
         vTaskDelay( 1000 );
     }
 
-    if( dhcp->state == DHCP_STATE_BOUND )
-    {
-        PRINTF( "IPv4 Address: %u.%u.%u.%u\r\n", ( ( u8_t * ) &netif.ip_addr.addr )[ 0 ],
-                ( ( u8_t * ) &netif.ip_addr.addr )[ 1 ], ( ( u8_t * ) &netif.ip_addr.addr )[ 2 ],
-                ( ( u8_t * ) &netif.ip_addr.addr )[ 3 ] );
-    }
+    PRINTF( "IPv4 Address: %u.%u.%u.%u\r\n",
+    		( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 0 ],
+			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 1 ],
+			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 2 ],
+			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 3 ] );
 
-    PRINTF( "DHCP OK\r\n" );
+    PRINTF( "DHCP OK!\r\n" );
 }
+
 void BOARD_InitModuleClock( void )
 {
     const clock_enet_pll_config_t config = { .enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1 };

@@ -40,3 +40,6 @@
 [submodule "Middleware/AWS/device-shadow"]
 	path = Middleware/AWS/device-shadow
 	url = https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git
+[submodule "Middleware/AWS/device-defender"]
+	path = Middleware/AWS/device-defender
+	url = https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git
