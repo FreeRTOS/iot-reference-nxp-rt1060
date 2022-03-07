@@ -144,7 +144,7 @@
 /**
  * @brief Time in ms to wait between checking for updates to report.
  */
-#define shadowexampleMS_BETWEEN_REPORTS                ( 15000U )
+#define shadowexampleMS_BETWEEN_SYNC                   ( 1000U )
 
 /**
  * @brief This demo uses task notifications to signal tasks from MQTT callback
@@ -1484,7 +1484,7 @@ void vShadowDeviceTask( void * pvParameters )
             if( xShadowSynced == false )
             {
                 LogDebug( ( "Sleeping until next sync check." ) );
-                vTaskDelay( pdMS_TO_TICKS( shadowexampleMS_BETWEEN_REPORTS ) );
+                vTaskDelay( pdMS_TO_TICKS( shadowexampleMS_BETWEEN_SYNC ) );
             }
         }
     }

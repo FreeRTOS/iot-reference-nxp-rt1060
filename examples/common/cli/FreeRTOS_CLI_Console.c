@@ -77,7 +77,7 @@ void FreeRTOS_CLIEnterConsoleLoop( xConsoleIO_t consoleIO,
         if( bytesRead > 0 )
         {
             /* Echo back. */
-            consoleIO.write( cInputBuffer, bytesRead );
+            /*consoleIO.write( cInputBuffer, bytesRead ); */
 
             FreeRTOS_CLI_ProcessInputBuffer( consoleIO,
                                              cInputBuffer,

@@ -32,14 +32,13 @@
 #include "task.h"
 #include "kvstore.h"
 #include "mqtt_agent_task.h"
-#include "logging_task.h"
 
 /**
  * @brief Flag which enables OTA update task along with the demo.
  */
-#define appmainINCLUDE_OTA_UPDATE_TASK            ( 0 )
+#define appmainINCLUDE_OTA_UPDATE_TASK            ( 1 )
 
-#define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainPROVISIONING_MODE                  ( 1 )
 
 #define appmainDEVICE_DEFENDER_TASK_STACK_SIZE    ( 2048 )
 #define appmainDEVICE_DEFENDER_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
@@ -53,10 +52,6 @@
 #define appmainCLI_TASK_STACK_SIZE                ( 6144 )
 #define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
 
-#define appmainLOGGING_TASK_STACK_SIZE            ( 2048 )
-#define appmainLOGGING_TASK_PRIORITY              ( tskIDLE_PRIORITY + 1 )
-#define appmainLOGGING_QUEUE_SIZE                 ( 15 )
-
 extern void vDeviceDefenderTask( void * pvParameters );
 
 extern void vOTAUpdateTask( void * pvParam );
@@ -67,18 +62,11 @@ int app_main( void )
 {
     BaseType_t xResult = pdFAIL;
 
-    xResult = xLoggingTaskInitialize( appmainLOGGING_TASK_STACK_SIZE,
-                                      appmainLOGGING_TASK_PRIORITY,
-                                      appmainLOGGING_QUEUE_SIZE );
+    xResult = KVStore_init();
 
-    if( xResult == pdPASS )
+    if( xResult == pdFAIL )
     {
-        xResult = KVStore_init();
-
-        if( xResult == pdFAIL )
-        {
-            configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
-        }
+        configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
     }
 
     #if ( appmainPROVISIONING_MODE == 1 )

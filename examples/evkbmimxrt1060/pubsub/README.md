@@ -69,7 +69,7 @@ The board should be successfully provisioned at this time. Provisioning mode sho
 
 ### Perform Firmware Over-The-Air Updates with AWS IoT
 
-The demo leverages OTA client library and AWS IoT OTA service for code signing and secure download of firmware updates. Safe and secure boot process along with root of trust verification is performed using opensource MCUBoot secondary bootloader. As a pre requisite you should have built and flash the bootloader project from this repository.
+The demo leverages OTA client library and AWS IoT OTA service for code signing and secure download of firmware updates. Safe and secure boot process along with root of trust verification is performed using opensource MCUBoot secondary bootloader. As a pre-requisite you should have built and flash the bootloader project from this repository.
 
 #### Setup
 This is a one time setup required for performing OTA firmware updates.
@@ -81,24 +81,25 @@ This is a one time setup required for performing OTA firmware updates.
       ```
       openssl ec -in ecdsasigner.key  -outform PEM -out ecdsasigner-pub-key.pem
       ```
-      3. Switch to device provisioning mode by setting `appmainPROVISIONING_MODE` to `1`, recompiling and downloading the firmware.
-      4. On the CLI prompt from the terminal, run:
+      2. Switch to device provisioning mode by setting `appmainPROVISIONING_MODE` to `1`, recompiling and downloading the firmware.
+      3. On the terminal CLI prompt, run the following command:
       ```
       pki set pub_key sss:00223344
       ```
-     5. CLI waits to input the public key. Copy the PEM public key created in above step line by line and paste it to serial terminal. Press `Enter` after each line.
-     6. On successful provisioning, the CLI should print `OK`. At this point you can switch back to device normal mode by turning off `appmainPROVISIONING_MODE` flag.
+     4. CLI waits to input the public key. Copy the PEM public key created in above step and paste it to serial terminal. Press `Enter`.
+     5. On successful provisioning, the CLI should print `OK`. At this point you can switch back to device normal mode by turning off `appmainPROVISIONING_MODE` flag.
 
 #### Creating a new firmware update job
 
 1. Go to `examples/common/ota/ota_update.c` and increment the version number `APP_VERSION_MAJOR` for the new image.
-2. Build the new image. Create a bin file -  From the MCUXpresso IDE. goto `Binaries/` folder, right click on the `.axf` binary created and then choose `Binary Utilities` then choose `Create a binary`.
+2. Build the new image.
 3. Sign the new binary image using MCUBoot key-pair generated as part of setting up the bootloader project. From the repository root folder execute following command:
 ```
 python3 Middleware/mcuboot/scripts/imgtool.py sign -k examples/evkbmimxrt1060/bootloader/keys/<signing key generated in bootloader project> --align 4  --header-size 0x400 --pad-header --slot-size 0x200000 --max-sectors 800 --version "1.0" projects/evkmimxrt1060/pubsub/Debug/aws_iot_pubsub.bin aws_iot_pubsub_signed.bin
 ```
 This should create a new signed MCUboot image named `aws_iot_pubsub_signed.bin`
-4. Create a firmware update job using the signed image following the steps [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-console-workflow.html)
+
+4. Create a firmware update job using the signed image following the steps [here](https://docs.aws.amazon.com/freertos/latest/userguide/ota-console-workflow.html).
 5. Once the job is create successfully, the demo should start downloading the firmware chunks. The process can be monitored using logs from the console. 
 
 #### Verification and Bootup of new Image

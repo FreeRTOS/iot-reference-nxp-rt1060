@@ -42,10 +42,10 @@
 #define REMOVE
 
 /* Generic logging macros */
-extern void vLoggingPrintfWarn( const char * pcFormat,
-                                ... );
 extern void vLoggingPrintfError( const char * pcFormat,
                                  ... );
+extern void vLoggingPrintfWarn( const char * pcFormat,
+                                ... );
 extern void vLoggingPrintfInfo( const char * pcFormat,
                                 ... );
 extern void vLoggingPrintfDebug( const char * pcFormat,
@@ -57,9 +57,7 @@ extern void vLoggingPrintf( const char * pcFormat,
 #define LogWarnInternal( ... )     do { vLoggingPrintfWarn( __VA_ARGS__ ); } while( 0 )
 #define LogInfoInternal( ... )     do { vLoggingPrintfInfo( __VA_ARGS__ ); } while( 0 )
 #define LogDebugInternal( ... )    do { vLoggingPrintfDebug( __VA_ARGS__ ); } while( 0 )
-
 #define LogAssert( ... )           do { vLoggingPrintf( __VA_ARGS__ ); } while( 0 )
-
 #define LogSys( ... )              do { vLoggingPrintf( __VA_ARGS__ ); } while( 0 )
 
 

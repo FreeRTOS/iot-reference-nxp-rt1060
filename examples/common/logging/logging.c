@@ -26,8 +26,6 @@
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
-#include "semphr.h"
 
 /* Logging includes. */
 #include "logging_levels.h"
@@ -37,10 +35,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-/* Sanity check all the definitions required by this file are set. */
-#ifndef configPRINT_STRING
-    #error configPRINT_STRING( x ) must be defined in FreeRTOSConfig.h to use this logging file.  Set configPRINT_STRING( x ) to a function that outputs a string, where X is the string.  For example, #define configPRINT_STRING( x ) MyUARTWriteString( X )
-#endif
+#include "fsl_debug_console.h"
 
 #ifndef configLOGGING_MAX_MESSAGE_LENGTH
     #error configLOGGING_MAX_MESSAGE_LENGTH must be defined in FreeRTOSConfig.h to use this logging file.  configLOGGING_MAX_MESSAGE_LENGTH sets the size of the buffer into which formatted text is written, so also sets the maximum log message length.
@@ -49,9 +44,6 @@
 #ifndef configLOGGING_INCLUDE_TIME_AND_TASK_NAME
     #error configLOGGING_INCLUDE_TIME_AND_TASK_NAME must be defined in FreeRTOSConfig.h to use this logging file.  Set configLOGGING_INCLUDE_TIME_AND_TASK_NAME to 1 to prepend a time stamp, message number and the name of the calling task to each logged message.  Otherwise set to 0.
 #endif
-
-/* A block time of 0 just means don't block. */
-#define loggingDONT_BLOCK    0
 
 /*
  * Wrapper functions for vsnprintf and snprintf to return the actual number of
@@ -87,31 +79,6 @@ static int snprintf_safe( char * s,
                           size_t n,
                           const char * format,
                           ... );
-
-/*-----------------------------------------------------------*/
-
-/*
- * The task that actually performs the print output.  Using a separate task
- * enables the use of slow output, such as as a UART, without the task that is
- * outputting the log message having to wait for the message to be completely
- * written.  Using a separate task also serializes access to the output port.
- *
- * The structure of this task is very simple; it blocks on a queue to wait for
- * a pointer to a string, sending any received strings to a macro that performs
- * the actual output.  The macro is port specific, so implemented outside of
- * this file.  This version uses dynamic memory, so the buffer that contained
- * the log message is freed after it has been output.
- */
-static void prvLoggingTask( void * pvParameters );
-
-/*-----------------------------------------------------------*/
-
-/*
- * The queue used to pass pointers to log messages from the task that created
- * the message to the task that will performs the output.
- */
-static QueueHandle_t xQueue = NULL;
-
 /*-----------------------------------------------------------*/
 
 static int vsnprintf_safe( char * s,
@@ -164,73 +131,18 @@ static int snprintf_safe( char * s,
 
 /*-----------------------------------------------------------*/
 
-BaseType_t xLoggingTaskInitialize( configSTACK_DEPTH_TYPE usStackSize,
-                                   UBaseType_t uxPriority,
-                                   UBaseType_t uxQueueLength )
-{
-    BaseType_t xReturn = pdFAIL;
-
-    /* Ensure the logging task has not been created already. */
-    if( xQueue == NULL )
-    {
-        /* Create the queue used to pass pointers to strings to the logging task. */
-        xQueue = xQueueCreate( uxQueueLength, sizeof( char ** ) );
-
-        if( xQueue != NULL )
-        {
-            if( xTaskCreate( prvLoggingTask, "Logging", usStackSize, NULL, uxPriority, NULL ) == pdPASS )
-            {
-                xReturn = pdPASS;
-            }
-            else
-            {
-                /* Could not create the task, so delete the queue again. */
-                vQueueDelete( xQueue );
-            }
-        }
-    }
-
-    return xReturn;
-}
-/*-----------------------------------------------------------*/
-
-static void prvLoggingTask( void * pvParameters )
-{
-    /* Disable unused parameter warning. */
-    ( void ) pvParameters;
-
-    char * pcReceivedString = NULL;
-
-    for( ; ; )
-    {
-        /* Block to wait for the next string to print. */
-        if( xQueueReceive( xQueue, &pcReceivedString, portMAX_DELAY ) == pdPASS )
-        {
-            configPRINT_STRING( pcReceivedString );
-
-            vPortFree( ( void * ) pcReceivedString );
-        }
-    }
-}
-
-/*-----------------------------------------------------------*/
-
 static void prvLoggingPrintfCommon( uint8_t usLoggingLevel,
                                     const char * pcFile,
                                     size_t fileLineNo,
                                     const char * pcFormat,
                                     va_list args )
 {
-    size_t xLength = 0;
+    size_t xLength = 0, xIndex = 0;
     char * pcPrintString = NULL;
 
     configASSERT( usLoggingLevel <= LOG_DEBUG );
     configASSERT( pcFormat != NULL );
     configASSERT( configLOGGING_MAX_MESSAGE_LENGTH > 0 );
-
-    /* The queue is created by xLoggingTaskInitialize().  Check
-     * xLoggingTaskInitialize() has been called. */
-    configASSERT( xQueue );
 
     /* Allocate a buffer to hold the log message. */
     pcPrintString = pvPortMalloc( configLOGGING_MAX_MESSAGE_LENGTH );
@@ -346,19 +258,14 @@ static void prvLoggingPrintfCommon( uint8_t usLoggingLevel,
          * not empty. */
         if( xLength > 0 )
         {
-            /* Send the string to the logging task for IO. */
-            if( xQueueSend( xQueue, &pcPrintString, loggingDONT_BLOCK ) != pdPASS )
+            for( xIndex = 0; xIndex < xLength; xIndex++ )
             {
-                /* The buffer was not sent so must be freed again. */
-                vPortFree( ( void * ) pcPrintString );
+                DbgConsole_Putchar( pcPrintString[ xIndex ] );
             }
         }
-        else
-        {
-            /* The buffer was not sent, so it must be
-             * freed. */
-            vPortFree( ( void * ) pcPrintString );
-        }
+
+        /* The buffer was  sent, so it must be freed. */
+        vPortFree( ( void * ) pcPrintString );
     }
 }
 
@@ -458,11 +365,7 @@ void vLoggingPrintf( const char * pcFormat,
 void vLoggingPrint( const char * pcMessage )
 {
     char * pcPrintString = NULL;
-    size_t xLength = 0;
-
-    /* The queue is created by xLoggingTaskInitialize().  Check
-     * xLoggingTaskInitialize() has been called. */
-    configASSERT( xQueue );
+    size_t xLength = 0, xIndex = 0;
 
     xLength = strlen( pcMessage ) + 1;
     pcPrintString = pvPortMalloc( xLength );
@@ -472,11 +375,13 @@ void vLoggingPrint( const char * pcMessage )
         strncpy( pcPrintString, pcMessage, xLength );
 
         /* Send the string to the logging task for IO. */
-        if( xQueueSend( xQueue, &pcPrintString, loggingDONT_BLOCK ) != pdPASS )
+        for( xIndex = 0; xIndex < xLength; xIndex++ )
         {
-            /* The buffer was not sent so must be freed again. */
-            vPortFree( ( void * ) pcPrintString );
+            DbgConsole_Putchar( pcPrintString[ xIndex ] );
         }
+
+        /* The buffer was sent so must be freed. */
+        vPortFree( ( void * ) pcPrintString );
     }
 }
 

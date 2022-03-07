@@ -53,7 +53,7 @@ static BaseType_t prvPKICommandHandler( char * pcWriteBuffer,
 static CLI_Command_Definition_t xCommandConfig =
 {
     .pcCommand                   = "conf",
-    .pcHelpString                = "Configures the device. Usage: conf [get|set] key [value]\n",
+    .pcHelpString                = "Configures the device. Usage: conf [get|set] key [value]\r\n",
     .pxCommandInterpreter        = prvConfigCommandHandler,
     .cExpectedNumberOfParameters = -1
 };
@@ -61,7 +61,7 @@ static CLI_Command_Definition_t xCommandConfig =
 static CLI_Command_Definition_t xPKICommandConfig =
 {
     .pcCommand                   = "pki",
-    .pcHelpString                = "Command for interfacing with PKI for the device. usage: pki [get|set] [cert|pub_key] label\n",
+    .pcHelpString                = "Command for interfacing with PKI for the device. usage: pki [get|set] [cert|pub_key] label\r\n",
     .pxCommandInterpreter        = prvPKICommandHandler,
     .cExpectedNumberOfParameters = -1
 };
@@ -485,8 +485,6 @@ CK_RV prvReadAndProvisionPublicKey( uint8_t * pucPublicKeyLabel,
                     {
                         readLine[ readOffset ] = '\n';
                         readOffset++;
-                        uartConsoleIO.write( readLine, readOffset - 1U );
-                        uartConsoleIO.write( "\r\n", 2U );
                         memcpy( ( pubKey + pubKeyLength ), readLine, readOffset );
                         pubKeyLength += readOffset;
 
