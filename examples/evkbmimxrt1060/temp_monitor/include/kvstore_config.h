@@ -26,36 +26,58 @@
 #ifndef _KVSTORE_CONFIG_H
 #define _KVSTORE_CONFIG_H
 
+
+#include "demo_config.h"
+#include "core_pkcs11_config.h"
+
 typedef enum KVStoreKey
 {
-    KVS_CORE_THING_NAME,
-	KVS_CORE_MQTT_ENDPOINT,
-	KVS_CORE_MQTT_PORT,
-	KVS_NUM_KEYS
+    KVS_CORE_THING_NAME = 0,
+    KVS_CORE_MQTT_ENDPOINT,
+    KVS_CORE_MQTT_PORT,
+    KVS_DEVICE_PRIVKEY_ID,
+    KVS_DEVICE_PUBKEY_ID,
+    KVS_DEVICE_CERT_ID,
+    KVS_PRIV_ROOTCA_ID,
+    KVS_AWS_ROOTCA_ID,
+    KVS_CODEVERIFY_PUBKEY_ID,
+    KVS_NUM_KEYS
 } KVStoreKey_t;
 
 /* Define default values for common attributes */
-#define THING_NAME_DFLT 				"NXP_RT_1060"
-#define MQTT_ENDOPOINT_DFLT 			"a31zvyed820ljz-ats.iot.us-east-1.amazonaws.com"
+#define THING_NAME_DFLT        democonfigCLIENT_IDENTIFIER
+#define MQTT_ENDOPOINT_DFLT    democonfigMQTT_BROKER_ENDPOINT
 
-#define KVSTORE_KEY_MAX_LEN		16
-#define KVSTORE_VAL_MAX_LEN		256
+#define KVSTORE_KEY_MAX_LEN    32
+#define KVSTORE_VAL_MAX_LEN    256
 
-#define KVSTORE_FILE_PATH ( "/kvstore")
+#define KVSTORE_FILE_PATH      ( "/kvstore" )
 
 /* Array to map between strings and KVStoreKey_t IDs */
-#define KVSTORE_KEYS 	    \
-{							\
-	"THINGNAME",			\
-	"ENDPOINT",		        \
-	"PORT",			        \
-}
+#define KVSTORE_KEYS                                       \
+    {                                                      \
+        [ KVS_CORE_THING_NAME ] = "thing_name",            \
+        [ KVS_CORE_MQTT_ENDPOINT ] = "mqtt_endpoint",      \
+        [ KVS_CORE_MQTT_PORT ] = "mqtt_port",              \
+        [ KVS_DEVICE_PRIVKEY_ID ] = "priv_key_id",         \
+        [ KVS_DEVICE_PUBKEY_ID ] = "pub_key_id",           \
+        [ KVS_DEVICE_CERT_ID ] = "cert_id",                \
+        [ KVS_PRIV_ROOTCA_ID ] = "priv_root_ca_id",        \
+        [ KVS_AWS_ROOTCA_ID ] = "aws_root_ca_id",          \
+        [ KVS_CODEVERIFY_PUBKEY_ID ] = "codeverify_key_id" \
+    }
 
-#define KV_STORE_DEFAULTS \
-{ \
-	KV_DFLT( KV_TYPE_STRING, THING_NAME_DFLT 		), /* CS_CORE_THING_NAME */ 	\
-	KV_DFLT( KV_TYPE_STRING, MQTT_ENDOPOINT_DFLT	), /* CS_CORE_MQTT_ENDPOINT */	\
-	KV_DFLT( KV_TYPE_UINT32, 8883 					), /* CS_CORE_MQTT_PORT */		\
-}
+#define KV_STORE_DEFAULTS                                                                                   \
+    {                                                                                                       \
+        KV_DFLT( KV_TYPE_STRING, democonfigCLIENT_IDENTIFIER ),                  /* THINGNAME */            \
+        KV_DFLT( KV_TYPE_STRING, democonfigMQTT_BROKER_ENDPOINT ),               /* MQTT_ENDPOINT */        \
+        KV_DFLT( KV_TYPE_UINT32, 8883 ),                                         /* MQTT_PORT */            \
+        KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS ), /* DEVICE_PRIVKEY_ID */    \
+        KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS ),  /* DEVICE_PUBKEY_ID */     \
+        KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS ), /* DEVICE_CERT_ID */       \
+        KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_JITP_CERTIFICATE ),           /* PRIV_ROOTCA_ID */       \
+        KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_ROOT_CERTIFICATE ),           /* AWS_ROOTCA_ID */        \
+        KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_CODE_VERIFICATION_KEY ),      /* CODEVERIFY_PUBKEY_ID */ \
+    }
 
 #endif /* _KVSTORE_CONFIG_H */

@@ -149,7 +149,7 @@ static int generateRandomBytes( void * pvCtx,
  * @return Zero on success.
  */
 static CK_RV readCertificateIntoContext( SSLContext_t * pSslContext,
-                                         const char * pcLabelName,
+									     const char * pcLabelName,
                                          CK_OBJECT_CLASS xClass,
                                          mbedtls_x509_crt * pxCertificateContext );
 
@@ -282,7 +282,7 @@ static CK_RV readCertificateIntoContext( SSLContext_t * pSslContext,
 
     /* Get the handle of the certificate. */
     xResult = xFindObjectWithLabelAndClass( pSslContext->xP11Session,
-                                            pcLabelName,
+                                            ( char * ) pcLabelName,
                                             strnlen( pcLabelName,
                                                      pkcs11configMAX_LABEL_LENGTH ),
                                             xClass,
@@ -406,7 +406,7 @@ static CK_RV initializeClientKeys( SSLContext_t * pxCtx,
     {
         /* Get the handle of the device private key. */
         xResult = xFindObjectWithLabelAndClass( pxCtx->xP11Session,
-                                                pcLabelName,
+                                                ( char * ) pcLabelName,
                                                 strnlen( pcLabelName,
                                                          pkcs11configMAX_LABEL_LENGTH ),
                                                 CKO_PRIVATE_KEY,
@@ -970,7 +970,7 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
                                            uint32_t sendTimeoutMs )
 {
     TlsTransportStatus_t returnStatus = TLS_TRANSPORT_SUCCESS;
-    uint32_t nonBlockingTimeout = 100U;
+    int opt;
 
     if( ( pNetworkContext == NULL ) ||
         ( pHostName == NULL ) ||
@@ -1015,7 +1015,8 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
 
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
-        if( setsockopt( pNetworkContext->tcpSocket, SOL_SOCKET, SO_RCVTIMEO, &nonBlockingTimeout, sizeof( receiveTimeoutMs ) ) != 0 )
+    	opt = 1;
+    	if( lwip_ioctl( pNetworkContext->tcpSocket, FIONBIO, &opt ) != 0 )
         {
             returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
         }

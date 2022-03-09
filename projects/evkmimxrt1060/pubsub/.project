@@ -349,7 +349,7 @@
 		<link>
 			<name>pkcs11/source</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/pkcs11_pal</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/pkcs11</locationURI>
 		</link>
 		<link>
 			<name>secure_element/hostlib</name>

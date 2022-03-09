@@ -55,11 +55,11 @@ pki get cert sss:F0000001
 
 6. Get the AWS IoT MQTT broker endpoint from `Settings` tab in AWS IoT console. Provision the endpoint by executing the following command:
 ```
-conf set ENDPOINT <endpoint string>
+conf set mqtt_endpoint <endpoint>
 ```
 7. Create a new thing, device policy in AWS as mentioned in the doc [here](https://docs.aws.amazon.com/iot/latest/developerguide/create-iot-resources.html). Attach the certificate registered in step 5 with the thing name. Provision the new thing name to the device:
 ```
-conf set THINGNAME <thing name>
+conf set thing_name <thing name>
 ```
 8. Once the configurations are setup turn off the provisioning mode by setting `appmainPROVISIONING_MODE` to `0` and then recompiling and flashing the image onto the board.
 

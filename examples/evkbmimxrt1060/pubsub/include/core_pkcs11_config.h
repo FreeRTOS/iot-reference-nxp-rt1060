@@ -42,9 +42,6 @@
 /**************************************************/
 /******* DO NOT CHANGE the following order ********/
 /**************************************************/
-
-extern const char * pcPkcs11GetThingName(void);
-
 /**
  * @brief Malloc API used by core_pkcs11.h
  */
@@ -54,17 +51,6 @@ extern const char * pcPkcs11GetThingName(void);
  * @brief Free API used by core_pkcs11.h
  */
 #define PKCS11_FREE vPortFree
-
-
-/**
- * @brief ESP32 NVS Partition where PKCS #11 data is stored
- */
-#define pkcs11configSTORAGE_PARTITION  "storage"
-
-/**
- * @brief ESP32 NVS namespace for PKCS #11 data
- */
-#define pkcs11configSTORAGE_NS         "creds"
 
 /**
  * @brief PKCS #11 default user PIN.

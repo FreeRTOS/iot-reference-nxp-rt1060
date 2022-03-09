@@ -92,6 +92,8 @@
  ******************************************************************************/
 void Board_InitNetwork( void );
 
+static const char * prvGetDHCPStateStr( dhcp_state_enum_t state );
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -123,6 +125,56 @@ static mflash_file_t dir_template[] =
 /*******************************************************************************
  * Code
  ******************************************************************************/
+static const char * prvGetDHCPStateStr( dhcp_state_enum_t state )
+{
+	const char * pcStateStr = "UNKNOWN";
+
+	switch( state )
+	{
+	case DHCP_STATE_OFF:
+		pcStateStr = "OFF";
+		break;
+	case DHCP_STATE_INIT:
+		pcStateStr = "INIT";
+		break;
+	case DHCP_STATE_REBOOTING:
+		pcStateStr = "REBOOTING";
+		break;
+	case DHCP_STATE_REBINDING:
+		pcStateStr = "REBINDING";
+		break;
+	case DHCP_STATE_RENEWING:
+		pcStateStr = "RENEWING";
+		break;
+	case DHCP_STATE_SELECTING:
+		pcStateStr = "SELECTING";
+		break;
+	case DHCP_STATE_INFORMING:
+		pcStateStr = "INFORMING";
+		break;
+	case DHCP_STATE_CHECKING:
+		pcStateStr = "CHECKING";
+		break;
+	case DHCP_STATE_PERMANENT:
+		pcStateStr = "PERMANENT";
+		break;
+	case DHCP_STATE_BOUND:
+		pcStateStr = "BOUND";
+		break;
+	case DHCP_STATE_RELEASING:
+		pcStateStr = "RELEASING";
+		break;
+	case DHCP_STATE_BACKING_OFF:
+		pcStateStr = "BACKING_OFF";
+		break;
+	default:
+		break;
+	}
+
+	return pcStateStr;
+
+}
+
 void Board_InitNetwork( void )
 {
     ip4_addr_t netif_ipaddr, netif_netmask, netif_gw;
@@ -131,6 +183,7 @@ void Board_InitNetwork( void )
         .phyHandle  = &phyHandle,
         .macAddress = configMAC_ADDR,
     };
+    dhcp_state_enum_t prevState = DHCP_STATE_OFF;
 
     mdioHandle.resource.csrClock_Hz = EXAMPLE_CLOCK_FREQ;
 
@@ -154,9 +207,16 @@ void Board_InitNetwork( void )
 
     while( dhcp->state != DHCP_STATE_BOUND )
     {
-    	PRINTF( "DHCP Current state:%u, Intended state:%u.\r\n", dhcp->state, DHCP_STATE_BOUND );
-        vTaskDelay( 1000 );
+    	if( dhcp->state != prevState )
+    	{
+    		PRINTF( "DHCP State:%s.\r\n", prvGetDHCPStateStr( dhcp->state ) );
+    		prevState = dhcp->state;
+    	}
+
+    	vTaskDelay( 1000 );
     }
+
+    PRINTF( "DHCP OK!\r\n" );
 
     PRINTF( "IPv4 Address: %u.%u.%u.%u\r\n",
     		( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 0 ],
@@ -164,7 +224,17 @@ void Board_InitNetwork( void )
 			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 2 ],
 			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 3 ] );
 
-    PRINTF( "DHCP OK!\r\n" );
+    PRINTF( "Subnet Mask: %u.%u.%u.%u\r\n",
+    		( ( u8_t * ) &ethernet_netif.netmask.addr )[ 0 ],
+			( ( u8_t * ) &ethernet_netif.netmask.addr )[ 1 ],
+			( ( u8_t * ) &ethernet_netif.netmask.addr )[ 2 ],
+			( ( u8_t * ) &ethernet_netif.netmask.addr )[ 3 ] );
+
+    PRINTF( "Gateway: %u.%u.%u.%u\r\n",
+    		( ( u8_t * ) &ethernet_netif.gw.addr )[ 0 ],
+			( ( u8_t * ) &ethernet_netif.gw.addr )[ 1 ],
+			( ( u8_t * ) &ethernet_netif.gw.addr )[ 2 ],
+			( ( u8_t * ) &ethernet_netif.gw.addr )[ 3 ] );
 }
 
 void BOARD_InitModuleClock( void )

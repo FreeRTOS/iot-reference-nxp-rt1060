@@ -608,7 +608,7 @@ extern void mbedtls_platform_free( void * ptr );
 
 #if SSS_HAVE_ALT
 #if (SSS_HAVE_ECC)
-#   define MBEDTLS_ECP_ALT
+#define MBEDTLS_ECP_ALT
 #define MBEDTLS_ECDH_LEGACY_CONTEXT
 #endif /*  TGT_A71CH */
 
