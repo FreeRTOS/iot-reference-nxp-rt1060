@@ -133,8 +133,8 @@ static void sslContextFree( SSLContext_t * pSslContext );
  * @return Zero on success.
  */
 static int generateRandomBytes( void * pvCtx,
-                                    unsigned char * pucRandom,
-                                    size_t xRandomLength );
+                                unsigned char * pucRandom,
+                                size_t xRandomLength );
 
 /**
  * @brief Helper for reading the specified certificate object, if present,
@@ -149,7 +149,7 @@ static int generateRandomBytes( void * pvCtx,
  * @return Zero on success.
  */
 static CK_RV readCertificateIntoContext( SSLContext_t * pSslContext,
-									     const char * pcLabelName,
+                                         const char * pcLabelName,
                                          CK_OBJECT_CLASS xClass,
                                          mbedtls_x509_crt * pxCertificateContext );
 
@@ -212,10 +212,11 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
                                       const NetworkCredentials_t * pNetworkCredentials );
 
 static int lwip_socket_connect( const char * pHostName,
-		                  uint16_t port,
-		                  uint32_t receiveTimeoutMs,
-		                  uint32_t sendTimeoutMs,
-						  Socket_t *pSocket );
+                                uint16_t port,
+                                uint32_t receiveTimeoutMs,
+                                uint32_t sendTimeoutMs,
+                                Socket_t * pSocket );
+
 /**
  * @brief Sends data over LWIP sockets.
  *
@@ -459,19 +460,19 @@ static CK_RV initializeClientKeys( SSLContext_t * pxCtx,
         pxCtx->privKeyInfo.get_bitlen = NULL;
         pxCtx->privKeyInfo.can_do = canDoStub;
         pxCtx->privKeyInfo.verify_func = NULL;
-#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_ECP_RESTARTABLE)
-        pxCtx->privKeyInfo.verify_rs_func = NULL;
-        pxCtx->privKeyInfo.sign_rs_func = NULL;
-#endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+        #if defined( MBEDTLS_ECDSA_C ) && defined( MBEDTLS_ECP_RESTARTABLE )
+            pxCtx->privKeyInfo.verify_rs_func = NULL;
+            pxCtx->privKeyInfo.sign_rs_func = NULL;
+        #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
         pxCtx->privKeyInfo.decrypt_func = NULL;
         pxCtx->privKeyInfo.encrypt_func = NULL;
         pxCtx->privKeyInfo.check_pair_func = NULL;
         pxCtx->privKeyInfo.ctx_alloc_func = NULL;
         pxCtx->privKeyInfo.ctx_free_func = NULL;
-#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_ECP_RESTARTABLE)
-        pxCtx->privKeyInfo.rs_alloc_func = NULL;
-        pxCtx->privKeyInfo.rs_free_func = NULL;
-#endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+        #if defined( MBEDTLS_ECDSA_C ) && defined( MBEDTLS_ECP_RESTARTABLE )
+            pxCtx->privKeyInfo.rs_alloc_func = NULL;
+            pxCtx->privKeyInfo.rs_free_func = NULL;
+        #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
         pxCtx->privKeyInfo.debug_func = NULL;
 
         pxCtx->privKeyInfo.sign_func = privateKeySigningCallback;
@@ -584,8 +585,8 @@ static int32_t privateKeySigningCallback( void * pvContext,
 /*-----------------------------------------------------------*/
 
 static int generateRandomBytes( void * pvCtx,
-                                    unsigned char * pucRandom,
-                                    size_t xRandomLength )
+                                unsigned char * pucRandom,
+                                size_t xRandomLength )
 {
     /* Must cast from void pointer to conform to mbed TLS API. */
     SSLContext_t * pxCtx = ( SSLContext_t * ) pvCtx;
@@ -838,74 +839,73 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
 /*-----------------------------------------------------------*/
 
 static int lwip_socket_connect( const char * pHostName,
-		                  uint16_t port,
-		                  uint32_t receiveTimeoutMs,
-		                  uint32_t sendTimeoutMs,
-						  Socket_t *pSocket )
+                                uint16_t port,
+                                uint32_t receiveTimeoutMs,
+                                uint32_t sendTimeoutMs,
+                                Socket_t * pSocket )
 {
     int socketStatus = 0;
     struct sockaddr_in serverAddr = { 0 };
     struct hostent * pDnsEntry = NULL;
     int socket = -1;
 
-	socketStatus = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if( socketStatus >= 0 )
-	{
-		socket = socketStatus;
-		socketStatus = 0;
-	}
-	else
-	{
-		LogError( ( "Failed to create TCP socket with error %d.", socketStatus ) );
-	}
+    socketStatus = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 
-	if( socketStatus == 0 )
-	{
-		pDnsEntry = gethostbyname(pHostName);
-		 if( pDnsEntry != NULL )
-		 {
-			 serverAddr.sin_family = AF_INET;
-			 serverAddr.sin_port = htons(port);
-			 memcpy((char*)&serverAddr.sin_addr, (char *)(pDnsEntry->h_addr_list[0]), pDnsEntry->h_length);
+    if( socketStatus >= 0 )
+    {
+        socket = socketStatus;
+        socketStatus = 0;
+    }
+    else
+    {
+        LogError( ( "Failed to create TCP socket with error %d.", socketStatus ) );
+    }
 
-			 socketStatus = connect( socket, ( struct sockaddr * ) ( &serverAddr ), sizeof( serverAddr )  );
-			 if( socketStatus < 0 )
-			 {
-				 LogError( ( "Failed to establish TCP connection to %s, with error %d.", pHostName, socketStatus ) );
-			 }
-		 }
-		 else
-		 {
-			 LogError( ( "Failed to resolve IP address for host %s", pHostName ) );
-			 socketStatus = -1;
-		 }
-	}
+    if( socketStatus == 0 )
+    {
+        pDnsEntry = gethostbyname( pHostName );
 
+        if( pDnsEntry != NULL )
+        {
+            serverAddr.sin_family = AF_INET;
+            serverAddr.sin_port = htons( port );
+            memcpy( ( char * ) &serverAddr.sin_addr, ( char * ) ( pDnsEntry->h_addr_list[ 0 ] ), pDnsEntry->h_length );
 
-	if( socketStatus == 0 )
-	{
-		socketStatus = setsockopt( socket, SOL_SOCKET, SO_RCVTIMEO, &receiveTimeoutMs, sizeof( receiveTimeoutMs ) );
-	}
+            socketStatus = connect( socket, ( struct sockaddr * ) ( &serverAddr ), sizeof( serverAddr ) );
 
+            if( socketStatus < 0 )
+            {
+                LogError( ( "Failed to establish TCP connection to %s, with error %d.", pHostName, socketStatus ) );
+            }
+        }
+        else
+        {
+            LogError( ( "Failed to resolve IP address for host %s", pHostName ) );
+            socketStatus = -1;
+        }
+    }
 
-	if( socketStatus == 0 )
-	{
-		socketStatus = setsockopt( socket, SOL_SOCKET, SO_SNDTIMEO, &sendTimeoutMs, sizeof( sendTimeoutMs ) );
-	}
+    if( socketStatus == 0 )
+    {
+        socketStatus = setsockopt( socket, SOL_SOCKET, SO_RCVTIMEO, &receiveTimeoutMs, sizeof( receiveTimeoutMs ) );
+    }
 
-	if( socketStatus == 0 )
-	{
-		( * pSocket ) = socket;
+    if( socketStatus == 0 )
+    {
+        socketStatus = setsockopt( socket, SOL_SOCKET, SO_SNDTIMEO, &sendTimeoutMs, sizeof( sendTimeoutMs ) );
+    }
 
-	}
-	else
-	{
-		if( socket >= 0 )
-		{
-			closesocket( socket );
-
-		}
-	}
+    if( socketStatus == 0 )
+    {
+        ( *pSocket ) = socket;
+    }
+    else
+    {
+        if( socket >= 0 )
+        {
+            closesocket( socket );
+        }
+    }
 
     return socketStatus;
 }
@@ -934,28 +934,27 @@ int mbedtls_bio_lwip_recv( void * ctx,
     configASSERT( buf != NULL );
     recvStatus = recv( ( Socket_t ) ctx, buf, len, 0 );
 
-
     if( -1 == recvStatus )
     {
         /*
          * 1. EWOULDBLOCK if the socket is NON-blocking, but there is no data
          *    when recv is called.
-         * 2. EAGAIN if the socket would block and have waited long enough but
+         * 2. EAGAIN if the socket is blocking and have waited long enough but
          *    packet is not received.
          */
         if( ( errno == EWOULDBLOCK ) || ( errno == EAGAIN ) )
         {
-           recvStatus = 0; /* timeout or would block */
+            recvStatus = MBEDTLS_ERR_SSL_WANT_READ; /* timeout or would block */
         }
         else
         {
-        	recvStatus = -errno;
+            recvStatus = -errno;
         }
     }
 
     if( ( 0 == recvStatus ) && ( errno == ENOTCONN ) )
     {
-    	recvStatus = -ENOTCONN;
+        recvStatus = -ENOTCONN;
     }
 
     return recvStatus;
@@ -993,17 +992,16 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
         /* Empty else for MISRA 15.7 compliance. */
     }
 
-
     /* Establish a TCP connection with the server. */
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
         if( lwip_socket_connect( pHostName, port, receiveTimeoutMs, sendTimeoutMs, &pNetworkContext->tcpSocket ) < 0 )
         {
-        	returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
+            returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
         }
         else
         {
-        	 /* Empty else for MISRA 15.7 compliance. */
+            /* Empty else for MISRA 15.7 compliance. */
         }
     }
 
@@ -1015,8 +1013,9 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
 
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
-    	opt = 1;
-    	if( lwip_ioctl( pNetworkContext->tcpSocket, FIONBIO, &opt ) != 0 )
+        opt = 1;
+
+        if( lwip_ioctl( pNetworkContext->tcpSocket, FIONBIO, &opt ) != 0 )
         {
             returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
         }
@@ -1071,17 +1070,16 @@ void TLS_FreeRTOS_Disconnect( NetworkContext_t * pNetworkContext )
         {
             /* WANT_READ and WANT_WRITE can be ignored. Logging for debugging purposes. */
             LogInfo( ( "(Network connection %p) TLS close-notify sent; received %s as the TLS status can be ignored for close-notify.",
-            		   pNetworkContext,
-            		   mbedtlsHighLevelCodeOrDefault( tlsStatus ) ) );
+                       pNetworkContext,
+                       mbedtlsHighLevelCodeOrDefault( tlsStatus ) ) );
         }
 
         /* Close connection */
-         closesocket( pNetworkContext->tcpSocket );
+        closesocket( pNetworkContext->tcpSocket );
 
         /* Free mbed TLS contexts. */
         sslContextFree( &( pNetworkContext->sslContext ) );
     }
-
 }
 /*-----------------------------------------------------------*/
 

@@ -93,4 +93,25 @@
  */
 #define MQTT_AGENT_NETWORK_BUFFER_SIZE               ( 5000 )
 
+/**
+ * @brief This is the timeout for the duration on which no data is received
+ * from the transport interface, after at least a single byte of the MQTT packet has
+ * been read.
+ *
+ * Since the transport interface is set to non-blocking, this is set to a value large enough
+ * of a delay for a chunk of packet to be sent over the connection.
+ */
+#define MQTT_RECV_POLLING_TIMEOUT_MS                 ( 500 )
+
+/**
+ * @brief Maximum wait time in milliseconds for MQTT agent on the input queue.
+ * If there is no events(commands) on the queue for the period, then MQTT agent
+ * switches to receive packet from network.
+ *
+ * Since the transport interface is non blocking, the queue wait time is set to
+ * a small value since the agent more frequently polls the queue.
+ *
+ */
+#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME        ( 10 )
+
 #endif /* ifndef CORE_MQTT_CONFIG_H */

@@ -1,7 +1,8 @@
 ## MQTT Publish Subscribe Demo
 
 ### Introduction
-This example demonstrates an MQTT publish subscribe task running concurrently with Over-The-Air firmware update background task, using coreMQTT agent libary to manage the thread safety for the MQTT connection.The publish subscribe task runs in a loop to publish a message to AWS IoT MQTT broker on a topic, and echoes back the same message, by subscribing to the same topic with the broker. OTA firmware update task runs OTA Agent loop which polls for and subscribes to OTA job requests from AWS IoT OTA service. The OTA agent task receives firmware chunks and sends control packets over MQTT, concurrently using coreMQTT agent task for thread safety.
+This example demonstrates multiple MQTT publish subscribe task running concurrently with Over-The-Air firmware update background task, using coreMQTT agent libary to manage the thread safety for the MQTT connection.Each publish subscribe task runs in a loop to publish a message to AWS IoT MQTT broker on a topic, and receive same message back by subscribing to the publish topic. Topics are constructed per device and per task for this demo. You can  view the number of messages published by each task by logging to AWS IoT console and subscribing to respective topics.
+OTA firmware update task runs OTA Agent loop which polls for and subscribes to OTA job requests from AWS IoT OTA service. The OTA agent task receives firmware chunks and sends control packets over MQTT, concurrently using coreMQTT agent task for thread safety.
 
 ### Hardware requirements
 
@@ -63,9 +64,9 @@ conf set thing_name <thing name>
 ```
 8. Once the configurations are setup turn off the provisioning mode by setting `appmainPROVISIONING_MODE` to `0` and then recompiling and flashing the image onto the board.
 
-### Runnning the demo
+### Runnning the publish subscribe demo
 
-The board should be successfully provisioned at this time. Provisioning mode should be turned off by seting `appmainPROVISIONING_MODE` to `0` in `examples/evkbmimxrt1060/pubsub/app_main.c`.  Demo on startup, establishes a TLS connection with AWS IoT MQTT broker and runs the publish subscribe demo task using coreMQTT agent. The demo also runs the OTA firmware update task in the background polling for the firmware update jobs from AWS IoT service. 
+The board should be successfully provisioned at this time. Provisioning mode should be turned off by seting `appmainPROVISIONING_MODE` to `0` in `examples/evkbmimxrt1060/pubsub/app_main.c`.  Demo on startup, establishes a TLS connection with AWS IoT MQTT broker and runs the publish subscribe demo tasks using coreMQTT agent. By default two pubsub task are created. You can adjust the number of tasks created by setting the config `appmainMQTT_NUM_PUBSUB_TASKS` in `examples/evkbmimxrt1060/pubsub/app_main.c` to respective value.
 
 ### Perform Firmware Over-The-Air Updates with AWS IoT
 

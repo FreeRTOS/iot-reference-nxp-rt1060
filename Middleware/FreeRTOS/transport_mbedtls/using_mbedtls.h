@@ -77,7 +77,7 @@ typedef struct SSLContext
     CK_KEY_TYPE xKeyType;
 } SSLContext_t;
 
- /* @brief Definition of the network context for the transport interface
+/* @brief Definition of the network context for the transport interface
  *  implementation that uses mbedTLS and FreeRTOS+TLS sockets.
  */
 struct NetworkContext

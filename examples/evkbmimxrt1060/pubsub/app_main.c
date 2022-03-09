@@ -40,6 +40,8 @@
 
 #define appmainPROVISIONING_MODE                  ( 1 )
 
+
+#define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 
@@ -57,6 +59,10 @@ extern void vSimpleSubscribePublishTask( void * pvParameters );
 extern void vOTAUpdateTask( void * pvParam );
 
 extern void vCLITask( void * pvParam );
+
+extern BaseType_t xStartSimplePubSubTasks( uint32_t ulNumPubsubTasks,
+                                           configSTACK_DEPTH_TYPE uxStackSize,
+                                           UBaseType_t uxPriority );
 
 int app_main( void )
 {
@@ -104,12 +110,9 @@ int app_main( void )
 
             if( xResult == pdPASS )
             {
-                xResult = xTaskCreate( vSimpleSubscribePublishTask,
-                                       "PUBSUB",
-                                       appmainMQTT_PUBSUB_TASK_STACK_SIZE,
-                                       NULL,
-                                       appmainMQTT_PUBSUB_TASK_PRIORITY,
-                                       NULL );
+                xResult = xStartSimplePubSubTasks( appmainMQTT_NUM_PUBSUB_TASKS,
+                                                   appmainMQTT_PUBSUB_TASK_STACK_SIZE,
+                                                   appmainMQTT_PUBSUB_TASK_PRIORITY );
             }
         }
     #endif /* if ( appmainPROVISIONING_MODE == 1 ) */

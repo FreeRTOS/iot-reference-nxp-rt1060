@@ -58,8 +58,14 @@
 /* MQTT agent include. */
 #include "core_mqtt_agent.h"
 
+/* MQTT agent task API. */
+#include "mqtt_agent_task.h"
+
 /* Subscription manager header include. */
 #include "subscription_manager.h"
+
+/* Fetches thing name from the key store */
+#include "kvstore.h"
 
 /**
  * @brief This demo uses task notifications to signal tasks from MQTT callback
@@ -69,15 +75,9 @@
 #define mqttexampleMS_TO_WAIT_FOR_NOTIFICATION            ( 10000 )
 
 /**
- * @brief Size of statically allocated buffers for holding topic names and
- * payloads.
- */
-#define mqttexampleSTRING_BUFFER_LENGTH                   ( 100 )
-
-/**
  * @brief Delay for the synchronous publisher task between publishes.
  */
-#define mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    ( 500U )
+#define mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    ( 2000U )
 
 /**
  * @brief Number of publishes done by each task in this demo.
@@ -90,6 +90,37 @@
  * Tasks wait in the Blocked state, so don't use any CPU time.
  */
 #define mqttexampleMAX_COMMAND_SEND_BLOCK_TIME_MS         ( 500 )
+
+
+/**
+ * @brief Maximum length of the thing name as set by AWS IoT.
+ * This is used to set the maximum size of topic buffer that needs to be allocated.
+ */
+#define mqttexampleTHING_NAME_MAX_LENGTH    ( 128 )
+
+/**
+ * @brief Size of statically allocated buffers for holding payloads.
+ */
+#define mqttexampleSTRING_BUFFER_LENGTH     ( 100 )
+
+/**
+ * @brief Format for the topic to which publish subscribe demo task sends messages.
+ *
+ * Topic Hierarchy follows the pattern: /domain_name/device_identifier/publisher_identifier.
+ * domain_name identifies the domain for the metrics which is the demo name (pubsub).
+ * device_identifier is string which uniquely identifies the device. We use thing name as the device identifier.
+ * published_identifier identifies a unique entity within a device which is publishing the
+ * message. We use FreeRTOS task number as the publisher identifier.
+ *
+ *
+ */
+#define mqttexampleTOPIC_FORMAT             "/pubsub_demo/%s/task%lu"
+
+/**
+ * @brief Size of the static buffer to hold the topic name.
+ * The buffer should accommodate the topic format string, thing name and the task number which is a 32bit integer.
+ */
+#define mqttexampleTOPIC_BUFFER_LENGTH      ( sizeof( mqttexampleTOPIC_FORMAT ) + mqttexampleTHING_NAME_MAX_LENGTH + 10U )
 
 /*-----------------------------------------------------------*/
 
@@ -179,13 +210,38 @@ static void prvIncomingPublishCallback( void * pvIncomingPublishCallbackContext,
  * for all MQTT brokers.  Can also be QoS2 if supported by the broker.  AWS IoT
  * does not support QoS2.
  */
-static bool prvSubscribeToTopic( MQTTQoS_t xQoS,
-                                 char * pcTopicFilter );
+static BaseType_t prvSubscribeToTopic( MQTTQoS_t xQoS,
+                                       char * pcTopicFilter );
+
+
+/**
+ * @brief Retrieves the thing name from key store to use in demo.
+ *
+ * @return Pointer to null terminated string containing the thing name.
+ *         NULL if thing name not found.
+ */
+static char * prvGetThingNameFromKeyStore( void );
 
 /**
  * @brief The function that implements the task demonstrated by this file.
+ *
+ * @param pvParameters The parameters to the task.
  */
 void vSimpleSubscribePublishTask( void * pvParameters );
+
+
+/**
+ * @brief Starts a group of publish subscribe tasks as requested by the user.
+ * All tasks share the same code, task stack size and task priority, but publishes
+ * messages to different topics.
+ *
+ * @param ulNumPubsubTasks Number of publish subscribe tasks to start.
+ * @param uxStackSize Stack size for each publish subscribe task.
+ * @param uxPriority Priority for each publish subscribe task.
+ */
+BaseType_t xStartSimplePubSubTasks( uint32_t ulNumPubsubTasks,
+                                    configSTACK_DEPTH_TYPE uxStackSize,
+                                    UBaseType_t uxPriority );
 
 /*-----------------------------------------------------------*/
 
@@ -194,23 +250,6 @@ void vSimpleSubscribePublishTask( void * pvParameters );
  * context used by this demo.
  */
 extern MQTTAgentContext_t xGlobalMqttAgentContext;
-
-/*-----------------------------------------------------------*/
-
-/**
- * @brief The buffer to hold the topic filter. The topic is generated at runtime
- * by adding the task names.
- *
- * @note The topic strings must persist until unsubscribed.
- */
-static char topicBuf[ 1U ][ mqttexampleSTRING_BUFFER_LENGTH ];
-
-/**
- * @brief Pass and fail counts for each created task.
- */
-static volatile uint32_t ulQoS0FailCount[ 1 ] = { 0UL }, ulQoS1FailCount[ 1 ] = { 0UL };
-static volatile uint32_t ulQoS0PassCount[ 1 ] = { 0UL }, ulQoS1PassCount[ 1 ] = { 0UL };
-
 
 /*-----------------------------------------------------------*/
 
@@ -314,8 +353,8 @@ static void prvIncomingPublishCallback( void * pvIncomingPublishCallbackContext,
 
 /*-----------------------------------------------------------*/
 
-static bool prvSubscribeToTopic( MQTTQoS_t xQoS,
-                                 char * pcTopicFilter )
+static BaseType_t prvSubscribeToTopic( MQTTQoS_t xQoS,
+                                       char * pcTopicFilter )
 {
     MQTTStatus_t xCommandAdded;
     BaseType_t xCommandAcknowledged = pdFALSE;
@@ -395,124 +434,212 @@ static bool prvSubscribeToTopic( MQTTQoS_t xQoS,
 }
 /*-----------------------------------------------------------*/
 
+static char * prvGetThingNameFromKeyStore( void )
+{
+    size_t xValueLength = 0U;
+    char * pcValue = NULL;
+
+    /* Load broker endpoint and thing name for client connection, from the key store. */
+    xValueLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
+
+    if( xValueLength > 0 )
+    {
+        pcValue = pvPortMalloc( xValueLength + 1 );
+
+        if( pcValue != NULL )
+        {
+            ( void ) KVStore_getString( KVS_CORE_THING_NAME, pcValue, ( xValueLength + 1 ) );
+        }
+    }
+
+    return pcValue;
+}
+
+/*-----------------------------------------------------------*/
+
+
 void vSimpleSubscribePublishTask( void * pvParameters )
 {
-    extern UBaseType_t uxRand( void );
     MQTTPublishInfo_t xPublishInfo = { 0UL };
-    char payloadBuf[ mqttexampleSTRING_BUFFER_LENGTH ];
-    char taskName[ mqttexampleSTRING_BUFFER_LENGTH ];
     MQTTAgentCommandContext_t xCommandContext;
-    uint32_t ulNotification = 0U, ulValueToNotify = 0UL;
     MQTTStatus_t xCommandAdded;
     uint32_t ulTaskNumber = ( uint32_t ) pvParameters;
     MQTTQoS_t xQoS;
     TickType_t xTicksToDelay;
     MQTTAgentCommandInfo_t xCommandParams = { 0UL };
-    char * pcTopicBuffer = topicBuf[ ulTaskNumber ];
-    static volatile uint32_t * ulPassCounts[] = { ulQoS0PassCount, ulQoS1PassCount };
-    static volatile uint32_t * ulFailCounts[] = { ulQoS0FailCount, ulQoS1FailCount };
+    char payloadBuf[ mqttexampleSTRING_BUFFER_LENGTH ];
+    char cTopicBuf[ mqttexampleTOPIC_BUFFER_LENGTH ];
+    char * pcThingName = NULL;
+    uint32_t ulPublishCount = 0U, ulSuccessCount = 0U, ulFailCount = 0U;
+    BaseType_t xStatus = pdPASS;
+    size_t xTopicLength = 0UL;
+    uint32_t ulNotification;
 
     /* Have different tasks use different QoS.  0 and 1.  2 can also be used
      * if supported by the broker. */
     xQoS = ( MQTTQoS_t ) ( ulTaskNumber % 2UL );
 
-    /* Create a unique name for this task from the task number that is passed into
-     * the task using the task's parameter. */
-    snprintf( taskName, mqttexampleSTRING_BUFFER_LENGTH, "Publisher%d", ( int ) ulTaskNumber );
+    /*
+     * Get the thing name to be used in topic filter.
+     */
+    pcThingName = prvGetThingNameFromKeyStore();
 
-    /* Create a topic name for this task to publish to. */
-    snprintf( pcTopicBuffer, mqttexampleSTRING_BUFFER_LENGTH, "/filter/%s", taskName );
-
-    /* Subscribe to the same topic to which this task will publish.  That will
-     * result in each published message being published from the server back to
-     * the target. */
-    prvSubscribeToTopic( xQoS, pcTopicBuffer );
-
-    /* Configure the publish operation. */
-    memset( ( void * ) &xPublishInfo, 0x00, sizeof( xPublishInfo ) );
-    xPublishInfo.qos = xQoS;
-    xPublishInfo.pTopicName = pcTopicBuffer;
-    xPublishInfo.topicNameLength = ( uint16_t ) strlen( pcTopicBuffer );
-    xPublishInfo.pPayload = payloadBuf;
-
-    /* Store the handler to this task in the command context so the callback
-     * that executes when the command is acknowledged can send a notification
-     * back to this task. */
-    memset( ( void * ) &xCommandContext, 0x00, sizeof( xCommandContext ) );
-    xCommandContext.xTaskToNotify = xTaskGetCurrentTaskHandle();
-
-    xCommandParams.blockTimeMs = mqttexampleMAX_COMMAND_SEND_BLOCK_TIME_MS;
-    xCommandParams.cmdCompleteCallback = prvPublishCommandCallback;
-    xCommandParams.pCmdCompleteCallbackContext = &xCommandContext;
-
-    /* For a finite number of publishes... */
-    for( ulValueToNotify = 0UL; ulValueToNotify < mqttexamplePUBLISH_COUNT; ulValueToNotify++ )
+    if( pcThingName == NULL )
     {
-        /* Create a payload to send with the publish message.  This contains
-         * the task name and an incrementing number. */
-        snprintf( payloadBuf,
-                  mqttexampleSTRING_BUFFER_LENGTH,
-                  "%s publishing message %d",
-                  taskName,
-                  ( int ) ulValueToNotify );
-
-        xPublishInfo.payloadLength = ( uint16_t ) strlen( payloadBuf );
-
-        /* Also store the incrementing number in the command context so it can
-         * be accessed by the callback that executes when the publish operation
-         * is acknowledged. */
-        xCommandContext.ulNotificationValue = ulValueToNotify;
-
-        LogInfo( ( "Sending publish request to agent with message \"%s\" on topic \"%s\"",
-                   payloadBuf,
-                   pcTopicBuffer ) );
-
-        /* To ensure ulNotification doesn't accidentally hold the expected value
-         * as it is to be checked against the value sent from the callback.. */
-        ulNotification = ~ulValueToNotify;
-
-        xCommandAdded = MQTTAgent_Publish( &xGlobalMqttAgentContext,
-                                           &xPublishInfo,
-                                           &xCommandParams );
-        configASSERT( xCommandAdded == MQTTSuccess );
-
-        /* For QoS 1 and 2, wait for the publish acknowledgment.  For QoS0,
-         * wait for the publish to be sent. */
-        LogInfo( ( "Task %s waiting for publish %d to complete.",
-                   taskName,
-                   ulValueToNotify ) );
-        prvWaitForCommandAcknowledgment( &ulNotification );
-
-        /* The value received by the callback that executed when the publish was
-         * acked came from the context passed into MQTTAgent_Publish() above, so
-         * should match the value set in the context above. */
-        if( ulNotification == ulValueToNotify )
-        {
-            ( ulPassCounts[ xQoS ][ ulTaskNumber >> 1 ] )++;
-            LogInfo( ( "Rx'ed %s from Tx to %s (P%d:F%d).",
-                       ( xQoS == 0 ) ? "completion notification for QoS0 publish" : "ack for QoS1 publish",
-                       pcTopicBuffer,
-                       ulPassCounts[ xQoS ][ ulTaskNumber >> 1 ],
-                       ulFailCounts[ xQoS ][ ulTaskNumber >> 1 ] ) );
-        }
-        else
-        {
-            ( ulFailCounts[ xQoS ][ ulTaskNumber >> 1 ] )++;
-            LogError( ( "Timed out Rx'ing %s from Tx to %s (P%d:F%d)",
-                        ( xQoS == 0 ) ? "completion notification for QoS0 publish" : "ack for QoS1 publish",
-                        pcTopicBuffer,
-                        ulPassCounts[ xQoS ][ ulTaskNumber >> 1 ],
-                        ulFailCounts[ xQoS ][ ulTaskNumber >> 1 ] ) );
-        }
-
-        /* Add a little randomness into the delay so the tasks don't remain
-         * in lockstep. */
-        xTicksToDelay = pdMS_TO_TICKS( mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS ) +
-                        ( xTaskGetTickCount() % 0xff );
-        vTaskDelay( xTicksToDelay );
+        xStatus = pdFAIL;
     }
 
-    /* Delete the task if it is complete. */
-    LogInfo( ( "Task %s completed.", taskName ) );
+    if( xStatus == pdPASS )
+    {
+        if( xIsMQTTAgentRunning() == pdFALSE )
+        {
+            xWaitForMQTTAgentTask( 0U );
+        }
+    }
+
+    if( xStatus == pdPASS )
+    {
+        /* Create a topic name for this task to publish to. */
+        xTopicLength = snprintf( cTopicBuf,
+                                 mqttexampleTOPIC_BUFFER_LENGTH,
+                                 mqttexampleTOPIC_FORMAT,
+                                 pcThingName,
+                                 ulTaskNumber );
+
+        /*
+         * Assert if the topic buffer is enough to hold the required topic.
+         */
+        configASSERT( xTopicLength <= mqttexampleTOPIC_BUFFER_LENGTH );
+
+        /* Subscribe to the same topic to which this task will publish.  That will
+         * result in each published message being published from the server back to
+         * the target. */
+        xStatus = prvSubscribeToTopic( xQoS, cTopicBuf );
+    }
+
+    if( xStatus == pdTRUE )
+    {
+        /* Configure the publish operation. */
+        memset( ( void * ) &xPublishInfo, 0x00, sizeof( xPublishInfo ) );
+        xPublishInfo.qos = xQoS;
+        xPublishInfo.pTopicName = cTopicBuf;
+        xPublishInfo.topicNameLength = ( uint16_t ) strlen( cTopicBuf );
+        xPublishInfo.pPayload = payloadBuf;
+
+        /* Store the handler to this task in the command context so the callback
+         * that executes when the command is acknowledged can send a notification
+         * back to this task. */
+        memset( ( void * ) &xCommandContext, 0x00, sizeof( xCommandContext ) );
+        xCommandContext.xTaskToNotify = xTaskGetCurrentTaskHandle();
+
+        xCommandParams.blockTimeMs = mqttexampleMAX_COMMAND_SEND_BLOCK_TIME_MS;
+        xCommandParams.cmdCompleteCallback = prvPublishCommandCallback;
+        xCommandParams.pCmdCompleteCallbackContext = &xCommandContext;
+
+        /* For a finite number of publishes... */
+        for( ulPublishCount = 0UL; ulPublishCount < mqttexamplePUBLISH_COUNT; ulPublishCount++ )
+        {
+            /* Create a payload to send with the publish message.  This contains
+             * the task name and an incrementing number. */
+            xPublishInfo.payloadLength = snprintf( payloadBuf,
+                                                   mqttexampleSTRING_BUFFER_LENGTH,
+                                                   "Task %lu publishing message %d",
+                                                   ulTaskNumber,
+                                                   ( int ) ulPublishCount );
+
+            /**
+             * Assert if the buffer length is not enough to hold the message.
+             */
+            configASSERT( xPublishInfo.payloadLength <= mqttexampleSTRING_BUFFER_LENGTH );
+
+            /* Also store the incrementing number in the command context so it can
+             * be accessed by the callback that executes when the publish operation
+             * is acknowledged. */
+            xCommandContext.ulNotificationValue = ulPublishCount;
+
+            LogInfo( ( "Sending publish request to agent with message \"%s\" on topic \"%s\"",
+                       payloadBuf,
+                       cTopicBuf ) );
+
+            /* To ensure ulNotification doesn't accidentally hold the expected value
+             * as it is to be checked against the value sent from the callback.. */
+            ulNotification = ~ulPublishCount;
+
+            xCommandAdded = MQTTAgent_Publish( &xGlobalMqttAgentContext,
+                                               &xPublishInfo,
+                                               &xCommandParams );
+            configASSERT( xCommandAdded == MQTTSuccess );
+
+            /* For QoS 1 and 2, wait for the publish acknowledgment.  For QoS0,
+             * wait for the publish to be sent. */
+            LogInfo( ( "Task %u waiting for publish %d to complete.",
+                       ulTaskNumber,
+                       ulPublishCount ) );
+            prvWaitForCommandAcknowledgment( &ulNotification );
+
+            /* The value received by the callback that executed when the publish was
+             * acked came from the context passed into MQTTAgent_Publish() above, so
+             * should match the value set in the context above. */
+            if( ulNotification == ulPublishCount )
+            {
+                ulSuccessCount++;
+                LogInfo( ( "Successfully sent QoS %u publish to topic: %s (PassCount:%d, FailCount:%d).",
+                           xQoS,
+                           cTopicBuf,
+                           ulSuccessCount,
+                           ulFailCount ) );
+            }
+            else
+            {
+                ulFailCount++;
+                LogError( ( "Timed out while sending QoS %u publish to topic: %s (PassCount:%d, FailCount: %d)",
+                            xQoS,
+                            cTopicBuf,
+                            ulSuccessCount,
+                            ulFailCount ) );
+            }
+
+            /* Add a little randomness into the delay so the tasks don't remain
+             * in lockstep. */
+            xTicksToDelay = pdMS_TO_TICKS( mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS ) +
+                            ( xTaskGetTickCount() % 0xff );
+            vTaskDelay( xTicksToDelay );
+        }
+
+        /* Delete the task if it is complete. */
+        LogInfo( ( "Task %u completed.", ulTaskNumber ) );
+    }
+
+    if( pcThingName != NULL )
+    {
+        vPortFree( pcThingName );
+        pcThingName = NULL;
+    }
+
     vTaskDelete( NULL );
+}
+
+BaseType_t xStartSimplePubSubTasks( uint32_t ulNumPubsubTasks,
+                                    configSTACK_DEPTH_TYPE uxStackSize,
+                                    UBaseType_t uxPriority )
+{
+    BaseType_t xResult = pdFAIL;
+    uint32_t ulTaskNum;
+
+    for( ulTaskNum = 0; ulTaskNum < ulNumPubsubTasks; ulTaskNum++ )
+    {
+        xResult = xTaskCreate( vSimpleSubscribePublishTask,
+                               "PUBSUB",
+                               uxStackSize,
+                               ( void * ) ulTaskNum,
+                               uxPriority,
+                               NULL );
+
+        if( xResult == pdFAIL )
+        {
+            break;
+        }
+    }
+
+    return xResult;
 }
