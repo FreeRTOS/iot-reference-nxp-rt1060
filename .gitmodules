@@ -43,3 +43,6 @@
 [submodule "Middleware/AWS/device-defender"]
 	path = Middleware/AWS/device-defender
 	url = https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git
+[submodule "Middleware/unity"]
+	path = Middleware/unity
+	url = https://github.com/ThrowTheSwitch/Unity.git

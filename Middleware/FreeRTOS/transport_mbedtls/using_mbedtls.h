@@ -174,7 +174,7 @@ void TLS_FreeRTOS_Disconnect( NetworkContext_t * pNetworkContext );
  * 0 if the socket times out without reading any bytes;
  * negative value on error.
  */
-int32_t TLS_FreeRTOS_recv( NetworkContext_t * pNetworkContext,
+int32_t TLS_FreeRTOS_Recv( NetworkContext_t * pNetworkContext,
                            void * pBuffer,
                            size_t bytesToRecv );
 
@@ -192,7 +192,7 @@ int32_t TLS_FreeRTOS_recv( NetworkContext_t * pNetworkContext,
  * 0 if the socket times out without sending any bytes;
  * else a negative value to represent error.
  */
-int32_t TLS_FreeRTOS_send( NetworkContext_t * pNetworkContext,
+int32_t TLS_FreeRTOS_Send( NetworkContext_t * pNetworkContext,
                            const void * pBuffer,
                            size_t bytesToSend );
 

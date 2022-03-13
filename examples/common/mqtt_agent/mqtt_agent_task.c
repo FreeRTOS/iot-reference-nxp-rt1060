@@ -326,8 +326,8 @@ static MQTTStatus_t prvMQTTInit( void )
 
     /* Fill in Transport Interface send and receive function pointers. */
     xTransport.pNetworkContext = &xNetworkContext;
-    xTransport.send = TLS_FreeRTOS_send;
-    xTransport.recv = TLS_FreeRTOS_recv;
+    xTransport.send = TLS_FreeRTOS_Send;
+    xTransport.recv = TLS_FreeRTOS_Recv;
 
     /* Initialize MQTT library. */
     xReturn = MQTTAgent_Init( &xGlobalMqttAgentContext,
