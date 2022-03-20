@@ -1,5 +1,4 @@
 /*
- * Lab-Project-coreMQTT-Agent 201215
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -60,9 +59,6 @@
 
 /* MQTT agent task API. */
 #include "mqtt_agent_task.h"
-
-/* Subscription manager header include. */
-#include "subscription_manager.h"
 
 /* Fetches thing name from the key store */
 #include "kvstore.h"
@@ -276,7 +272,7 @@ static void prvPublishCommandCallback( MQTTAgentCommandContext_t * pxCommandCont
 static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
                                          MQTTAgentReturnInfo_t * pxReturnInfo )
 {
-    bool xSubscriptionAdded = false;
+    BaseType_t xSubscriptionAdded = pdFALSE;
     MQTTAgentSubscribeArgs_t * pxSubscribeArgs = ( MQTTAgentSubscribeArgs_t * ) pxCommandContext->pArgs;
 
     /* Store the result in the application defined context so the task that
@@ -291,19 +287,13 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
     {
         /* Add subscription so that incoming publishes are routed to the application
          * callback. */
-        xSubscriptionAdded = SubscriptionStore_Add(
-            ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback(
             pxSubscribeArgs->pSubscribeInfo->pTopicFilter,
             pxSubscribeArgs->pSubscribeInfo->topicFilterLength,
             prvIncomingPublishCallback,
-            NULL );
-
-        if( xSubscriptionAdded == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        pxSubscribeArgs->pSubscribeInfo->topicFilterLength,
-                        pxSubscribeArgs->pSubscribeInfo->pTopicFilter ) );
-        }
+            NULL,
+            pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
     }
 
     xTaskNotify( pxCommandContext->xTaskToNotify,
@@ -491,9 +481,9 @@ void vSimpleSubscribePublishTask( void * pvParameters )
 
     if( xStatus == pdPASS )
     {
-        if( xIsMQTTAgentRunning() == pdFALSE )
+        if( xGetMQTTAgentState() != MQTT_AGENT_STATE_CONNECTED )
         {
-            xWaitForMQTTAgentTask( 0U );
+            ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
         }
     }
 

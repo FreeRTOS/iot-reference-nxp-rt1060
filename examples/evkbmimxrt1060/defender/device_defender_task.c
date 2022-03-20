@@ -63,9 +63,6 @@
 /* MQTT Agent task APIs. */
 #include "mqtt_agent_task.h"
 
-/* MQTT Topic subscription store APIs. */
-#include "subscription_manager.h"
-
 #if ( !defined( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS ) || ( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS < 300 ) )
     #error "Defender metrics publish interval should be greater than or equal to 300 seconds"
 #endif
@@ -256,46 +253,31 @@ static void prvReportRejectedCallback( void * pxSubscriptionContext,
 static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
                                          MQTTAgentReturnInfo_t * pxReturnInfo )
 {
-    bool xSuccess = false;
+    BaseType_t xSubscriptionAdded = pdFALSE;
 
     /* Check if the subscribe operation is a success. */
     if( pxReturnInfo->returnCode == MQTTSuccess )
     {
         /* Add subscriptions so that incoming publishes are routed to the application
          * callback. */
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cReportAcceptedTopic,
-                                          usReportAcceptedTopicLength,
-                                          prvReportAcceptedCallback,
-                                          ( void * ) pxCommandContext->xDefenderTaskHandle );
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cReportAcceptedTopic,
+                                                          usReportAcceptedTopicLength,
+                                                          prvReportAcceptedCallback,
+                                                          ( void * ) pxCommandContext->xDefenderTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
 
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usReportAcceptedTopicLength,
-                        cReportAcceptedTopic ) );
-        }
-    }
-
-    if( xSuccess == true )
-    {
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cReportRejectedTopic,
-                                          usReportRejectedTopicLength,
-                                          prvReportRejectedCallback,
-                                          ( void * ) pxCommandContext->xDefenderTaskHandle );
-
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usReportRejectedTopicLength,
-                        cReportRejectedTopic ) );
-        }
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cReportRejectedTopic,
+                                                          usReportRejectedTopicLength,
+                                                          prvReportRejectedCallback,
+                                                          ( void * ) pxCommandContext->xDefenderTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
     }
 
     /* Store the result in the application defined context so the calling task
      * can check it. */
-    pxCommandContext->xReturnStatus = xSuccess;
+    pxCommandContext->xReturnStatus = xSubscriptionAdded;
 
     xTaskNotifyGive( pxCommandContext->xDefenderTaskHandle );
 }
@@ -572,6 +554,7 @@ void vDeviceDefenderTask( void * pvParameters )
     MetricsCollectorStatus_t xCollectStatus;
     uint32_t ulReportID = 0;
     DefenderMetrics_t xMetrics = { 0 };
+    TickType_t xDelayIntervalTicks = 0U;
 
     /* Remove compiler warnings about unused parameters. */
     ( void ) pvParameters;
@@ -593,12 +576,12 @@ void vDeviceDefenderTask( void * pvParameters )
 
     if( xStatus == true )
     {
-        if( xIsMQTTAgentRunning() == pdFALSE )
+        if( xGetMQTTAgentState() != MQTT_AGENT_STATE_CONNECTED )
         {
-            xWaitForMQTTAgentTask( 0U );
+            ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
         }
 
-        LogInfo( ( "MQTT Agent is up. Initializing device defender task." ) );
+        LogInfo( ( "MQTT Agent is connected. Initializing device defender task." ) );
     }
 
     if( xStatus == true )
@@ -679,11 +662,11 @@ void vDeviceDefenderTask( void * pvParameters )
 
             LogInfo( ( "Waiting for %u seconds before publishing next metrics report.", democonfigMETRICS_PUBLISH_INTERVAL_SECONDS ) );
 
-            vTaskDelay( pdMS_TO_TICKS( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS * 1000 ) );
+            xDelayIntervalTicks = pdMS_TO_TICKS( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS * 1000 );
 
-            if( xIsMQTTAgentRunning() == pdFALSE )
+            if( xWaitForMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED, xDelayIntervalTicks ) == pdTRUE )
             {
-                xWaitForMQTTAgentTask( 0U );
+                ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
             }
         }
     }

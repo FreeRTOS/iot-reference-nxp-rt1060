@@ -90,7 +90,7 @@ int app_main( void )
         {
             if( xResult == pdPASS )
             {
-                xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+                xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
             }
 
             #if ( appmainINCLUDE_OTA_UPDATE_TASK == 1 )

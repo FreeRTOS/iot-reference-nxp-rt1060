@@ -60,9 +60,6 @@
 /* MQTT library includes. */
 #include "core_mqtt_agent.h"
 
-/* Subscription manager header include. */
-#include "subscription_manager.h"
-
 /* JSON library includes. */
 #include "core_json.h"
 
@@ -523,94 +520,53 @@ static bool prvSubscribeToShadowUpdateTopics( void )
 static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
                                          MQTTAgentReturnInfo_t * pxReturnInfo )
 {
-    bool xSuccess = false;
+    BaseType_t xSubscriptionAdded = pdFALSE;
 
     /* Check if the subscribe operation is a success. */
     if( pxReturnInfo->returnCode == MQTTSuccess )
     {
         /* Add subscriptions so that incoming publishes are routed to the application
          * callback. */
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cUpdateDeltaTopic,
-                                          usUpdateDeltaTopicLength,
-                                          prvUpdateDeltaCallback,
-                                          ( void * ) pxCommandContext->xShadowTaskHandle );
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cUpdateDeltaTopic,
+                                                          usUpdateDeltaTopicLength,
+                                                          prvUpdateDeltaCallback,
+                                                          ( void * ) pxCommandContext->xShadowTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
 
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usUpdateDeltaTopicLength,
-                        cUpdateDeltaTopic ) );
-        }
-    }
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cUpdateAcceptedTopic,
+                                                          usUpdateAcceptedTopicLength,
+                                                          prvUpdateAcceptedCallback,
+                                                          ( void * ) pxCommandContext->xShadowTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
 
-    if( xSuccess == true )
-    {
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cUpdateAcceptedTopic,
-                                          usUpdateAcceptedTopicLength,
-                                          prvUpdateAcceptedCallback,
-                                          ( void * ) pxCommandContext->xShadowTaskHandle );
 
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usUpdateAcceptedTopicLength,
-                        cUpdateAcceptedTopic ) );
-        }
-    }
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cUpdateRejectedTopic,
+                                                          usUpdateRejectedTopicLength,
+                                                          prvUpdateRejectedCallback,
+                                                          ( void * ) pxCommandContext->xShadowTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
 
-    if( xSuccess == true )
-    {
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cUpdateRejectedTopic,
-                                          usUpdateRejectedTopicLength,
-                                          prvUpdateRejectedCallback,
-                                          ( void * ) pxCommandContext->xShadowTaskHandle );
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cGetAcceptedTopic,
+                                                          usGetAcceptedTopicLength,
+                                                          prvGetAcceptedCallback,
+                                                          ( void * ) pxCommandContext->xShadowTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
 
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usUpdateRejectedTopicLength,
-                        cUpdateRejectedTopic ) );
-        }
-    }
-
-    if( xSuccess == true )
-    {
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cGetAcceptedTopic,
-                                          usGetAcceptedTopicLength,
-                                          prvGetAcceptedCallback,
-                                          ( void * ) pxCommandContext->xShadowTaskHandle );
-
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usGetAcceptedTopicLength,
-                        cGetAcceptedTopic ) );
-        }
-    }
-
-    if( xSuccess == true )
-    {
-        xSuccess = SubscriptionStore_Add( ( SubscriptionStore_t * ) xGlobalMqttAgentContext.pIncomingCallbackContext,
-                                          cGetRejectedTopic,
-                                          usGetRejectedTopicLength,
-                                          prvGetRejectedCallback,
-                                          ( void * ) pxCommandContext->xShadowTaskHandle );
-
-        if( xSuccess == false )
-        {
-            LogError( ( "Failed to register an incoming publish callback for topic %.*s.",
-                        usGetRejectedTopicLength,
-                        cGetRejectedTopic ) );
-        }
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( cGetRejectedTopic,
+                                                          usGetRejectedTopicLength,
+                                                          prvGetRejectedCallback,
+                                                          ( void * ) pxCommandContext->xShadowTaskHandle,
+                                                          pdTRUE );
+        configASSERT( xSubscriptionAdded == pdTRUE );
     }
 
     /* Store the result in the application defined context so the calling task
      * can check it. */
-    pxCommandContext->xReturnStatus = xSuccess;
+    pxCommandContext->xReturnStatus = xSubscriptionAdded;
 
     xTaskNotifyGive( pxCommandContext->xShadowTaskHandle );
 }
@@ -1433,12 +1389,12 @@ void vShadowDeviceTask( void * pvParameters )
 
     if( xStatus == true )
     {
-        if( xIsMQTTAgentRunning() == pdFALSE )
+        if( xGetMQTTAgentState() == MQTT_AGENT_STATE_CONNECTED )
         {
-            xWaitForMQTTAgentTask( 0U );
+            ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
         }
 
-        LogInfo( ( "MQTT Agent is up. Initializing shadow device task." ) );
+        LogInfo( ( "MQTT Agent is connected. Initializing shadow device task." ) );
     }
 
     if( xStatus == true )

@@ -36,86 +36,66 @@
 /**
  * @brief Flag which enables OTA update task along with the demo.
  */
-#define appmainINCLUDE_OTA_UPDATE_TASK            ( 1 )
 
-#define appmainPROVISIONING_MODE                  ( 1 )
+#define appmainRUN_QUALIFICATION_TEST_SUITE       ( 1 )
 
+#define appmainRUN_DEVICE_ADVISOR_TEST_SUITE      ( 1 )
 
-#define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
-#define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
-#define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
+#define appmainRUN_OTA_END_TO_END_TEST_SUITE      ( 0 )
+
 
 #define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
 #define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
 
+#define appmainTEST_TASK_STACK_SIZE               ( 6144 )
+#define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
+
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
-#define appmainCLI_TASK_STACK_SIZE                ( 6144 )
-#define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
+extern void prvQualificationTestTask( void * pvParameters );
 
-extern void vSimpleSubscribePublishTask( void * pvParameters );
-
-extern void vOTAUpdateTask( void * pvParam );
-
-extern void vCLITask( void * pvParam );
-
-extern BaseType_t xStartSimplePubSubTasks( uint32_t ulNumPubsubTasks,
-                                           configSTACK_DEPTH_TYPE uxStackSize,
-                                           UBaseType_t uxPriority );
+extern void vSubscribePublishTestTask( void * pvParameters );
 
 int app_main( void )
 {
     BaseType_t xResult = pdFAIL;
 
     xResult = KVStore_init();
-
-    if( xResult == pdFAIL )
-    {
-        configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
-    }
-
-    #if ( appmainPROVISIONING_MODE == 1 )
+    #if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 )
         {
             if( xResult == pdPASS )
             {
-                xResult = xTaskCreate( vCLITask,
-                                       "CLI",
-                                       appmainCLI_TASK_STACK_SIZE,
+                xResult = xTaskCreate( prvQualificationTestTask,
+                                       "TEST",
+                                       appmainTEST_TASK_STACK_SIZE,
                                        NULL,
-                                       appmainCLI_TASK_PRIORITY,
+                                       appmainTEST_TASK_PRIORITY,
                                        NULL );
             }
         }
-    #else /* if ( appmainPROVISIONING_MODE == 1 ) */
+    #endif /* if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 ) */
+
+
+
+    #if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 )
         {
             if( xResult == pdPASS )
             {
                 xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
             }
 
-            #if ( appmainINCLUDE_OTA_UPDATE_TASK == 1 )
-                {
-                    if( xResult == pdPASS )
-                    {
-                        xResult = xTaskCreate( vOTAUpdateTask,
-                                               "OTA",
-                                               appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-                                               NULL,
-                                               appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
-                                               NULL );
-                    }
-                }
-            #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
-
             if( xResult == pdPASS )
             {
-                xResult = xStartSimplePubSubTasks( appmainMQTT_NUM_PUBSUB_TASKS,
-                                                   appmainMQTT_PUBSUB_TASK_STACK_SIZE,
-                                                   appmainMQTT_PUBSUB_TASK_PRIORITY );
+                xResult = xTaskCreate( vSubscribePublishTestTask,
+                                       "TEST",
+                                       appmainTEST_TASK_STACK_SIZE,
+                                       NULL,
+                                       appmainTEST_TASK_PRIORITY,
+                                       NULL );
             }
         }
-    #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
+    #endif /* if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 ) */
 
     return pdPASS;
 }
