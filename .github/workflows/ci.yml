@@ -26,7 +26,13 @@ jobs:
       - name: Run Uncrustify
         run: |
           uncrustify --version
-          find Projects Common -iname "*.[hc]" -exec uncrustify --check -c ./uncrustify.cfg {} +
+          find -iname "*.[hc]" -exec uncrustify --check -c ./uncrustify.cfg {} +
+          if [ "$?" = "0" ]; then
+            exit 0
+          else
+            echo -e "\033[31;1;43mFormatting check (using Uncrustify) failed...\033[0m"
+            exit 1
+          fi
       - name: Check For Trailing Whitespace
         run: |
           set +e
