@@ -359,7 +359,7 @@
 		<link>
 			<name>secure_element/hostlib</name>
 			<type>2</type>
-			<location>Z:/workspace/iot-reference-nxp-rt1060/Middleware/NXP/hostLib</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/hostLib</locationURI>
 		</link>
 		<link>
 			<name>secure_element/sss</name>
@@ -424,7 +424,7 @@
 		<link>
 			<name>utilities/backoffAlgorithm</name>
 			<type>2</type>
-			<location>Z:/workspace/iot-reference-nxp-rt1060/Middleware/FreeRTOS/backoffAlgorithm/source</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/backoffAlgorithm/source</locationURI>
 		</link>
 		<link>
 			<name>utilities/fsl_assert.c</name>
@@ -469,7 +469,7 @@
 		<link>
 			<name>lwip/port/arch</name>
 			<type>2</type>
-			<location>Z:/workspace/iot-reference-nxp-rt1060/Middleware/FreeRTOS/lwip_osal/include/arch</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/lwip_osal/include/arch</locationURI>
 		</link>
 		<link>
 			<name>lwip/port/enet_ethernetif.c</name>
