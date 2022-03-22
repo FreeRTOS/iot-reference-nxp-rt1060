@@ -17,6 +17,16 @@ jobs:
         with:
           path: ./
 
+  link-verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone This Repo
+        uses: actions/checkout@v2
+      - name: Run spellings check
+        uses: FreeRTOS/CI-CD-Github-Actions/link-verifier@main
+        with:
+          path: ./
+
   formatting:
     runs-on: ubuntu-latest
     steps:
