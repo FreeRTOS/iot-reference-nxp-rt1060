@@ -27,6 +27,7 @@ jobs:
         with:
           path: ./
           include-file-types: .c,.h,.md,.dox
+          exclude-dirs: Middleware/NXP
 
   formatting:
     runs-on: ubuntu-latest
@@ -37,7 +38,7 @@ jobs:
       - name: Run Uncrustify
         run: |
           uncrustify --version
-          find -iname "*.[hc]" -exec uncrustify --check -c ./uncrustify.cfg {} +
+          find -not -path ".*/Middleware/NXP*" -iname "*.[hc]" -exec uncrustify --check -c ./uncrustify.cfg {} +
           if [ "$?" = "0" ]; then
             exit 0
           else
