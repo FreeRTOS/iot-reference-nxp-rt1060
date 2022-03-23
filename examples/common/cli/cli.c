@@ -33,6 +33,7 @@
 #include "core_pkcs11.h"
 #include "mbedtls/base64.h"
 #include "mbedtls/x509_crt.h"
+#include "mbedtls/pem.h"
 
 #define MAX_COMMAND_BUFFER_LENGTH    ( 512 )
 
@@ -239,8 +240,8 @@ static CK_RV prvGetPKCS11Object( const char * pcLabelName,
     return xResult;
 }
 
-static int prvWriteCertPem( const unsigned char * int_ca_cert_der,
-                            int len_der )
+static int prvWriteCertPemToConsole( const unsigned char * int_ca_cert_der,
+                                     int len_der )
 {
     int ret;
     const char start[] = "-----BEGIN CERTIFICATE-----\r\n";
@@ -248,37 +249,30 @@ static int prvWriteCertPem( const unsigned char * int_ca_cert_der,
 
 #define CERT_PER_LINE    64
     static char cCertPem[ 4096 ] = { 0 };
-    static size_t certLength = 0U;
-    static size_t offset = 0U, certLineLength = 0U;
-    char certLine[ CERT_PER_LINE + 3 ] = { 0 };
+    size_t offset = 0U, certLength = 0U;
 
-    ret = mbedtls_base64_encode( cCertPem,
-                                 4096,
-                                 &certLength,
-                                 int_ca_cert_der,
-                                 len_der );
+    ret = mbedtls_pem_write_buffer( start,
+                                    end,
+                                    int_ca_cert_der,
+                                    len_der,
+                                    cCertPem,
+                                    4096,
+                                    &certLength );
 
     if( ret == 0 )
     {
-        uartConsoleIO.write( start, strlen( start ) );
-
-        for( offset = 0; offset < certLength; )
+        for( offset = 0; offset < certLength; offset++ )
         {
-            memset( certLine, 0x00, sizeof( certLine ) );
-            certLineLength = CERT_PER_LINE;
-
-            if( ( certLength - offset ) < certLineLength )
+            if( ( cCertPem[ offset ] == '\n' ) &&
+                ( ( offset == 0 ) || ( cCertPem[ offset - 1 ] != '\r' ) ) )
             {
-                certLineLength = certLength - offset;
+                uartConsoleIO.write( "\r\n", 2U );
             }
-
-            strncpy( certLine, ( cCertPem + offset ), certLineLength );
-            strcat( certLine, "\r\n" );
-            uartConsoleIO.write( certLine, strlen( certLine ) );
-            offset += certLineLength;
+            else
+            {
+                uartConsoleIO.write( &cCertPem[ offset ], 1U );
+            }
         }
-
-        uartConsoleIO.write( end, strlen( end ) );
     }
 
     return ret;
@@ -309,7 +303,8 @@ static CK_RV prvWriteCertificate( const char * pcLabelName,
 
         if( ret == 0 )
         {
-            ret = prvWriteCertPem( pkcs11Object, ( int ) ( objectLength - 2 ) );
+            /* Write the certificate raw format (DER) as PEM encoded bytes to console. */
+            ret = prvWriteCertPemToConsole( certificate.raw.p, certificate.raw.len );
         }
 
         if( ret != 0 )
