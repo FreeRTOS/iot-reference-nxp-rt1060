@@ -1,4 +1,4 @@
-## IoT Refrence Integration on NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
+## IoT Reference Integration on NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
 
 
 ### Introduction
