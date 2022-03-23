@@ -26,6 +26,7 @@ jobs:
         uses: FreeRTOS/CI-CD-Github-Actions/link-verifier@main
         with:
           path: ./
+          include-file-types: .c,.h,.md,.dox
 
   formatting:
     runs-on: ubuntu-latest
