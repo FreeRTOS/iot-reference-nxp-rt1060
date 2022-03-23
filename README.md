@@ -70,6 +70,9 @@ git submodule update --init --recursive
 
 To get started running a coreMQTT Agent demo that publishes and subscribes messages with AWS IoT MQTT broker, along with over-the-air updates functionality, see the [README](examples/evkbmimxrt1060/pubsub/README.md).
 
+### Security
+See [CONTRIBUTING](CONTRIBUTING.md) for more information.
+
 
 ### License
 
