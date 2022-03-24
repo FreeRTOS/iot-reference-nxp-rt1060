@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Clone This Repo
         uses: actions/checkout@v2
-      - name: Run spellings check
+      - name: Run link verifier
         uses: FreeRTOS/CI-CD-Github-Actions/link-verifier@main
         with:
           path: ./
