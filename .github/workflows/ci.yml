@@ -28,7 +28,7 @@ jobs:
         run: |
           PATH=$PATH:actions/spellings/tools
           # Make sure that the portable directory is not included in the spellcheck.
-          sed -i 's/find $DIRNAME \(/find $DIRNAME \( -not -path \".\*/Middleware/NXP\*\"/g' actions/spellings/tools/find-unknown-comment-words
+          sed -i 's/find $DIRNAME \\(/find $DIRNAME \\( -not -path \\".\\*\/Middleware\/NXP\\*\\"/g' actions/spellings/tools/find-unknown-comment-words
           find-unknown-comment-words --directory NXPRef/ --lexicon NXPRef/lexicon.txt
           if [ "$?" = "0" ]; then
             exit 0
