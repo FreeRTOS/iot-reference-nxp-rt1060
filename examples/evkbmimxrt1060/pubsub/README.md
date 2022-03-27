@@ -80,7 +80,7 @@ This is a one time setup required for performing OTA firmware updates.
 3.  Provision the code signining public key to the board using the steps below.
       1. Get the ECDSA public key from the code signing credentials generated in step 2:
       ```
-      openssl ec -in ecdsasigner.key  -outform PEM -out ecdsasigner-pub-key.pem
+      openssl ec -in ecdsasigner.key -pubout -outform PEM -out ecdsasigner-pub-key.pem
       ```
       2. Switch to device provisioning mode by setting `appmainPROVISIONING_MODE` to `1`, recompiling and downloading the firmware.
       3. On the terminal CLI prompt, run the following command:
