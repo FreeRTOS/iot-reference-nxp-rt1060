@@ -83,7 +83,7 @@ void sys_assert( char *pcMessage )
 
 /************************************************************************
 * Generates a pseudo-random number.
-* NOTE: Contrubuted by the FNET project.
+* NOTE: Contributed by the FNET project.
 *************************************************************************/
 static  u32_t _rand_value;
 u32_t lwip_rand(void)
