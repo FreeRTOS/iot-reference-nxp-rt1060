@@ -292,7 +292,7 @@ typedef struct _flexspi_nor_config
     uint8_t serialNorType;          //!< Serial NOR Flash type: 0/1/2/3
     uint8_t needExitNoCmdMode;      //!< Need to exit NoCmd mode before other IP command
     uint8_t halfClkForNonReadCmd;   //!< Half the Serial Clock for non-read command: true/false
-    uint8_t needRestoreNoCmdMode;   //!< Need to Restore NoCmd mode after IP commmand execution
+    uint8_t needRestoreNoCmdMode;   //!< Need to Restore NoCmd mode after IP command execution
     uint32_t blockSize;             //!< Block size
 #if (defined SOC_IMXRTXXX_SERIES)
     uint32_t flashStateCtx; /*!< Flash State Context */

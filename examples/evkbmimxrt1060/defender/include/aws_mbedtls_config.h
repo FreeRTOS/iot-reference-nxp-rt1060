@@ -2045,7 +2045,7 @@ extern void mbedtls_platform_free( void * ptr );
  *      MBEDTLS_TLS_PSK_WITH_RC4_128_SHA
  *
  * \warning   ARC4 is considered a weak cipher and its use constitutes a
- *            security risk. If possible, we recommend avoidng dependencies on
+ *            security risk. If possible, we recommend avoiding dependencies on
  *            it, and considering stronger ciphers instead.
  *
  */
