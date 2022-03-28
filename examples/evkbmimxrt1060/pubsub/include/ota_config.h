@@ -131,7 +131,7 @@
  * This configurations parameter sets the maximum number of static data buffers used by
  * the OTA agent for job and file data blocks received.
  */
-#define otaconfigMAX_NUM_OTA_DATA_BUFFERS      4U
+#define otaconfigMAX_NUM_OTA_DATA_BUFFERS      5U
 
 /**
  * @brief The protocol selected for OTA control operations.

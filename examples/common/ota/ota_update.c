@@ -172,7 +172,7 @@
 /**
  * @brief Task priority of OTA agent.
  */
-#define otaexampleAGENT_TASK_PRIORITY            ( tskIDLE_PRIORITY + 1 )
+#define otaexampleAGENT_TASK_PRIORITY            ( tskIDLE_PRIORITY + 2 )
 
 /**
  * @brief Maximum stack size of OTA agent task.
@@ -892,17 +892,25 @@ static OtaMqttStatus_t prvMQTTSubscribe( const char * pTopicFilter,
     xCommandParams.cmdCompleteCallback = prvSubscribeCommandCallback;
     xCommandParams.pCmdCompleteCallbackContext = ( void * ) &xCommandContext;
 
+    /*
+     * Wait for Agent to be connected before sending a subscribe message.
+     */
+    if( xGetMQTTAgentState() != MQTT_AGENT_STATE_CONNECTED )
+    {
+        ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
+    }
+
     xTaskNotifyStateClear( NULL );
 
     mqttStatus = MQTTAgent_Subscribe( &xGlobalMqttAgentContext,
                                       &xSubscribeArgs,
                                       &xCommandParams );
 
-    /* Wait for command to complete so MQTTSubscribeInfo_t remains in scope for the
+    /* Block for command to complete so MQTTSubscribeInfo_t remains in scope for the
      * duration of the command. */
     if( mqttStatus == MQTTSuccess )
     {
-        result = xTaskNotifyWait( 0, otaexampleMAX_UINT32, &ulNotifiedValue, pdMS_TO_TICKS( otaexampleMQTT_TIMEOUT_MS ) );
+        result = xTaskNotifyWait( 0, otaexampleMAX_UINT32, &ulNotifiedValue, portMAX_DELAY );
 
         if( result == pdTRUE )
         {
@@ -954,21 +962,30 @@ static OtaMqttStatus_t prvMQTTPublish( const char * const pacTopic,
     publishInfo.payloadLength = msgSize;
 
     xCommandContext.xTaskToNotify = xTaskGetCurrentTaskHandle();
-    xTaskNotifyStateClear( NULL );
 
     xCommandParams.blockTimeMs = otaexampleMQTT_TIMEOUT_MS;
     xCommandParams.cmdCompleteCallback = prvCommandCallback;
     xCommandParams.pCmdCompleteCallbackContext = ( void * ) &xCommandContext;
 
+    /*
+     * Wait for Agent to be connected before sending a publish message.
+     */
+    if( xGetMQTTAgentState() != MQTT_AGENT_STATE_CONNECTED )
+    {
+        ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
+    }
+
+    xTaskNotifyStateClear( NULL );
+
     mqttStatus = MQTTAgent_Publish( &xGlobalMqttAgentContext,
                                     &publishInfo,
                                     &xCommandParams );
 
-    /* Wait for command to complete so MQTTSubscribeInfo_t remains in scope for the
+    /* Block for command to complete so MQTTPublishInfo_t remains in scope for the
      * duration of the command. */
     if( mqttStatus == MQTTSuccess )
     {
-        result = xTaskNotifyWait( 0, otaexampleMAX_UINT32, &ulNotifiedValue, pdMS_TO_TICKS( otaexampleMQTT_TIMEOUT_MS ) );
+        result = xTaskNotifyWait( 0, otaexampleMAX_UINT32, &ulNotifiedValue, portMAX_DELAY );
 
         if( result != pdTRUE )
         {
@@ -1035,11 +1052,11 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
                                         &xSubscribeArgs,
                                         &xCommandParams );
 
-    /* Wait for command to complete so MQTTSubscribeInfo_t remains in scope for the
+    /* Block for command to complete so MQTTSubscribeInfo_t remains in scope for the
      * duration of the command. */
     if( mqttStatus == MQTTSuccess )
     {
-        result = xTaskNotifyWait( 0, otaexampleMAX_UINT32, &ulNotifiedValue, pdMS_TO_TICKS( otaexampleMQTT_TIMEOUT_MS ) );
+        result = xTaskNotifyWait( 0, otaexampleMAX_UINT32, &ulNotifiedValue, portMAX_DELAY );
 
         if( result == pdTRUE )
         {
@@ -1105,33 +1122,6 @@ static void setOtaInterfaces( OtaInterfaces_t * pOtaInterfaces )
     pOtaInterfaces->pal.createFile = xOtaPalCreateFileForRx;
 }
 
-void vSuspendOTAUpdate( void )
-{
-    if( ( OTA_GetState() != OtaAgentStateSuspended ) && ( OTA_GetState() != OtaAgentStateStopped ) )
-    {
-        OTA_Suspend();
-
-        while( ( OTA_GetState() != OtaAgentStateSuspended ) &&
-               ( OTA_GetState() != OtaAgentStateStopped ) )
-        {
-            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
-        }
-    }
-}
-
-void vResumeOTAUpdate( void )
-{
-    if( OTA_GetState() == OtaAgentStateSuspended )
-    {
-        OTA_Resume();
-
-        while( OTA_GetState() == OtaAgentStateSuspended )
-        {
-            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
-        }
-    }
-}
-
 void vOTAUpdateTask( void * pvParam )
 {
     /* FreeRTOS APIs return status. */
@@ -1191,16 +1181,6 @@ void vOTAUpdateTask( void * pvParam )
         {
             xResult = pdFAIL;
         }
-    }
-
-    if( xResult == pdPASS )
-    {
-        if( xGetMQTTAgentState() != MQTT_AGENT_STATE_CONNECTED )
-        {
-            ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
-        }
-
-        LogInfo( ( "MQTT Agent is connected. Starting OTA agent task." ) );
     }
 
     if( xResult == pdPASS )
@@ -1269,9 +1249,7 @@ void vOTAUpdateTask( void * pvParam )
             if( xWaitForMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED,
                                         pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) ) == pdTRUE )
             {
-                vSuspendOTAUpdate();
                 ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
-                vResumeOTAUpdate();
             }
         }
     }
