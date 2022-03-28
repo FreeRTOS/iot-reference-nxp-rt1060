@@ -113,7 +113,7 @@
 /**
  * @brief The maximum number of retries for network operation with server.
  */
-#define RETRY_MAX_ATTEMPTS                           ( 5U )
+#define RETRY_MAX_ATTEMPTS                           ( 20U )
 
 /**
  * @brief The maximum back-off delay (in milliseconds) for retrying failed operation
@@ -144,6 +144,15 @@
 #define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 750 )
 
 /**
+ * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
+ * If the flag is set to true, MQTT broker will remember the previous session so that a re
+ * subscription to the topics are not required. Also any incoming publishes to subscriptions
+ * will be stored by the broker and resend to device, when it comes back online.
+ *
+ */
+#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 0 )
+
+/**
  * @brief Used to convert times to/from ticks and milliseconds.
  */
 #define mqttexampleMILLISECONDS_PER_SECOND           ( 1000U )
@@ -155,9 +164,19 @@
  */
 #define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 ) ''
 
-#define EVENT_BIT( xState )    ( ( EventBits_t ) ( 1UL << xState ) )
+/**
+ * @brief Event Bit corresponding to an MQTT agent state.
+ * The event bit is used to set the state bit in event group so that application tasks can
+ * wait on a state transition.
+ */
+#define mqttexampleEVENT_BIT( xState )    ( ( EventBits_t ) ( 1UL << xState ) )
 
-#define EVENT_BITS_ALL    ( ( EventBits_t ) ( ( 1ULL << MQTT_AGENT_NUM_STATES ) - 1U ) )
+/**
+ * @brief Mask to clear all set event bits for the MQTT agent state event group.
+ * State event group is always cleared before setting the next state event bit so that only
+ * state is set at anytime.
+ */
+#define mqttexampleEVENT_BITS_ALL    ( ( EventBits_t ) ( ( 1ULL << MQTT_AGENT_NUM_STATES ) - 1U ) )
 
 /*-----------------------------------------------------------*/
 
@@ -187,13 +206,11 @@ static MQTTStatus_t prvMQTTInit( void );
 /**
  * @brief Sends an MQTT Connect packet over the already connected TCP socket.
  *
- * @param[in] pxMQTTContext MQTT context pointer.
- * @param[in] xCleanSession If a clean session should be established.
- *
+ * @param[in] xIsReconnect Boolean flag to indicate if this is a reconnection.
  * @return `MQTTSuccess` if connection succeeds, else appropriate error code
  * from MQTT_Connect.
  */
-static MQTTStatus_t prvCreateMQTTConnection( bool xCleanSession );
+static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect );
 
 /**
  * @brief Connect a TCP socket to the MQTT broker.
@@ -211,7 +228,7 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext );
  *
  * @return `pdPASS` if disconnect succeeds, else `pdFAIL`.
  */
-static BaseType_t prvDisconnectFromBroker( NetworkContext_t * pxNetworkContext );
+static BaseType_t prvDisconnectTLS( NetworkContext_t * pxNetworkContext );
 
 /**
  * @brief Function to attempt to resubscribe to the topics already present in the
@@ -224,10 +241,18 @@ static BaseType_t prvDisconnectFromBroker( NetworkContext_t * pxNetworkContext )
  *
  * @return `MQTTSuccess` if adding subscribes to the command queue succeeds, else
  * appropriate error code from MQTTAgent_Subscribe.
- * */
+ */
 static MQTTStatus_t prvHandleResubscribe( void );
 
-
+/**
+ * @brief The callback invoked by MQTT agent for a response to SUBSCRIBE request.
+ * Parameter indicates whether the request was successful or not. If subscribe was not successful
+ * then callback removes the topic from the subscription store and displays a warning log.
+ *
+ *
+ * @param pxCommandContext Pointer to the command context passed from caller
+ * @param pxReturnInfo Return Info containing the result of the subscribe command.
+ */
 static void prvSubscriptionCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
                                             MQTTAgentReturnInfo_t * pxReturnInfo );
 
@@ -260,8 +285,11 @@ static uint32_t prvGetTimeMs( void );
 /**
  * @brief Connects a TCP socket to the MQTT broker, then creates and MQTT
  * connection to the same.
+ * @param[in] xIsReconnect Boolean flag to indicate if its a reconnection.
+ * @return MQTTConnected if connection was successful, MQTTNotConnected if MQTT connection
+ *         failed and all retries exhausted.
  */
-static BaseType_t prvConnectToMQTTBroker( bool xIsReconnect );
+static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect );
 
 /**
  * @brief Get the string value for a key from the KV store.
@@ -389,7 +417,7 @@ static MQTTStatus_t prvMQTTInit( void )
 
 /*-----------------------------------------------------------*/
 
-static MQTTStatus_t prvCreateMQTTConnection( bool xCleanSession )
+static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
 {
     MQTTStatus_t xResult;
     MQTTConnectInfo_t xConnectInfo;
@@ -402,7 +430,15 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xCleanSession )
      * previous session data. Also, establishing a connection with clean session
      * will ensure that the broker does not store any data when this client
      * gets disconnected. */
-    xConnectInfo.cleanSession = xCleanSession;
+    #if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 1 )
+        {
+            xConnectInfo.cleanSession = false;
+        }
+    #else
+        {
+            xConnectInfo.cleanSession = true;
+        }
+    #endif
 
     /* The client identifier is used to uniquely identify this MQTT client to
      * the MQTT broker. In a production device the identifier can be something
@@ -450,7 +486,7 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xCleanSession )
                             mqttexampleCONNACK_RECV_TIMEOUT_MS,
                             &xSessionPresent );
 
-    if( ( xResult == MQTTSuccess ) && ( xCleanSession == false ) )
+    if( ( xResult == MQTTSuccess ) && ( xIsReconnect == true ) )
     {
         LogInfo( ( "Resuming previous MQTT session with broker." ) );
         xResult = MQTTAgent_ResumeSession( &xGlobalMqttAgentContext, xSessionPresent );
@@ -525,7 +561,7 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 
 /*-----------------------------------------------------------*/
 
-static BaseType_t prvDisconnectFromBroker( NetworkContext_t * pxNetworkContext )
+static BaseType_t prvDisconnectTLS( NetworkContext_t * pxNetworkContext )
 {
     LogInfo( ( "Disconnecting TLS connection.\n" ) );
     TLS_FreeRTOS_Disconnect( pxNetworkContext );
@@ -687,8 +723,6 @@ void prvMQTTAgentTask( void * pvParameters )
 {
     BaseType_t xStatus = pdFAIL;
     MQTTStatus_t xMQTTStatus = MQTTBadParameter;
-    BaseType_t xConnected = pdFALSE;
-    bool xReconnect = false;
     MQTTContext_t * pMqttContext = &( xGlobalMqttAgentContext.mqttContext );
 
     ( void ) pvParameters;
@@ -747,57 +781,59 @@ void prvMQTTAgentTask( void * pvParameters )
     if( xStatus == pdPASS )
     {
         xMQTTStatus = prvMQTTInit();
+
+        if( xMQTTStatus != MQTTSuccess )
+        {
+            LogError( ( "Failed to initialize MQTT with error %d.", xMQTTStatus ) );
+        }
     }
 
     if( xMQTTStatus == MQTTSuccess )
     {
-        xReconnect = false;
+        pMqttContext->connectStatus = prvConnectToMQTTBroker( false );
 
-        for( ; ; )
+        while( pMqttContext->connectStatus == MQTTConnected )
         {
-            xConnected = prvConnectToMQTTBroker( xReconnect );
+            /* MQTTAgent_CommandLoop() is effectively the agent implementation.  It
+             * will manage the MQTT protocol until such time that an error occurs,
+             * which could be a disconnect.  If an error occurs the MQTT context on
+             * which the error happened is returned so there is an attempt to
+             * clean up and reconnect. */
+            prvSetMQTTAgentState( MQTT_AGENT_STATE_CONNECTED );
 
-            if( xConnected == pdTRUE )
+            xMQTTStatus = MQTTAgent_CommandLoop( &xGlobalMqttAgentContext );
+
+            pMqttContext->connectStatus = MQTTNotConnected;
+            prvSetMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED );
+
+            /*
+             * Cancel all pending requests so that a callback with an error will be invoked for
+             * all pending requests. Its up to application to retry the requests once MQTT agent
+             * is reconnected.
+             */
+            #if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 0 )
+                {
+                    ( void ) MQTTAgent_CancelAll( &xGlobalMqttAgentContext );
+                }
+            #endif
+
+            if( xMQTTStatus == MQTTSuccess )
             {
-                /* MQTTAgent_CommandLoop() is effectively the agent implementation.  It
-                 * will manage the MQTT protocol until such time that an error occurs,
-                 * which could be a disconnect.  If an error occurs the MQTT context on
-                 * which the error happened is returned so there is an attempt to
-                 * clean up and reconnect. */
-
-                pMqttContext->connectStatus = MQTTConnected;
-                prvSetMQTTAgentState( MQTT_AGENT_STATE_CONNECTED );
-
-
-                xMQTTStatus = MQTTAgent_CommandLoop( &xGlobalMqttAgentContext );
-
-                pMqttContext->connectStatus = MQTTNotConnected;
-                prvSetMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED );
-
-                if( xMQTTStatus == MQTTSuccess )
-                {
-                    /* Success is returned for a graceful disconnect or termination. The socket should
-                     * be disconnected and exit the loop. */
-                    ( void ) prvDisconnectFromBroker( &xNetworkContext );
-                    break;
-                }
-                else
-                {
-                    /* MQTT agent returned due to an underlying error, reconnect to the loop. */
-                    ( void ) prvDisconnectFromBroker( &xNetworkContext );
-                    xReconnect = true;
-                }
+                /*
+                 * On a graceful termination, MQTT agent loop returns success.
+                 * Disconnect the socket and terminate MQTT agent loop.
+                 */
+                LogInfo( ( "MQTT Agent loop terminated due to a graceful disconnect." ) );
+                ( void ) prvDisconnectTLS( &xNetworkContext );
             }
             else
             {
-                LogError( ( "Failed to connect to MQTT broker after retries. Exiting MQTT agent loop." ) );
-                break;
+                LogInfo( ( "MQTT Agent loop terminated due to abrupt disconnect. Retrying MQTT connection.." ) );
+                /* MQTT agent returned due to an underlying error, reconnect to the loop. */
+                ( void ) prvDisconnectTLS( &xNetworkContext );
+                pMqttContext->connectStatus = prvConnectToMQTTBroker( true );
             }
         }
-    }
-    else
-    {
-        LogError( ( "Failed to initialize MQTT." ) );
     }
 
     prvSetMQTTAgentState( MQTT_AGENT_STATE_TERMINATED );
@@ -831,10 +867,11 @@ void prvMQTTAgentTask( void * pvParameters )
 
 /*-----------------------------------------------------------*/
 
-static BaseType_t prvConnectToMQTTBroker( bool xIsReconnect )
+static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect )
 {
     BaseType_t xStatus = pdFAIL;
     MQTTStatus_t xMQTTStatus;
+    MQTTConnectionStatus_t xConnectionStatus = MQTTNotConnected;
     BackoffAlgorithmStatus_t xBackoffAlgStatus = BackoffAlgorithmSuccess;
     BackoffAlgorithmContext_t xReconnectParams = { 0 };
     uint16_t usNextRetryBackOff = 0U;
@@ -859,17 +896,18 @@ static BaseType_t prvConnectToMQTTBroker( bool xIsReconnect )
 
         if( xStatus == pdPASS )
         {
-            xMQTTStatus = prvCreateMQTTConnection( !xIsReconnect );
+            xMQTTStatus = prvCreateMQTTConnection( xIsReconnect );
 
             if( xMQTTStatus != MQTTSuccess )
             {
                 LogError( ( "Failed to connect to MQTT broker, error = %u", xMQTTStatus ) );
-                prvDisconnectFromBroker( &xNetworkContext );
+                prvDisconnectTLS( &xNetworkContext );
                 xStatus = pdFAIL;
             }
             else
             {
                 LogInfo( ( "Successfully connected to MQTT broker." ) );
+                xConnectionStatus = MQTTConnected;
             }
         }
 
@@ -894,9 +932,9 @@ static BaseType_t prvConnectToMQTTBroker( bool xIsReconnect )
                 /* Empty Else. */
             }
         }
-    } while( ( xStatus != pdPASS ) && ( xBackoffAlgStatus == BackoffAlgorithmSuccess ) );
+    } while( ( xConnectionStatus == MQTTNotConnected ) && ( xBackoffAlgStatus == BackoffAlgorithmSuccess ) );
 
-    return xStatus;
+    return xConnectionStatus;
 }
 /*-----------------------------------------------------------*/
 
@@ -954,8 +992,8 @@ static bool prvMatchTopicFilterSubscriptions( MQTTPublishInfo_t * pxPublishInfo 
 static void prvSetMQTTAgentState( MQTTAgentState_t xAgentState )
 {
     xState = xAgentState;
-    ( void ) xEventGroupClearBits( xStateEventGrp, EVENT_BITS_ALL );
-    ( void ) xEventGroupSetBits( xStateEventGrp, EVENT_BIT( xAgentState ) );
+    ( void ) xEventGroupClearBits( xStateEventGrp, mqttexampleEVENT_BITS_ALL );
+    ( void ) xEventGroupSetBits( xStateEventGrp, mqttexampleEVENT_BIT( xAgentState ) );
 }
 
 /*-----------------------------------------------------------*/
@@ -1016,7 +1054,7 @@ BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xState,
 
     if( xState != MQTT_AGENT_STATE_NONE )
     {
-        xBitsToWaitFor = EVENT_BIT( xState );
+        xBitsToWaitFor = mqttexampleEVENT_BIT( xState );
         xBitsSet = xEventGroupWaitBits( xStateEventGrp, xBitsToWaitFor, pdFALSE, pdFALSE, xTicksToWait );
 
         if( ( xBitsSet & xBitsToWaitFor ) != 0 )

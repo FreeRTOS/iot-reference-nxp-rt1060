@@ -8,18 +8,6 @@
 #define __MCUBOOT_CONFIG_H__
 
 #include <sbl.h>
-/*
- * Template configuration file for MCUboot.
- *
- * When porting MCUboot to a new target, copy it somewhere that your
- * include path can find it as mcuboot_config/mcuboot_config.h, and
- * make adjustments to suit your platform.
- *
- * For examples, see:
- *
- * boot/zephyr/include/mcuboot_config/mcuboot_config.h
- * boot/mynewt/mcuboot_config/include/mcuboot_config/mcuboot_config.h
- */
 
 /*
  * Signature types

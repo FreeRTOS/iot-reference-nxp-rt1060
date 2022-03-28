@@ -17,12 +17,9 @@
  * under the License.
  */
 
-//#include <zephyr.h>
 #include "sbl.h"
 #include <string.h>
 #include "mcuboot_config.h"
-
-//#include "os/os_heap.h"
 
 //#ifdef CONFIG_BOOT_USE_MBEDTLS
 #ifdef MCUBOOT_USE_MBED_TLS

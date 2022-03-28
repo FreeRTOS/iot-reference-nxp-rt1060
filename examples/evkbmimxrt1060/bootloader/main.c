@@ -65,8 +65,6 @@ int main(void)
 
     SCB_DisableDCache();
 
-    PRINTF("hello sbl.\r\n");
-
     (void)sbl_boot_main();
 
     return 0;

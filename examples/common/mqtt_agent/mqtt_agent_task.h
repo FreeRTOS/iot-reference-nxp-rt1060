@@ -32,11 +32,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-
 /**
- * @brief Enum value indicates different states for MQTT agent.
- * Application tasks can query MQTT agent states or register callback for
- * state changes.
+ * @brief Enum defines states which MQTT agent exposes to the MQTT application tasks.
+ * Application can query the state of the MQTT agent or wait for MQTT agent to reach a
+ * desired state.
  */
 typedef enum MQTTAgentState
 {
@@ -47,7 +46,6 @@ typedef enum MQTTAgentState
     MQTT_AGENT_STATE_TERMINATED = 4,
     MQTT_AGENT_NUM_STATES
 } MQTTAgentState_t;
-
 
 /**
  * @brief Callback function called when receiving a publish.
