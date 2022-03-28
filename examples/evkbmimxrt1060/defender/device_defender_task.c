@@ -197,7 +197,7 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
 
 
 /**
- * @brief Creates the required defeneder topics for the example, given thing name as the parameter.
+ * @brief Creates the required defender topics for the example, given thing name as the parameter.
  *
  * @param[in] pcThingName Pointer to the thing name
  * @param[in] xThingNameLength Length of the thing name.
