@@ -46,7 +46,7 @@ OtaPalImageState_t xOtaPalGetPlatformImageState( OtaFileContext_t * const pFileC
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
  * @param[in] eState State to be set for the firmware image.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalSetPlatformImageState( OtaFileContext_t * const pFileContext,
                                              OtaImageState_t eState );
@@ -57,7 +57,7 @@ OtaPalStatus_t xOtaPalSetPlatformImageState( OtaFileContext_t * const pFileConte
  * new image after a successful update.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalResetDevice( OtaFileContext_t * const pFileContext );
 
@@ -66,7 +66,7 @@ OtaPalStatus_t xOtaPalResetDevice( OtaFileContext_t * const pFileContext );
  * The API should prepare the new image to be booted up and reset the device to boot up with the new image.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalActivateNewImage( OtaFileContext_t * const pFileContext );
 
@@ -88,7 +88,7 @@ int16_t xOtaPalWriteBlock( OtaFileContext_t * const pFileContext,
  * @brief Closes the firmware image after reading or writing.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const pFileContext );
 
@@ -96,7 +96,7 @@ OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const pFileContext );
  * @brief Prepares a new firmware image to be written.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalCreateFileForRx( OtaFileContext_t * const pFileContext );
 
@@ -104,7 +104,7 @@ OtaPalStatus_t xOtaPalCreateFileForRx( OtaFileContext_t * const pFileContext );
  * @brief Aborts the current firmware image being written.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalAbort( OtaFileContext_t * const pFileContext );
 
@@ -113,7 +113,7 @@ OtaPalStatus_t xOtaPalAbort( OtaFileContext_t * const pFileContext );
  * The API is used to verify the image signature after it has been written.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return OtaPalSuccess if succesful, else OTA error code along with detailed PAL error code.
+ * @return OtaPalSuccess if successful, else OTA error code along with detailed PAL error code.
  */
 OtaPalStatus_t xOtaPalOpenFileForRead( OtaFileContext_t * const pContext );
 

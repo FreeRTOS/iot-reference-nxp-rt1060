@@ -23,7 +23,7 @@
 #define FLASH_AREA_IMAGE_PRIMARY(x)   (((x) == 0) ? FLASH_AREA_ID(image_0) : FLASH_AREA_ID(image_0))
 #define FLASH_AREA_IMAGE_SECONDARY(x) (((x) == 0) ? FLASH_AREA_ID(image_1) : FLASH_AREA_ID(image_1))
 #elif (MCUBOOT_IMAGE_NUMBER == 2)
-/* MCUBoot currently supports only up to 2 updateable firmware images.
+/* MCUBoot currently supports only up to 2 updatable firmware images.
  * If the number of the current image is greater than MCUBOOT_IMAGE_NUMBER - 1
  * then a dummy value will be assigned to the flash area macros.
  */

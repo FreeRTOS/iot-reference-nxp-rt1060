@@ -82,7 +82,7 @@ MQTTAgentState_t xGetMQTTAgentState( void );
 
 /**
  * @brief Wait for MQTT agent to reach the desired state.
- * Function blocks caller task for a timeout period, untill MQTT agent reaches the specified state. Function can be
+ * Function blocks caller task for a timeout period, until MQTT agent reaches the specified state. Function can be
  * called from multiple tasks concurrently.
  *
  * @param[in] xStateToWait The desired MQTT agent state to reach.

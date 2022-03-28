@@ -46,7 +46,7 @@
  * @brief Opens a PKCS11 Session.
  *
  * @param[out] xSession Handle to the session opened.
- * @return CKR_OK if succesful.
+ * @return CKR_OK if successful.
  */
 static CK_RV prvOpenPKCS11Session( CK_SESSION_HANDLE_PTR pSession );
 
@@ -54,7 +54,7 @@ static CK_RV prvOpenPKCS11Session( CK_SESSION_HANDLE_PTR pSession );
  * @brief Closes a PKCS11 Session.
  *
  * @param[out] xSession Session to be closed.
- * @return CKR_OK if succesful.
+ * @return CKR_OK if successful.
  */
 static CK_RV prvClosePKCS11Session( CK_SESSION_HANDLE xSession );
 
@@ -64,7 +64,7 @@ static CK_RV prvClosePKCS11Session( CK_SESSION_HANDLE xSession );
  * @param[in] xSession PKCS11 session being opened.
  * @param[in] pcLabelName String containing the label name for the certificate slot.
  * @param[out] pxCertHandle The handle for the certificate slot.
- * @return CKR_OK if succesful
+ * @return CKR_OK if successful
  */
 static CK_RV prvPKCS11GetCertificateHandle( CK_SESSION_HANDLE xSession,
                                             const char * pcLabelName,

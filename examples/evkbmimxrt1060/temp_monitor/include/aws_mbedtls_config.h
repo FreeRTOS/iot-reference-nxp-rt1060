@@ -123,7 +123,7 @@
  * from size of inputs. If inputs and result can fit into FREESCALE_PKHA_INT_MAX_BYTES
  * then we call hardware algorithm, otherwise we call software algorithm.
  *
- * Note that mbedTLS algorithms break modular operations unefficiently into two steps.
+ * Note that mbedTLS algorithms break modular operations inefficiently into two steps.
  * First is normal operation, for example non-modular multiply, which can produce number
  * with greater size than operands. Second is modular reduction.
  * The implication of this is that if for example FREESCALE_PKHA_INT_MAX_BYTES is 256 (2048 bits),
@@ -922,7 +922,7 @@ extern void mbedtls_platform_free( void * ptr );
 #define MBEDTLS_ECP_DP_SECP224R1_ENABLED
 #define MBEDTLS_ECP_DP_SECP256R1_ENABLED
 #define MBEDTLS_ECP_DP_SECP384R1_ENABLED
-#ifndef MBEDTLS_FREESCALE_LTC_PKHA /* PKHA suports only <=512 */
+#ifndef MBEDTLS_FREESCALE_LTC_PKHA /* PKHA supports only <=512 */
 #define MBEDTLS_ECP_DP_SECP521R1_ENABLED
 #endif
 #define MBEDTLS_ECP_DP_SECP192K1_ENABLED
