@@ -21,7 +21,7 @@
 #include <string.h>
 #include "mcuboot_config.h"
 
-//#ifdef CONFIG_BOOT_USE_MBEDTLS
+/*#ifdef CONFIG_BOOT_USE_MBEDTLS */
 #ifdef MCUBOOT_USE_MBED_TLS
 
 #include <mbedtls/platform.h>
@@ -33,28 +33,28 @@
  * enough. When using RSA-2048-OAEP encryption + RSA-2048 signing, 10240
  * bytes seem to be enough.
  */
-//#if !defined(CONFIG_BOOT_ENCRYPT_RSA)
-#if !defined(MCUBOOT_ENCRYPT_RSA)
-#define CRYPTO_HEAP_SIZE 8192
+/*#if !defined(CONFIG_BOOT_ENCRYPT_RSA) */
+#if !defined( MCUBOOT_ENCRYPT_RSA )
+#define CRYPTO_HEAP_SIZE    8192
 #else
-#define CRYPTO_HEAP_SIZE 10240
+#define CRYPTO_HEAP_SIZE    10240
 #endif
 
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-static unsigned char mempool[CRYPTO_HEAP_SIZE];
+#if defined( MBEDTLS_MEMORY_BUFFER_ALLOC_C )
+static unsigned char mempool[ CRYPTO_HEAP_SIZE ];
 #endif
 
 /*
  * Initialize mbedtls to be able to use the local heap.
  */
-void os_heap_init(void)
+void os_heap_init( void )
 {
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-    mbedtls_memory_buffer_alloc_init(mempool, sizeof(mempool));
+#if defined( MBEDTLS_MEMORY_BUFFER_ALLOC_C )
+    mbedtls_memory_buffer_alloc_init( mempool, sizeof( mempool ) );
 #endif
 }
-#else
-void os_heap_init(void)
+#else /* ifdef MCUBOOT_USE_MBED_TLS */
+void os_heap_init( void )
 {
 }
-#endif
+#endif /* ifdef MCUBOOT_USE_MBED_TLS */

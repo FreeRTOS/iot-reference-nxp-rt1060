@@ -14,10 +14,10 @@
 #include "clock_config.h"
 #include "board.h"
 
-#if defined(FSL_FEATURE_SOC_DCP_COUNT) && (FSL_FEATURE_SOC_DCP_COUNT > 0)
+#if defined( FSL_FEATURE_SOC_DCP_COUNT ) && ( FSL_FEATURE_SOC_DCP_COUNT > 0 )
 #include "fsl_dcp.h"
 #endif
-#if defined(FSL_FEATURE_SOC_TRNG_COUNT) && (FSL_FEATURE_SOC_TRNG_COUNT > 0)
+#if defined( FSL_FEATURE_SOC_TRNG_COUNT ) && ( FSL_FEATURE_SOC_TRNG_COUNT > 0 )
 #include "fsl_trng.h"
 #endif
 
@@ -25,35 +25,37 @@
  * Definitions
  ******************************************************************************/
 #ifdef SOC_REMAP_ENABLE
-#define REMAPADDRSTART  0x400AC078
-#define REMAPADDREND    0x400AC07C
-#define REMAPADDROFFSET 0x400AC080
+#define REMAPADDRSTART     0x400AC078
+#define REMAPADDREND       0x400AC07C
+#define REMAPADDROFFSET    0x400AC080
 #endif
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-#if (defined(COMPONENT_MCU_ISP))
-extern int isp_kboot_main(bool isInfiniteIsp);
+#if ( defined( COMPONENT_MCU_ISP ) )
+extern int isp_kboot_main( bool isInfiniteIsp );
 #endif
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
 
-void BOARD_InitModuleClock(void)
+void BOARD_InitModuleClock( void )
 {
-    const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1};
-    CLOCK_InitEnetPll(&config);
+    const clock_enet_pll_config_t config = { .enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1 };
+
+    CLOCK_InitEnetPll( &config );
 }
 
 /*!
  * @brief Main function
  */
-int main(void)
+int main( void )
 {
-#if (defined(COMPONENT_MCU_ISP))
+#if ( defined( COMPONENT_MCU_ISP ) )
     bool isInfiniteIsp = false;
-    (void)isp_kboot_main(isInfiniteIsp);
+    ( void ) isp_kboot_main( isInfiniteIsp );
 #endif
 
     /* Init board hardware. */
@@ -65,44 +67,46 @@ int main(void)
 
     SCB_DisableDCache();
 
-    (void)sbl_boot_main();
+    ( void ) sbl_boot_main();
 
     return 0;
 }
 
-void SBL_DisablePeripherals(void)
+void SBL_DisablePeripherals( void )
 {
     DbgConsole_Deinit();
-#if defined(COMPONENT_MCUBOOT_SECURE)
-#if defined(FSL_FEATURE_SOC_DCP_COUNT) && (FSL_FEATURE_SOC_DCP_COUNT > 0)
-    DCP_Deinit(DCP);
+#if defined( COMPONENT_MCUBOOT_SECURE )
+#if defined( FSL_FEATURE_SOC_DCP_COUNT ) && ( FSL_FEATURE_SOC_DCP_COUNT > 0 )
+    DCP_Deinit( DCP );
 #endif
-#if defined(FSL_FEATURE_SOC_TRNG_COUNT) && (FSL_FEATURE_SOC_TRNG_COUNT > 0)
-    TRNG_Deinit(TRNG);
+#if defined( FSL_FEATURE_SOC_TRNG_COUNT ) && ( FSL_FEATURE_SOC_TRNG_COUNT > 0 )
+    TRNG_Deinit( TRNG );
 #endif
 #endif
 }
 
 #ifdef SOC_REMAP_ENABLE
-void SBL_EnableRemap(uint32_t start_addr, uint32_t end_addr, uint32_t off)
+void SBL_EnableRemap( uint32_t start_addr,
+                      uint32_t end_addr,
+                      uint32_t off )
 {
-    uint32_t *remap_start  = (uint32_t *)REMAPADDRSTART;
-    uint32_t *remap_end    = (uint32_t *)REMAPADDREND;
-    uint32_t *remap_offset = (uint32_t *)REMAPADDROFFSET;
+    uint32_t * remap_start = ( uint32_t * ) REMAPADDRSTART;
+    uint32_t * remap_end = ( uint32_t * ) REMAPADDREND;
+    uint32_t * remap_offset = ( uint32_t * ) REMAPADDROFFSET;
 
-    *remap_start  = start_addr;
-    *remap_end    = end_addr;
+    *remap_start = start_addr;
+    *remap_end = end_addr;
     *remap_offset = off;
 }
 
-void SBL_DisableRemap(void)
+void SBL_DisableRemap( void )
 {
-    uint32_t *remap_start  = (uint32_t *)REMAPADDRSTART;
-    uint32_t *remap_end    = (uint32_t *)REMAPADDREND;
-    uint32_t *remap_offset = (uint32_t *)REMAPADDROFFSET;
+    uint32_t * remap_start = ( uint32_t * ) REMAPADDRSTART;
+    uint32_t * remap_end = ( uint32_t * ) REMAPADDREND;
+    uint32_t * remap_offset = ( uint32_t * ) REMAPADDROFFSET;
 
-    *remap_start  = 0;
-    *remap_end    = 0;
+    *remap_start = 0;
+    *remap_end = 0;
     *remap_offset = 0;
 }
-#endif
+#endif /* ifdef SOC_REMAP_ENABLE */

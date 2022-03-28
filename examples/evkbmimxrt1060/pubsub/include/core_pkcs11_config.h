@@ -42,15 +42,16 @@
 /**************************************************/
 /******* DO NOT CHANGE the following order ********/
 /**************************************************/
+
 /**
  * @brief Malloc API used by core_pkcs11.h
  */
-#define PKCS11_MALLOC pvPortMalloc
+#define PKCS11_MALLOC                    pvPortMalloc
 
 /**
  * @brief Free API used by core_pkcs11.h
  */
-#define PKCS11_FREE vPortFree
+#define PKCS11_FREE                      vPortFree
 
 /**
  * @brief PKCS #11 default user PIN.

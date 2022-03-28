@@ -64,7 +64,7 @@
 #include "mqtt_agent_task.h"
 
 #if ( !defined( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS ) || ( democonfigMETRICS_PUBLISH_INTERVAL_SECONDS < 300 ) )
-    #error "Defender metrics publish interval should be greater than or equal to 300 seconds"
+#error "Defender metrics publish interval should be greater than or equal to 300 seconds"
 #endif
 
 /**

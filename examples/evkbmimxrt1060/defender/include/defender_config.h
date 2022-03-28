@@ -40,11 +40,11 @@
 
 /* Logging configuration for the Defender library. */
 #ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME    "Defender"
+#define LIBRARY_LOG_NAME    "Defender"
 #endif
 
 #ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_INFO
+#define LIBRARY_LOG_LEVEL    LOG_INFO
 #endif
 
 #include "logging.h"

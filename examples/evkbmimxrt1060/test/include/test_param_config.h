@@ -55,13 +55,15 @@
  *
  * #define ECHO_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ENDPOINT   "192.168.4.159"
+#define ECHO_SERVER_ENDPOINT    "192.168.4.159"
+
 /**
  * @brief Port of the echo server to connect to in transport interface test.
  *
  * #define ECHO_SERVER_PORT       (9000)
  */
-#define ECHO_SERVER_PORT       (9001)
+#define ECHO_SERVER_PORT        ( 9001 )
+
 /**
  * @brief Root certificate of the echo server.
  *
@@ -74,28 +76,29 @@
  *
  * #define ECHO_SERVER_ROOT_CA "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ROOT_CA \
-"-----BEGIN CERTIFICATE-----\n"\
-"MIIDhDCCAmwCCQDk6zBIvVIj1zANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMC\n"\
-"VVMxCzAJBgNVBAgMAldBMQ4wDAYDVQQHDAVQbGFjZTEPMA0GA1UECgwGQW1hem9u\n"\
-"MQswCQYDVQQLDAJJVDEWMBQGA1UEAwwNMTkyLjE2OC40LjE1OTEhMB8GCSqGSIb3\n"\
-"DQEJARYSeW91ckVtYWlsQHlvdXIuY29tMB4XDTIyMDMxMzE4MjU1M1oXDTIzMDMx\n"\
-"MzE4MjU1M1owgYMxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJXQTEOMAwGA1UEBwwF\n"\
-"UGxhY2UxDzANBgNVBAoMBkFtYXpvbjELMAkGA1UECwwCSVQxFjAUBgNVBAMMDTE5\n"\
-"Mi4xNjguNC4xNTkxITAfBgkqhkiG9w0BCQEWEnlvdXJFbWFpbEB5b3VyLmNvbTCC\n"\
-"ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKIF5KtA9Q0Dib9k33bDDi5G\n"\
-"lGPrQR6xr0N19c+HIrfQ8bylWHp0BUGuE+Khg87CmSPqpLehaVVYQz8SuxFO/a18\n"\
-"/IMl+I4dtfV7RSS8GHmHMPK24EAs6AwPF1yGq4d+euKlHOphPpRMZnngJrsWjtz7\n"\
-"rgYkfw3hjI6oHktPEZt002bSLCTBXUFIENPKuupb/Mh348V6WKU2eIx/Hy80WGqg\n"\
-"acUDkQW1VH4g/f7Gu3PkeeN5SN0zw3mkAr0U9Y8J5CN50TiQuaVFOQuinc2UTi+P\n"\
-"nXKMDg+4adCqpJBKuucI/ymW8Yj/eboDkgsIXfpyAf8/TwYg3b/7GR7lqcDymgEC\n"\
-"AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAlznEfy73X/93MYRNsONcwdQ8ogagGj1p\n"\
-"KfafLazNyUJ46yBCEKAJd9JttUQjheGnR1XgKSPniK3l9Ep0p37vi21G6OOzcXeM\n"\
-"iutXhdcA3k6aqOVc9TGWjLbpmvtqkkFHIfa7218TONo5ESQlXI1eyxYPE3FF5Mj7\n"\
-"OAzJvsKkA+rLffL1svXL5hS59XTb9oCxk2DpJQN51XardfqDs6WMZowo2fizzp0S\n"\
-"tnYBaOPYjMTBGiGtGKsFcaSyJ0+efsFOmqJF8Vgqi+fj8nnsQmFm2QBnAy69dZqF\n"\
-"CBNYoQJfbpCFO6z56SvOHtgxkc4/IkrpV9HVZOltBrwbvHRLYSTBfQ==\n"\
-"-----END CERTIFICATE-----"
+#define ECHO_SERVER_ROOT_CA                                              \
+    "-----BEGIN CERTIFICATE-----\n"                                      \
+    "MIIDhDCCAmwCCQDk6zBIvVIj1zANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMC\n" \
+    "VVMxCzAJBgNVBAgMAldBMQ4wDAYDVQQHDAVQbGFjZTEPMA0GA1UECgwGQW1hem9u\n" \
+    "MQswCQYDVQQLDAJJVDEWMBQGA1UEAwwNMTkyLjE2OC40LjE1OTEhMB8GCSqGSIb3\n" \
+    "DQEJARYSeW91ckVtYWlsQHlvdXIuY29tMB4XDTIyMDMxMzE4MjU1M1oXDTIzMDMx\n" \
+    "MzE4MjU1M1owgYMxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJXQTEOMAwGA1UEBwwF\n" \
+    "UGxhY2UxDzANBgNVBAoMBkFtYXpvbjELMAkGA1UECwwCSVQxFjAUBgNVBAMMDTE5\n" \
+    "Mi4xNjguNC4xNTkxITAfBgkqhkiG9w0BCQEWEnlvdXJFbWFpbEB5b3VyLmNvbTCC\n" \
+    "ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKIF5KtA9Q0Dib9k33bDDi5G\n" \
+    "lGPrQR6xr0N19c+HIrfQ8bylWHp0BUGuE+Khg87CmSPqpLehaVVYQz8SuxFO/a18\n" \
+    "/IMl+I4dtfV7RSS8GHmHMPK24EAs6AwPF1yGq4d+euKlHOphPpRMZnngJrsWjtz7\n" \
+    "rgYkfw3hjI6oHktPEZt002bSLCTBXUFIENPKuupb/Mh348V6WKU2eIx/Hy80WGqg\n" \
+    "acUDkQW1VH4g/f7Gu3PkeeN5SN0zw3mkAr0U9Y8J5CN50TiQuaVFOQuinc2UTi+P\n" \
+    "nXKMDg+4adCqpJBKuucI/ymW8Yj/eboDkgsIXfpyAf8/TwYg3b/7GR7lqcDymgEC\n" \
+    "AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAlznEfy73X/93MYRNsONcwdQ8ogagGj1p\n" \
+    "KfafLazNyUJ46yBCEKAJd9JttUQjheGnR1XgKSPniK3l9Ep0p37vi21G6OOzcXeM\n" \
+    "iutXhdcA3k6aqOVc9TGWjLbpmvtqkkFHIfa7218TONo5ESQlXI1eyxYPE3FF5Mj7\n" \
+    "OAzJvsKkA+rLffL1svXL5hS59XTb9oCxk2DpJQN51XardfqDs6WMZowo2fizzp0S\n" \
+    "tnYBaOPYjMTBGiGtGKsFcaSyJ0+efsFOmqJF8Vgqi+fj8nnsQmFm2QBnAy69dZqF\n" \
+    "CBNYoQJfbpCFO6z56SvOHtgxkc4/IkrpV9HVZOltBrwbvHRLYSTBfQ==\n"         \
+    "-----END CERTIFICATE-----"
+
 /**
  * @brief Client certificate to connect to echo server.
  *

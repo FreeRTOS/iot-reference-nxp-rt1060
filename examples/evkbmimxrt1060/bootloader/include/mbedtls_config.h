@@ -51,7 +51,7 @@
 #define MBEDTLS_PLATFORM_PRINTF_ALT
 #define MBEDTLS_PLATFORM_SNPRINTF_ALT
 
-#if !defined(CONFIG_ARM)
+#if !defined( CONFIG_ARM )
 #define MBEDTLS_HAVE_ASM
 #endif
 
@@ -70,18 +70,18 @@
 #define MBEDTLS_AES_C
 
 /* Save RAM by adjusting to our exact needs */
-#define MBEDTLS_ECP_MAX_BITS             2048
+#define MBEDTLS_ECP_MAX_BITS           2048
 
-#if (CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN == 3072)
-#define MBEDTLS_MPI_MAX_SIZE              384
+#if ( CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN == 3072 )
+#define MBEDTLS_MPI_MAX_SIZE           384
 #else
-#define MBEDTLS_MPI_MAX_SIZE              256
+#define MBEDTLS_MPI_MAX_SIZE           256
 #endif
 
-#define MBEDTLS_SSL_MAX_CONTENT_LEN 1024
+#define MBEDTLS_SSL_MAX_CONTENT_LEN    1024
 
 /* Save ROM and a few bytes of RAM by specifying our own ciphersuite list */
-#define MBEDTLS_SSL_CIPHERSUITES MBEDTLS_TLS_ECJPAKE_WITH_AES_128_CCM_8
+#define MBEDTLS_SSL_CIPHERSUITES       MBEDTLS_TLS_ECJPAKE_WITH_AES_128_CCM_8
 
 #include "mbedtls/check_config.h"
 

@@ -12,14 +12,14 @@
 #include "fsl_common.h"
 #include "flash_partitioning.h"
 
-#define FLASH_AREA_IMAGE_1_OFFSET (BOOT_FLASH_ACT_APP - BOOT_FLASH_BASE)
-#define FLASH_AREA_IMAGE_1_SIZE   (BOOT_FLASH_CAND_APP - BOOT_FLASH_ACT_APP)
-#define FLASH_AREA_IMAGE_2_OFFSET (FLASH_AREA_IMAGE_1_OFFSET + FLASH_AREA_IMAGE_1_SIZE)
-#define FLASH_AREA_IMAGE_2_SIZE   FLASH_AREA_IMAGE_1_SIZE // image2 slot is the same size as image1
-#define FLASH_AREA_IMAGE_3_OFFSET (FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE)
+#define FLASH_AREA_IMAGE_1_OFFSET    ( BOOT_FLASH_ACT_APP - BOOT_FLASH_BASE )
+#define FLASH_AREA_IMAGE_1_SIZE      ( BOOT_FLASH_CAND_APP - BOOT_FLASH_ACT_APP )
+#define FLASH_AREA_IMAGE_2_OFFSET    ( FLASH_AREA_IMAGE_1_OFFSET + FLASH_AREA_IMAGE_1_SIZE )
+#define FLASH_AREA_IMAGE_2_SIZE      FLASH_AREA_IMAGE_1_SIZE /* image2 slot is the same size as image1 */
+#define FLASH_AREA_IMAGE_3_OFFSET    ( FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE )
 
-#define IMAGE_MAGIC       0x96f3b83d
-#define IMAGE_HEADER_SIZE 32
+#define IMAGE_MAGIC                  0x96f3b83d
+#define IMAGE_HEADER_SIZE            32
 
 struct image_version
 {
@@ -42,8 +42,8 @@ struct image_header
     uint32_t _pad1;
 };
 
-#define IMAGE_TLV_INFO_MAGIC      0x6907
-#define IMAGE_TLV_PROT_INFO_MAGIC 0x6908
+#define IMAGE_TLV_INFO_MAGIC         0x6907
+#define IMAGE_TLV_PROT_INFO_MAGIC    0x6908
 
 /** Image TLV header.  All fields in little endian. */
 struct image_tlv_info
@@ -52,27 +52,27 @@ struct image_tlv_info
     uint16_t it_tlv_tot; /* size of TLV area (including tlv_info header) */
 };
 
-#define BOOT_MAX_ALIGN 8
-#define BOOT_FLAG_SET  1
+#define BOOT_MAX_ALIGN    8
+#define BOOT_FLAG_SET     1
 
 struct image_trailer
 {
     uint8_t swap_type;
-    uint8_t pad1[BOOT_MAX_ALIGN - 1];
+    uint8_t pad1[ BOOT_MAX_ALIGN - 1 ];
     uint8_t copy_done;
-    uint8_t pad2[BOOT_MAX_ALIGN - 1];
+    uint8_t pad2[ BOOT_MAX_ALIGN - 1 ];
     uint8_t image_ok;
-    uint8_t pad3[BOOT_MAX_ALIGN - 1];
-    uint8_t magic[16];
+    uint8_t pad3[ BOOT_MAX_ALIGN - 1 ];
+    uint8_t magic[ 16 ];
 };
 
 /* Bootloader helper API */
 enum
 {
-    kSwapType_None,         // Default value when there is no upgradable image
-    kSwapType_ReadyForTest, // The application needs to switch to this state when finishing the update operation
-    kSwapType_Testing,      // The bootloader needs to switch to this state before running the test image
-    kSwapType_Permanent,    // The application needs to switch to this state when the self-test is okay
+    kSwapType_None,         /* Default value when there is no upgradable image */
+    kSwapType_ReadyForTest, /* The application needs to switch to this state when finishing the update operation */
+    kSwapType_Testing,      /* The bootloader needs to switch to this state before running the test image */
+    kSwapType_Permanent,    /* The application needs to switch to this state when the self-test is okay */
     kSwapType_Fail,
     kSwapType_Fatal,
     kSwapType_Max,
@@ -84,10 +84,11 @@ typedef struct
     uint32_t size;
 } partition_t;
 
-extern int32_t bl_verify_image(const uint8_t *data, uint32_t size);
+extern int32_t bl_verify_image( const uint8_t * data,
+                                uint32_t size );
 
-extern status_t bl_get_update_partition_info(partition_t *partition);
-extern status_t bl_update_image_state(uint32_t state);
-extern status_t bl_get_image_state(uint32_t *state);
+extern status_t bl_get_update_partition_info( partition_t * partition );
+extern status_t bl_update_image_state( uint32_t state );
+extern status_t bl_get_image_state( uint32_t * state );
 
-#endif
+#endif /* ifndef __MCUBOOT_APP_SUPPORT_H__ */

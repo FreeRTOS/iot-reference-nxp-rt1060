@@ -66,10 +66,10 @@
 
 /* Logging configuration for the Sockets. */
 #ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME     "TlsTransport"
+#define LIBRARY_LOG_NAME     "TlsTransport"
 #endif
 #ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_ERROR
+#define LIBRARY_LOG_LEVEL    LOG_ERROR
 #endif
 
 #include "logging.h"
@@ -452,19 +452,19 @@ static CK_RV initializeClientKeys( SSLContext_t * pxCtx,
         /* Assign unimplemented function pointers to NULL */
         pxCtx->privKeyInfo.get_bitlen = NULL;
         pxCtx->privKeyInfo.verify_func = NULL;
-        #if defined( MBEDTLS_ECDSA_C ) && defined( MBEDTLS_ECP_RESTARTABLE )
-            pxCtx->privKeyInfo.verify_rs_func = NULL;
-            pxCtx->privKeyInfo.sign_rs_func = NULL;
-        #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+#if defined( MBEDTLS_ECDSA_C ) && defined( MBEDTLS_ECP_RESTARTABLE )
+        pxCtx->privKeyInfo.verify_rs_func = NULL;
+        pxCtx->privKeyInfo.sign_rs_func = NULL;
+#endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
         pxCtx->privKeyInfo.decrypt_func = NULL;
         pxCtx->privKeyInfo.encrypt_func = NULL;
         pxCtx->privKeyInfo.check_pair_func = NULL;
         pxCtx->privKeyInfo.ctx_alloc_func = NULL;
         pxCtx->privKeyInfo.ctx_free_func = NULL;
-        #if defined( MBEDTLS_ECDSA_C ) && defined( MBEDTLS_ECP_RESTARTABLE )
-            pxCtx->privKeyInfo.rs_alloc_func = NULL;
-            pxCtx->privKeyInfo.rs_free_func = NULL;
-        #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+#if defined( MBEDTLS_ECDSA_C ) && defined( MBEDTLS_ECP_RESTARTABLE )
+        pxCtx->privKeyInfo.rs_alloc_func = NULL;
+        pxCtx->privKeyInfo.rs_free_func = NULL;
+#endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
         pxCtx->privKeyInfo.debug_func = NULL;
 
         pxCtx->privKeyInfo.sign_func = privateKeySigningCallback;
@@ -776,25 +776,25 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
     }
 
     /* Set Maximum Fragment Length if enabled. */
-    #ifdef MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
-        if( returnStatus == TLS_TRANSPORT_SUCCESS )
-        {
-            /* Enable the max fragment extension. 4096 bytes is currently the largest fragment size permitted.
-             * See RFC 8449 https://tools.ietf.org/html/rfc8449 for more information.
-             *
-             * Smaller values can be found in "mbedtls/include/ssl.h".
-             */
-            mbedtlsError = mbedtls_ssl_conf_max_frag_len( &( pNetworkContext->sslContext.config ), MBEDTLS_SSL_MAX_FRAG_LEN_4096 );
+#ifdef MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+    if( returnStatus == TLS_TRANSPORT_SUCCESS )
+    {
+        /* Enable the max fragment extension. 4096 bytes is currently the largest fragment size permitted.
+         * See RFC 8449 https://tools.ietf.org/html/rfc8449 for more information.
+         *
+         * Smaller values can be found in "mbedtls/include/ssl.h".
+         */
+        mbedtlsError = mbedtls_ssl_conf_max_frag_len( &( pNetworkContext->sslContext.config ), MBEDTLS_SSL_MAX_FRAG_LEN_4096 );
 
-            if( mbedtlsError != 0 )
-            {
-                LogError( ( "Failed to maximum fragment length extension: mbedTLSError= %s : %s.",
-                            mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                            mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
-                returnStatus = TLS_TRANSPORT_INTERNAL_ERROR;
-            }
+        if( mbedtlsError != 0 )
+        {
+            LogError( ( "Failed to maximum fragment length extension: mbedTLSError= %s : %s.",
+                        mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
+                        mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
+            returnStatus = TLS_TRANSPORT_INTERNAL_ERROR;
         }
-    #endif /* ifdef MBEDTLS_SSL_MAX_FRAGMENT_LENGTH */
+    }
+#endif /* ifdef MBEDTLS_SSL_MAX_FRAGMENT_LENGTH */
 
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {

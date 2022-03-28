@@ -54,45 +54,53 @@
 
 #endif
 
-#define SYS_MBOX_NULL					( ( QueueHandle_t ) NULL )
-#define SYS_SEM_NULL					( ( SemaphoreHandle_t ) NULL )
-#define SYS_DEFAULT_THREAD_STACK_DEPTH	configMINIMAL_STACK_SIZE
+#define SYS_MBOX_NULL                     ( ( QueueHandle_t ) NULL )
+#define SYS_SEM_NULL                      ( ( SemaphoreHandle_t ) NULL )
+#define SYS_DEFAULT_THREAD_STACK_DEPTH    configMINIMAL_STACK_SIZE
 #if !NO_SYS
-typedef SemaphoreHandle_t sys_sem_t;
-typedef SemaphoreHandle_t sys_mutex_t;
-typedef QueueHandle_t sys_mbox_t;
-typedef TaskHandle_t sys_thread_t;
+typedef SemaphoreHandle_t   sys_sem_t;
+typedef SemaphoreHandle_t   sys_mutex_t;
+typedef QueueHandle_t       sys_mbox_t;
+typedef TaskHandle_t        sys_thread_t;
 
-#define sys_mbox_valid( x ) ( ( ( *x ) == NULL) ? pdFALSE : pdTRUE )
-#define sys_mbox_set_invalid( x ) ( ( *x ) = NULL )
-#define sys_sem_valid( x ) ( ( ( *x ) == NULL) ? pdFALSE : pdTRUE )
-#define sys_sem_set_invalid( x ) ( ( *x ) = NULL )
+#define sys_mbox_valid( x )          ( ( ( *x ) == NULL ) ? pdFALSE : pdTRUE )
+#define sys_mbox_set_invalid( x )    ( ( *x ) = NULL )
+#define sys_sem_valid( x )           ( ( ( *x ) == NULL ) ? pdFALSE : pdTRUE )
+#define sys_sem_set_invalid( x )     ( ( *x ) = NULL )
 
 #else /* NO_SYS */ /* Bare-metal */
 
-#if defined(__cplusplus)
+/* *INDENT-OFF* */
+#if defined( __cplusplus )
 extern "C" {
 #endif /* __cplusplus */
+/* *INDENT-ON* */
 
-void time_isr(void);
-void time_init(void);
+void time_isr( void );
+void time_init( void );
 
-#if defined(__cplusplus)
+/* *INDENT-OFF* */
+#if defined( __cplusplus )
 }
 #endif /* __cplusplus */
+/* *INDENT-ON* */
 
-#endif
+#endif /* if !NO_SYS */
 
 typedef unsigned long sys_prot_t;
 
-#if defined(__cplusplus)
+/* *INDENT-OFF* */
+#if defined( __cplusplus )
 extern "C" {
 #endif /* __cplusplus */
+/* *INDENT-ON* */
 
-void sys_assert( char *msg );
+void sys_assert( char * msg );
 
-#if defined(__cplusplus)
+/* *INDENT-OFF* */
+#if defined( __cplusplus )
 }
 #endif /* __cplusplus */
+/* *INDENT-ON* */
 
 #endif /* __ARCH_SYS_ARCH_H__ */

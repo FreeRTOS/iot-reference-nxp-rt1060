@@ -12,25 +12,25 @@
 
 #include <stdint.h>
 
-#if (configUSE_TRACE_FACILITY == 0)
+#if ( configUSE_TRACE_FACILITY == 0 )
 #error "configUSE_TRACE_FACILITY must be enabled"
 #endif
 
-#define FREERTOS_DEBUG_CONFIG_MAJOR_VERSION 1
-#define FREERTOS_DEBUG_CONFIG_MINOR_VERSION 3
+#define FREERTOS_DEBUG_CONFIG_MAJOR_VERSION    1
+#define FREERTOS_DEBUG_CONFIG_MINOR_VERSION    3
 
 /* NOTE!!
  * Default to a FreeRTOS version which didn't include these macros. FreeRTOS
  * v7.5.3 is used here.
  */
 #ifndef tskKERNEL_VERSION_BUILD
-#define tskKERNEL_VERSION_BUILD 3
+#define tskKERNEL_VERSION_BUILD    3
 #endif
 #ifndef tskKERNEL_VERSION_MINOR
-#define tskKERNEL_VERSION_MINOR 5
+#define tskKERNEL_VERSION_MINOR    5
 #endif
 #ifndef tskKERNEL_VERSION_MAJOR
-#define tskKERNEL_VERSION_MAJOR 7
+#define tskKERNEL_VERSION_MAJOR    7
 #endif
 
 /* NOTE!!
@@ -47,16 +47,18 @@
  *          multiple nonOadjacent memory areas
  */
 #ifndef configFRTOS_MEMORY_SCHEME
-#define configFRTOS_MEMORY_SCHEME 3 /* thread safe malloc */
+#define configFRTOS_MEMORY_SCHEME    3 /* thread safe malloc */
 #endif
 
-#if ((configFRTOS_MEMORY_SCHEME > 5) || (configFRTOS_MEMORY_SCHEME < 1))
+#if ( ( configFRTOS_MEMORY_SCHEME > 5 ) || ( configFRTOS_MEMORY_SCHEME < 1 ) )
 #error "Invalid configFRTOS_MEMORY_SCHEME setting!"
 #endif
 
+/* *INDENT-OFF* */
 #ifdef __cplusplus
 extern "C" {
 #endif
+/* *INDENT-ON* */
 
 extern const uint8_t FreeRTOSDebugConfig[];
 
@@ -66,24 +68,24 @@ extern const uint8_t FreeRTOSDebugConfig[];
  * The IAR supplied examples violate both "rules", so this is a best guess.
  */
 
-#if (tskKERNEL_VERSION_MAJOR >= 10) && (tskKERNEL_VERSION_MINOR >= 2)
-#if defined(__GNUC__)
-char *const portArch_Name __attribute__((section(".rodata"))) = portARCH_NAME;
-#elif defined(__CC_ARM) || defined(__ARMCC_VERSION)
-char *const portArch_Name __attribute__((used)) = portARCH_NAME;
-#elif defined(__IAR_SYSTEMS_ICC__)
-char *const portArch_Name = portARCH_NAME;
+#if ( tskKERNEL_VERSION_MAJOR >= 10 ) && ( tskKERNEL_VERSION_MINOR >= 2 )
+#if defined( __GNUC__ )
+char * const portArch_Name __attribute__( ( section( ".rodata" ) ) ) = portARCH_NAME;
+#elif defined( __CC_ARM ) || defined( __ARMCC_VERSION )
+char * const portArch_Name __attribute__( ( used ) ) = portARCH_NAME;
+#elif defined( __IAR_SYSTEMS_ICC__ )
+char * const portArch_Name = portARCH_NAME;
 #pragma required=portArch_Name
 #endif
 #else
-char *const portArch_Name = NULL;
-#endif	// tskKERNEL_VERSION_MAJOR
+char * const portArch_Name = NULL;
+#endif // tskKERNEL_VERSION_MAJOR
 
-#if defined(__GNUC__)
-const uint8_t FreeRTOSDebugConfig[] __attribute__((section(".rodata"))) =
-#elif defined(__CC_ARM) || defined(__ARMCC_VERSION)
-const uint8_t FreeRTOSDebugConfig[] __attribute__((used)) =
-#elif defined(__IAR_SYSTEMS_ICC__)
+#if defined( __GNUC__ )
+const uint8_t FreeRTOSDebugConfig[] __attribute__( ( section( ".rodata" ) ) ) =
+#elif defined( __CC_ARM ) || defined( __ARMCC_VERSION )
+const uint8_t FreeRTOSDebugConfig[] __attribute__( ( used ) ) =
+#elif defined( __IAR_SYSTEMS_ICC__ )
 #pragma required=FreeRTOSDebugConfig
 const uint8_t FreeRTOSDebugConfig[] =
 #endif
@@ -94,29 +96,31 @@ const uint8_t FreeRTOSDebugConfig[] =
     tskKERNEL_VERSION_MINOR,
     tskKERNEL_VERSION_BUILD,
     configFRTOS_MEMORY_SCHEME,
-    offsetof(struct tskTaskControlBlock, pxTopOfStack),
-#if (tskKERNEL_VERSION_MAJOR > 8)
-    offsetof(struct tskTaskControlBlock, xStateListItem),
+    offsetof( struct tskTaskControlBlock, pxTopOfStack ),
+#if ( tskKERNEL_VERSION_MAJOR > 8 )
+    offsetof( struct tskTaskControlBlock, xStateListItem ),
 #else
-    offsetof(struct tskTaskControlBlock, xGenericListItem),
+    offsetof( struct tskTaskControlBlock, xGenericListItem ),
 #endif
-    offsetof(struct tskTaskControlBlock, xEventListItem),
-    offsetof(struct tskTaskControlBlock, pxStack),
-    offsetof(struct tskTaskControlBlock, pcTaskName),
-    offsetof(struct tskTaskControlBlock, uxTCBNumber),
-    offsetof(struct tskTaskControlBlock, uxTaskNumber),
+    offsetof( struct tskTaskControlBlock, xEventListItem ),
+    offsetof( struct tskTaskControlBlock, pxStack ),
+    offsetof( struct tskTaskControlBlock, pcTaskName ),
+    offsetof( struct tskTaskControlBlock, uxTCBNumber ),
+    offsetof( struct tskTaskControlBlock, uxTaskNumber ),
     configMAX_TASK_NAME_LEN,
     configMAX_PRIORITIES,
     configENABLE_MPU,
     configENABLE_FPU,
     configENABLE_TRUSTZONE,
-	configRUN_FREERTOS_SECURE_ONLY,
-	0, 			// 32-bit align
-	0, 0, 0, 0	// padding
-};
+    configRUN_FREERTOS_SECURE_ONLY,
+    0,         /* 32-bit align */
+    0, 0, 0, 0 /* padding */
+}
 
+/* *INDENT-OFF* */
 #ifdef __cplusplus
 }
 #endif
+/* *INDENT-ON* */
 
 #endif // FREERTOS_TASKS_C_ADDITIONS_H

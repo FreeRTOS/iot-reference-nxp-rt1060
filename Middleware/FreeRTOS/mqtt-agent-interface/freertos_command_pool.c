@@ -80,9 +80,9 @@ void Agent_InitializePool( void )
     {
         memset( ( void * ) commandStructurePool, 0x00, sizeof( commandStructurePool ) );
         commandStructMessageCtx.queue = xQueueCreateStatic( MQTT_COMMAND_CONTEXTS_POOL_SIZE,
-                                                       sizeof( MQTTAgentCommand_t * ),
-                                                       staticQueueStorageArea,
-                                                       &staticQueueStructure );
+                                                            sizeof( MQTTAgentCommand_t * ),
+                                                            staticQueueStorageArea,
+                                                            &staticQueueStructure );
         configASSERT( commandStructMessageCtx.queue );
 
         /* Populate the queue. */

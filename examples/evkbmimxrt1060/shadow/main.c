@@ -65,7 +65,7 @@
  ******************************************************************************/
 #ifndef EXAMPLE_NETIF_INIT_FN
 /*! @brief Network interface initialization function. */
-    #define EXAMPLE_NETIF_INIT_FN    ethernetif0_init
+#define EXAMPLE_NETIF_INIT_FN    ethernetif0_init
 #endif /* EXAMPLE_NETIF_INIT_FN */
 
 /* MAC address configuration. */
@@ -127,52 +127,63 @@ static mflash_file_t dir_template[] =
  ******************************************************************************/
 static const char * prvGetDHCPStateStr( dhcp_state_enum_t state )
 {
-	const char * pcStateStr = "UNKNOWN";
+    const char * pcStateStr = "UNKNOWN";
 
-	switch( state )
-	{
-	case DHCP_STATE_OFF:
-		pcStateStr = "OFF";
-		break;
-	case DHCP_STATE_INIT:
-		pcStateStr = "INIT";
-		break;
-	case DHCP_STATE_REBOOTING:
-		pcStateStr = "REBOOTING";
-		break;
-	case DHCP_STATE_REBINDING:
-		pcStateStr = "REBINDING";
-		break;
-	case DHCP_STATE_RENEWING:
-		pcStateStr = "RENEWING";
-		break;
-	case DHCP_STATE_SELECTING:
-		pcStateStr = "SELECTING";
-		break;
-	case DHCP_STATE_INFORMING:
-		pcStateStr = "INFORMING";
-		break;
-	case DHCP_STATE_CHECKING:
-		pcStateStr = "CHECKING";
-		break;
-	case DHCP_STATE_PERMANENT:
-		pcStateStr = "PERMANENT";
-		break;
-	case DHCP_STATE_BOUND:
-		pcStateStr = "BOUND";
-		break;
-	case DHCP_STATE_RELEASING:
-		pcStateStr = "RELEASING";
-		break;
-	case DHCP_STATE_BACKING_OFF:
-		pcStateStr = "BACKING_OFF";
-		break;
-	default:
-		break;
-	}
+    switch( state )
+    {
+        case DHCP_STATE_OFF:
+            pcStateStr = "OFF";
+            break;
 
-	return pcStateStr;
+        case DHCP_STATE_INIT:
+            pcStateStr = "INIT";
+            break;
 
+        case DHCP_STATE_REBOOTING:
+            pcStateStr = "REBOOTING";
+            break;
+
+        case DHCP_STATE_REBINDING:
+            pcStateStr = "REBINDING";
+            break;
+
+        case DHCP_STATE_RENEWING:
+            pcStateStr = "RENEWING";
+            break;
+
+        case DHCP_STATE_SELECTING:
+            pcStateStr = "SELECTING";
+            break;
+
+        case DHCP_STATE_INFORMING:
+            pcStateStr = "INFORMING";
+            break;
+
+        case DHCP_STATE_CHECKING:
+            pcStateStr = "CHECKING";
+            break;
+
+        case DHCP_STATE_PERMANENT:
+            pcStateStr = "PERMANENT";
+            break;
+
+        case DHCP_STATE_BOUND:
+            pcStateStr = "BOUND";
+            break;
+
+        case DHCP_STATE_RELEASING:
+            pcStateStr = "RELEASING";
+            break;
+
+        case DHCP_STATE_BACKING_OFF:
+            pcStateStr = "BACKING_OFF";
+            break;
+
+        default:
+            break;
+    }
+
+    return pcStateStr;
 }
 
 void Board_InitNetwork( void )
@@ -207,34 +218,34 @@ void Board_InitNetwork( void )
 
     while( dhcp->state != DHCP_STATE_BOUND )
     {
-    	if( dhcp->state != prevState )
-    	{
-    		PRINTF( "DHCP State:%s.\r\n", prvGetDHCPStateStr( dhcp->state ) );
-    		prevState = dhcp->state;
-    	}
+        if( dhcp->state != prevState )
+        {
+            PRINTF( "DHCP State:%s.\r\n", prvGetDHCPStateStr( dhcp->state ) );
+            prevState = dhcp->state;
+        }
 
-    	vTaskDelay( 1000 );
+        vTaskDelay( 1000 );
     }
 
     PRINTF( "DHCP OK!\r\n" );
 
     PRINTF( "IPv4 Address: %u.%u.%u.%u\r\n",
-    		( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 0 ],
-			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 1 ],
-			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 2 ],
-			( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 3 ] );
+            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 0 ],
+            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 1 ],
+            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 2 ],
+            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 3 ] );
 
     PRINTF( "Subnet Mask: %u.%u.%u.%u\r\n",
-    		( ( u8_t * ) &ethernet_netif.netmask.addr )[ 0 ],
-			( ( u8_t * ) &ethernet_netif.netmask.addr )[ 1 ],
-			( ( u8_t * ) &ethernet_netif.netmask.addr )[ 2 ],
-			( ( u8_t * ) &ethernet_netif.netmask.addr )[ 3 ] );
+            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 0 ],
+            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 1 ],
+            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 2 ],
+            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 3 ] );
 
     PRINTF( "Gateway: %u.%u.%u.%u\r\n",
-    		( ( u8_t * ) &ethernet_netif.gw.addr )[ 0 ],
-			( ( u8_t * ) &ethernet_netif.gw.addr )[ 1 ],
-			( ( u8_t * ) &ethernet_netif.gw.addr )[ 2 ],
-			( ( u8_t * ) &ethernet_netif.gw.addr )[ 3 ] );
+            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 0 ],
+            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 1 ],
+            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 2 ],
+            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 3 ] );
 }
 
 void BOARD_InitModuleClock( void )
@@ -258,6 +269,7 @@ void delay( void )
 /*******************************************************************************
  * Code
  ******************************************************************************/
+
 /*!
  * @brief Application entry point.
  */

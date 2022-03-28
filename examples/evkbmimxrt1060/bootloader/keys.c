@@ -28,15 +28,15 @@
  */
 #include <mcuboot_config.h>
 
-#if defined(MCUBOOT_SIGN_RSA)
+#if defined( MCUBOOT_SIGN_RSA )
 #define HAVE_KEYS
 
 #include "sign-rsa2048-pub.c"
 
-#elif defined(MCUBOOT_SIGN_EC256)
+#elif defined( MCUBOOT_SIGN_EC256 )
 #define HAVE_KEYS
 #include "sign-ecdsa256-pub.c"
-#elif defined(CONFIG_BOOT_SIGNATURE_TYPE_ROM)
+#elif defined( CONFIG_BOOT_SIGNATURE_TYPE_ROM )
 /* Don't need to define keys for HAB method */
 #endif
 
@@ -46,29 +46,31 @@
  *       key file. If no key file was configured, the array and length must be
  *       provided and added to the build manually.
  */
-#if defined(HAVE_KEYS)
-const struct bootutil_key bootutil_keys[] = {
+#if defined( HAVE_KEYS )
+const struct bootutil_key bootutil_keys[] =
+{
     {
-#if defined(MCUBOOT_SIGN_RSA)
+#if defined( MCUBOOT_SIGN_RSA )
         .key = rsa_pub_key,
         .len = &rsa_pub_key_len,
-#elif defined(MCUBOOT_SIGN_EC256)
+#elif defined( MCUBOOT_SIGN_EC256 )
         .key = ecdsa_pub_key,
         .len = &ecdsa_pub_key_len,
 #endif
     },
 };
 const int bootutil_key_cnt = 1;
-#endif
+#endif /* if defined( HAVE_KEYS ) */
 
-#if defined(MCUBOOT_ENCRYPT_RSA)
+#if defined( MCUBOOT_ENCRYPT_RSA )
 
 #include "enc-rsa2048-priv.c"
 
-const struct bootutil_key bootutil_enc_key = {
+const struct bootutil_key bootutil_enc_key =
+{
     .key = enc_priv_key,
     .len = &enc_priv_key_len,
 };
-#elif defined(MCUBOOT_ENCRYPT_KW)
+#elif defined( MCUBOOT_ENCRYPT_KW )
 #error "Encrypted images with AES-KW is not implemented yet."
-#endif
+#endif /* if defined( MCUBOOT_ENCRYPT_RSA ) */
