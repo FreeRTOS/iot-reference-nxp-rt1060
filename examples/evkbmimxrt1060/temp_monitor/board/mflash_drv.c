@@ -607,7 +607,7 @@ int32_t mflash_drv_write_internal(uint32_t addr, const uint8_t *data, uint32_t d
         sect_of = addr % MFLASH_SECTOR_SIZE,
                  /* and set first data offset to 0*/
         data_of = 0;
-        /* Continue until sector address exceed target adddress + data_length */
+        /* Continue until sector address exceed target address + data_length */
         sect_a < addr + data_len;
         /* Move to next sector */
         sect_a += MFLASH_SECTOR_SIZE,

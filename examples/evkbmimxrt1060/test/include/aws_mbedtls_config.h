@@ -2623,7 +2623,7 @@ extern void mbedtls_platform_free( void * ptr );
 /**
  * \def MBEDTLS_PK_C
  *
- * Enable the generic public (asymetric) key layer.
+ * Enable the generic public (asymmetric) key layer.
  *
  * Module:  library/pk.c
  * Caller:  library/ssl_tls.c
@@ -2639,7 +2639,7 @@ extern void mbedtls_platform_free( void * ptr );
 /**
  * \def MBEDTLS_PK_PARSE_C
  *
- * Enable the generic public (asymetric) key parser.
+ * Enable the generic public (asymmetric) key parser.
  *
  * Module:  library/pkparse.c
  * Caller:  library/x509_crt.c
@@ -2654,7 +2654,7 @@ extern void mbedtls_platform_free( void * ptr );
 /**
  * \def MBEDTLS_PK_WRITE_C
  *
- * Enable the generic public (asymetric) key writer.
+ * Enable the generic public (asymmetric) key writer.
  *
  * Module:  library/pkwrite.c
  * Caller:  library/x509write.c
@@ -3233,7 +3233,7 @@ extern void mbedtls_platform_free( void * ptr );
  * AES256 would get skipped and because of this TLS Handshake
  * would not pass
  *
- * Disabling this altogather. May be there's a way to use AES256
+ * Disabling this altogether. May be there's a way to use AES256
  * on EVKB with mbedTLS but need to Check.
  */
 

@@ -296,9 +296,9 @@ void BOARD_ConfigMPU(void)
      *     1             1           0           0              Normal             shareable       outer and inner
      * noncache
      *     1             0           1           1              Normal             not shareable   outer and inner write
-     * back write/read acllocate
+     * back write/read allocate
      *     1             1           1           1              Normal             shareable       outer and inner write
-     * back write/read acllocate
+     * back write/read allocate
      *     2             x           0           0              Device              not shareable
      *  Above are normal use settings, if your want to see more details or want to config different inner/outter cache
      * policy.

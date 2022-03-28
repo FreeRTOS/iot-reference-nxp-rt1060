@@ -37,7 +37,7 @@
  * @brief Retrieve the current firmware image state from flash.
  *
  * @param[in] pFileContext Pointer to a context containing firmware image details.
- * @return Appropirate state of the firmware image.
+ * @return Appropriate state of the firmware image.
  */
 OtaPalImageState_t xOtaPalGetPlatformImageState( OtaFileContext_t * const pFileContext );
 
