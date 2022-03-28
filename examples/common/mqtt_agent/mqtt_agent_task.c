@@ -85,7 +85,7 @@
 /* Keystore APIs to fetch configuration data. */
 #include "kvStore.h"
 
-/* Includes MQTT Agent Task managament APIs. */
+/* Includes MQTT Agent Task management APIs. */
 #include "mqtt_agent_task.h"
 
 /**

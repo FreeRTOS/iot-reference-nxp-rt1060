@@ -41,7 +41,7 @@
 
 #define FLASH_AREA_IMAGE_PRIMARY(x)   FLASH_AREA_ID(image_0)
 #define FLASH_AREA_IMAGE_SECONDARY(x) FLASH_AREA_ID(image_0)
-/* NOTE: Scratch parition is not used by single image DFU but some of
+/* NOTE: Scratch partition is not used by single image DFU but some of
  * functions in common files reference it, so the definitions has been
  * provided to allow compilation of common units.
  */

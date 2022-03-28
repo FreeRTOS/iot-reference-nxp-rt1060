@@ -25,7 +25,7 @@
 
 
 /**
- * @brief Header file containing platfrom abstraction layer APIS for OTA update.
+ * @brief Header file containing platform abstraction layer APIS for OTA update.
  */
 
 #ifndef OTA_PAL_H

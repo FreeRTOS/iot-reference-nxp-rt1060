@@ -250,7 +250,7 @@ typedef struct _FlexSPIConfig
     //! details
     uint8_t deviceType;    //!< [0x044-0x044] Device Type:  See Flash Type Definition for more details
     uint8_t sflashPadType; //!< [0x045-0x045] Serial Flash Pad Type: 1 - Single, 2 - Dual, 4 - Quad, 8 - Octal
-    uint8_t serialClkFreq; //!< [0x046-0x046] Serial Flash Frequencey, device specific definitions, See System Boot
+    uint8_t serialClkFreq; //!< [0x046-0x046] Serial Flash Frequency, device specific definitions, See System Boot
     //! Chapter for more details
     uint8_t lutCustomSeqEnable; //!< [0x047-0x047] LUT customization Enable, it is required if the program/erase cannot
     //! be done using 1 LUT sequence, currently, only applicable to HyperFLASH

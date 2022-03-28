@@ -1743,7 +1743,7 @@ extern void mbedtls_platform_free( void * ptr );
  * \def MBEDTLS_SSL_SESSION_TICKETS
  *
  * Enable support for RFC 5077 session tickets in SSL.
- * Client-side, provides full support for session tickets (maintainance of a
+ * Client-side, provides full support for session tickets (maintenance of a
  * session store remains the responsibility of the application, though).
  * Server-side, you also need to provide callbacks for writing and parsing
  * tickets, including authenticated encryption and key management. Example
