@@ -1,3 +1,4 @@
+ack
 acks
 addr
 aes
@@ -189,6 +190,7 @@ kbytes
 kconfig
 keystore
 lcdif
+lnumtries
 lpc
 lpspi
 ltc
@@ -221,6 +223,8 @@ mpu
 mqs
 mqtt
 mqttbadparameter
+mqttconnected
+mqttnotconnected
 mqttsuccess
 msvc
 mtu
@@ -850,6 +854,7 @@ ulservercertificatelength
 ulsize
 ulvaluelen
 unsecure
+updatable
 upgradable
 upto
 urandom
@@ -877,6 +882,7 @@ xdatalength
 xecparams
 xecpoint
 xhelpcommand
+xisreconnect
 xlength
 xmanageresubscription
 xmbedsslconfig
@@ -908,6 +914,8 @@ xtasknotify
 xtemplate
 xthingnamelength
 xtickstowait
+xtopicfilterlength
+xtopiclength
 xtrue
 xwritebufferlen
 xip
