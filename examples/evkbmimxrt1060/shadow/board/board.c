@@ -280,7 +280,7 @@ void BOARD_ConfigMPU(void)
      *      Use MACROS defined in mpu_armv7.h:
      * ARM_MPU_AP_NONE/ARM_MPU_AP_PRIV/ARM_MPU_AP_URO/ARM_MPU_AP_FULL/ARM_MPU_AP_PRO/ARM_MPU_AP_RO
      * Combine TypeExtField/IsShareable/IsCacheable/IsBufferable to configure MPU memory access attributes.
-     *  TypeExtField  IsShareable  IsCacheable  IsBufferable   Memory Attribtue    Shareability        Cache
+     *  TypeExtField  IsShareable  IsCacheable  IsBufferable   Memory Attribute    Shareability        Cache
      *     0             x           0           0             Strongly Ordered    shareable
      *     0             x           0           1              Device             shareable
      *     0             0           1           0              Normal             not shareable   Outer and inner write
@@ -296,9 +296,9 @@ void BOARD_ConfigMPU(void)
      *     1             1           0           0              Normal             shareable       outer and inner
      * noncache
      *     1             0           1           1              Normal             not shareable   outer and inner write
-     * back write/read acllocate
+     * back write/read allocate
      *     1             1           1           1              Normal             shareable       outer and inner write
-     * back write/read acllocate
+     * back write/read allocate
      *     2             x           0           0              Device              not shareable
      *  Above are normal use settings, if your want to see more details or want to config different inner/outter cache
      * policy.

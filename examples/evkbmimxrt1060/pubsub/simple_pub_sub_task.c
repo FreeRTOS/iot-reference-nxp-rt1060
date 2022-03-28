@@ -391,7 +391,7 @@ static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
             /*
              * If command was enqueued successfully, then agent will either process the packet successfully, or if
              * there is a disconnect, then it either retries the subscribe message while reconnecting and resuming
-             * persistent sessionns or cancel the operation and invokes the callback for failed response.
+             * persistent sessions or cancel the operation and invokes the callback for failed response.
              * Hence the caller task wait indefinitely for a success or failure response from agent.
              */
             ( void ) xTaskNotifyWait( 0UL,

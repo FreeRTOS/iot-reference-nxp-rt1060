@@ -80,7 +80,7 @@ MQTTAgentState_t xGetMQTTAgentState( void );
 
 /**
  * @brief Wait for MQTT agent to reach the desired state.
- * Function blocks caller task for a timeout period, untill MQTT agent reaches the specified state. Function can be
+ * Function blocks caller task for a timeout period, until MQTT agent reaches the specified state. Function can be
  * called from multiple tasks concurrently.
  *
  * @param[in] xStateToWait The desired MQTT agent state to reach.
@@ -96,7 +96,7 @@ BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xStateToWait,
  * Function adds a local subscription for the given topic filter. Each incoming publish received on the connection, will be
  * matched against the topic filter. The provided callback is invoked if the incoming publish topic matches the topic filter.
  * An optional context parameter can be passed into this function from the caller, the context is passed back transparently when
- * the publish callback is invoked. If a topic matches more than one registered topic filter, all mataching topic filter callbacks
+ * the publish callback is invoked. If a topic matches more than one registered topic filter, all matching topic filter callbacks
  * are invoked. The function is thread safe and can be invoked from multiple application tasks once the MQTT agent is
  * initialized.
  *

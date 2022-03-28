@@ -70,7 +70,7 @@
 /*! @brief The ENET PHY address. */
 #define BOARD_ENET0_PHY_ADDRESS (0x02U) /* Phy address of enet port 0. */
 
-/* USB PHY condfiguration */
+/* USB PHY configuration */
 #define BOARD_USB_PHY_D_CAL     (0x0CU)
 #define BOARD_USB_PHY_TXCAL45DP (0x06U)
 #define BOARD_USB_PHY_TXCAL45DM (0x06U)

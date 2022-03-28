@@ -123,7 +123,7 @@
  * from size of inputs. If inputs and result can fit into FREESCALE_PKHA_INT_MAX_BYTES
  * then we call hardware algorithm, otherwise we call software algorithm.
  *
- * Note that mbedTLS algorithms break modular operations unefficiently into two steps.
+ * Note that mbedTLS algorithms break modular operations inefficiently into two steps.
  * First is normal operation, for example non-modular multiply, which can produce number
  * with greater size than operands. Second is modular reduction.
  * The implication of this is that if for example FREESCALE_PKHA_INT_MAX_BYTES is 256 (2048 bits),
@@ -922,7 +922,7 @@ extern void mbedtls_platform_free( void * ptr );
 #define MBEDTLS_ECP_DP_SECP224R1_ENABLED
 #define MBEDTLS_ECP_DP_SECP256R1_ENABLED
 #define MBEDTLS_ECP_DP_SECP384R1_ENABLED
-#ifndef MBEDTLS_FREESCALE_LTC_PKHA /* PKHA suports only <=512 */
+#ifndef MBEDTLS_FREESCALE_LTC_PKHA /* PKHA supports only <=512 */
 #define MBEDTLS_ECP_DP_SECP521R1_ENABLED
 #endif
 #define MBEDTLS_ECP_DP_SECP192K1_ENABLED
@@ -1504,7 +1504,7 @@ extern void mbedtls_platform_free( void * ptr );
  * Enable support for Extended Master Secret, aka Session Hash
  * (draft-ietf-tls-session-hash-02).
  *
- * This was introduced as "the proper fix" to the Triple Handshake familiy of
+ * This was introduced as "the proper fix" to the Triple Handshake family of
  * attacks, but it is recommended to always use it (even if you disable
  * renegotiation), since it actually fixes a more fundamental issue in the
  * original SSL/TLS design, and has implications beyond Triple Handshake.
@@ -1743,7 +1743,7 @@ extern void mbedtls_platform_free( void * ptr );
  * \def MBEDTLS_SSL_SESSION_TICKETS
  *
  * Enable support for RFC 5077 session tickets in SSL.
- * Client-side, provides full support for session tickets (maintainance of a
+ * Client-side, provides full support for session tickets (maintenance of a
  * session store remains the responsibility of the application, though).
  * Server-side, you also need to provide callbacks for writing and parsing
  * tickets, including authenticated encryption and key management. Example
@@ -2045,7 +2045,7 @@ extern void mbedtls_platform_free( void * ptr );
  *      MBEDTLS_TLS_PSK_WITH_RC4_128_SHA
  *
  * \warning   ARC4 is considered a weak cipher and its use constitutes a
- *            security risk. If possible, we recommend avoidng dependencies on
+ *            security risk. If possible, we recommend avoiding dependencies on
  *            it, and considering stronger ciphers instead.
  *
  */
@@ -2623,7 +2623,7 @@ extern void mbedtls_platform_free( void * ptr );
 /**
  * \def MBEDTLS_PK_C
  *
- * Enable the generic public (asymetric) key layer.
+ * Enable the generic public (asymmetric) key layer.
  *
  * Module:  library/pk.c
  * Caller:  library/ssl_tls.c
@@ -2639,7 +2639,7 @@ extern void mbedtls_platform_free( void * ptr );
 /**
  * \def MBEDTLS_PK_PARSE_C
  *
- * Enable the generic public (asymetric) key parser.
+ * Enable the generic public (asymmetric) key parser.
  *
  * Module:  library/pkparse.c
  * Caller:  library/x509_crt.c
@@ -2654,7 +2654,7 @@ extern void mbedtls_platform_free( void * ptr );
 /**
  * \def MBEDTLS_PK_WRITE_C
  *
- * Enable the generic public (asymetric) key writer.
+ * Enable the generic public (asymmetric) key writer.
  *
  * Module:  library/pkwrite.c
  * Caller:  library/x509write.c
@@ -3118,7 +3118,7 @@ extern void mbedtls_platform_free( void * ptr );
 //#define MBEDTLS_PLATFORM_STD_TIME            time /**< Default time to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
 //#define MBEDTLS_PLATFORM_STD_FPRINTF      fprintf /**< Default fprintf to use, can be undefined */
 //#define MBEDTLS_PLATFORM_STD_PRINTF        printf /**< Default printf to use, can be undefined */
-/* Note: your snprintf must correclty zero-terminate the buffer! */
+/* Note: your snprintf must correctly zero-terminate the buffer! */
 //#define MBEDTLS_PLATFORM_STD_SNPRINTF    snprintf /**< Default snprintf to use, can be undefined */
 //#define MBEDTLS_PLATFORM_STD_EXIT_SUCCESS       0 /**< Default exit value to use, can be undefined */
 //#define MBEDTLS_PLATFORM_STD_EXIT_FAILURE       1 /**< Default exit value to use, can be undefined */
@@ -3135,7 +3135,7 @@ extern void mbedtls_platform_free( void * ptr );
 //#define MBEDTLS_PLATFORM_TIME_TYPE_MACRO       time_t /**< Default time macro to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
 //#define MBEDTLS_PLATFORM_FPRINTF_MACRO      fprintf /**< Default fprintf macro to use, can be undefined */
 #define MBEDTLS_PLATFORM_PRINTF_MACRO        PRINTF /**< Default printf macro to use, can be undefined */
-/* Note: your snprintf must correclty zero-terminate the buffer! */
+/* Note: your snprintf must correctly zero-terminate the buffer! */
 //#define MBEDTLS_PLATFORM_SNPRINTF_MACRO    snprintf /**< Default snprintf macro to use, can be undefined */
 //#define MBEDTLS_PLATFORM_NV_SEED_READ_MACRO   mbedtls_platform_std_nv_seed_read /**< Default nv_seed_read function to use, can be undefined */
 //#define MBEDTLS_PLATFORM_NV_SEED_WRITE_MACRO  mbedtls_platform_std_nv_seed_write /**< Default nv_seed_write function to use, can be undefined */
@@ -3233,7 +3233,7 @@ extern void mbedtls_platform_free( void * ptr );
  * AES256 would get skipped and because of this TLS Handshake
  * would not pass
  *
- * Disabling this altogather. May be there's a way to use AES256
+ * Disabling this altogether. May be there's a way to use AES256
  * on EVKB with mbedTLS but need to Check.
  */
 

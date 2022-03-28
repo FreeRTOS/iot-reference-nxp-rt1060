@@ -421,7 +421,7 @@ void *mflash_drv_phys2log(uint32_t addr, uint32_t len)
 
     if ((remap_start + remap_offset <= bus_addr) && (remap_end + remap_offset >= bus_addr + len))
     {
-        /* remapping window coveres the whole requested range of FLASH, return address adjusted by negative offset */
+        /* remapping window covers the whole requested range of FLASH, return address adjusted by negative offset */
         return (void *)(bus_addr - remap_offset);
     }
 
@@ -462,7 +462,7 @@ uint32_t mflash_drv_log2phys(void *ptr, uint32_t len)
 
     if ((remap_start <= bus_addr) && (remap_end >= bus_addr + len))
     {
-        /* remapping window coveres the whole address range, return address adjusted by offset */
+        /* remapping window covers the whole address range, return address adjusted by offset */
         return (bus_addr + remap_offset - MFLASH_BASE_ADDRESS);
     }
 
@@ -514,7 +514,7 @@ static int32_t mflash_drv_sector_update(uint32_t sector_addr, uint32_t sect_off,
     }
 
 #if !defined(MFLASH_INC_WRITES) || !MFLASH_INC_WRITES
-    /* Perform blank check page by page until decission for sector erase is made or we reach last page of the sector */
+    /* Perform blank check page by page until decision for sector erase is made or we reach last page of the sector */
     for (int page_idx = 0; (0 == sector_erase_req) && page_idx < MFLASH_SECTOR_SIZE / MFLASH_PAGE_SIZE; page_idx++)
     {
         /* Check only pages which need to be programed */
@@ -607,7 +607,7 @@ int32_t mflash_drv_write_internal(uint32_t addr, const uint8_t *data, uint32_t d
         sect_of = addr % MFLASH_SECTOR_SIZE,
                  /* and set first data offset to 0*/
         data_of = 0;
-        /* Continue until sector address exceed target adddress + data_length */
+        /* Continue until sector address exceed target address + data_length */
         sect_a < addr + data_len;
         /* Move to next sector */
         sect_a += MFLASH_SECTOR_SIZE,
