@@ -806,24 +806,15 @@ void prvMQTTAgentTask( void * pvParameters )
             pMqttContext->connectStatus = MQTTNotConnected;
             prvSetMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED );
 
-            /*
-             * Cancel all pending requests so that a callback with an error will be invoked for
-             * all pending requests. Its up to application to retry the requests once MQTT agent
-             * is reconnected.
-             */
-            #if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 0 )
-                {
-                    ( void ) MQTTAgent_CancelAll( &xGlobalMqttAgentContext );
-                }
-            #endif
-
             if( xMQTTStatus == MQTTSuccess )
             {
                 /*
                  * On a graceful termination, MQTT agent loop returns success.
+                 * Cancel all pending MQTT agent requests.
                  * Disconnect the socket and terminate MQTT agent loop.
                  */
                 LogInfo( ( "MQTT Agent loop terminated due to a graceful disconnect." ) );
+                ( void ) MQTTAgent_CancelAll( &xGlobalMqttAgentContext );
                 ( void ) prvDisconnectTLS( &xNetworkContext );
             }
             else
