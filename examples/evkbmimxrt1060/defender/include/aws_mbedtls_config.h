@@ -1504,7 +1504,7 @@ extern void mbedtls_platform_free( void * ptr );
  * Enable support for Extended Master Secret, aka Session Hash
  * (draft-ietf-tls-session-hash-02).
  *
- * This was introduced as "the proper fix" to the Triple Handshake familiy of
+ * This was introduced as "the proper fix" to the Triple Handshake family of
  * attacks, but it is recommended to always use it (even if you disable
  * renegotiation), since it actually fixes a more fundamental issue in the
  * original SSL/TLS design, and has implications beyond Triple Handshake.
