@@ -1204,7 +1204,7 @@ void vOTAUpdateTask( void * pvParam )
 
         if( ( otaRet = OTA_Init( &otaBuffer,
                                  &otaInterfaces,
-                                 ( const uint8_t * ) ( democonfigCLIENT_IDENTIFIER ),
+                                 ( const uint8_t * ) ( pcThingName ),
                                  otaAppCallback ) ) != OtaErrNone )
         {
             LogError( ( "Failed to initialize OTA Agent, exiting = %u.",
