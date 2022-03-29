@@ -41,69 +41,69 @@
 #ifndef __CC_H__
 #define __CC_H__
 
-//FSL
+/*FSL */
 #ifdef __REDLIB__
-#define LWIP_NO_INTTYPES_H 1
+#define LWIP_NO_INTTYPES_H    1
 #endif
 
-#if defined(LWIP_TIMEVAL_PRIVATE) && (LWIP_TIMEVAL_PRIVATE == 0)
+#if defined( LWIP_TIMEVAL_PRIVATE ) && ( LWIP_TIMEVAL_PRIVATE == 0 )
 #include <sys/time.h>
 #endif
 
 #ifndef LWIP_NO_STDINT_H
-#define LWIP_NO_STDINT_H 0
+#define LWIP_NO_STDINT_H    0
 #endif
 
-// Typedefs for the types used by lwip
+/* Typedefs for the types used by lwip */
 #if LWIP_NO_STDINT_H
-typedef unsigned char  u8_t;
-typedef signed   char  s8_t;
-typedef unsigned short u16_t;
-typedef signed   short s16_t;
-typedef unsigned int   u32_t;
-typedef signed   int   s32_t;
-typedef u32_t          mem_ptr_t;
+typedef unsigned char    u8_t;
+typedef signed char      s8_t;
+typedef unsigned short   u16_t;
+typedef signed short     s16_t;
+typedef unsigned int     u32_t;
+typedef signed int       s32_t;
+typedef u32_t            mem_ptr_t;
 #endif
 
-// Compiler hints for packing lwip's structures
-//FSL: very important at high optimization level
+/* Compiler hints for packing lwip's structures */
+/*FSL: very important at high optimization level */
 
-#if defined(__arm__) && defined(__ARMCC_VERSION)
-
-#define PACK_STRUCT_BEGIN
-#define PACK_STRUCT_STRUCT __attribute__((packed, aligned(1)))
-#define PACK_STRUCT_END
-#define PACK_STRUCT_FIELD(x) __attribute__((packed, aligned(1))) x
-
-#elif defined(__GNUC__) && (__GNUC__ != 0)
+#if defined( __arm__ ) && defined( __ARMCC_VERSION )
 
 #define PACK_STRUCT_BEGIN
-#define PACK_STRUCT_STRUCT __attribute__ ((__packed__))
+#define PACK_STRUCT_STRUCT    __attribute__( ( packed, aligned( 1 ) ) )
 #define PACK_STRUCT_END
-#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_FIELD( x )    __attribute__( ( packed, aligned( 1 ) ) ) x
 
-#elif defined(__IAR_SYSTEMS_ICC__)
+#elif defined( __GNUC__ ) && ( __GNUC__ != 0 )
 
-#define PACK_STRUCT_BEGIN _Pragma("pack(1)")
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_STRUCT    __attribute__( ( __packed__ ) )
+#define PACK_STRUCT_END
+#define PACK_STRUCT_FIELD( x )    x
+
+#elif defined( __IAR_SYSTEMS_ICC__ )
+
+#define PACK_STRUCT_BEGIN    _Pragma("pack(1)")
 #define PACK_STRUCT_STRUCT
-#define PACK_STRUCT_END _Pragma("pack()")
-#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_END      _Pragma("pack()")
+#define PACK_STRUCT_FIELD( x )    x
 
-#else
+#else /* if defined( __arm__ ) && defined( __ARMCC_VERSION ) */
 
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_STRUCT
 #define PACK_STRUCT_END
-#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_FIELD( x )    x
 
-#endif
+#endif /* if defined( __arm__ ) && defined( __ARMCC_VERSION ) */
 
-// Platform specific diagnostic output
-#include "sys_arch.h"//FSL
+/* Platform specific diagnostic output */
+#include "sys_arch.h" /*FSL */
 
-// non-fatal, print a message.
-#define LWIP_PLATFORM_DIAG(x)                     do {PRINTF x;PRINTF("\r\n");} while(0)
-// fatal, print message and abandon execution.
-#define LWIP_PLATFORM_ASSERT(x)                   sys_assert( x )
+/* non-fatal, print a message. */
+#define LWIP_PLATFORM_DIAG( x )      do { PRINTF x; PRINTF( "\r\n" ); } while( 0 )
+/* fatal, print message and abandon execution. */
+#define LWIP_PLATFORM_ASSERT( x )    sys_assert( x )
 
 #endif /* __CC_H__ */

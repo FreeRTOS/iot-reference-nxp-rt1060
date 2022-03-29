@@ -40,11 +40,11 @@
 
 /* Logging configuration for the MQTT library. */
 #ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME    "MQTT"
+#define LIBRARY_LOG_NAME    "MQTT"
 #endif
 
 #ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_ERROR
+#define LIBRARY_LOG_LEVEL    LOG_ERROR
 #endif
 
 #include "logging.h"
@@ -60,7 +60,7 @@
  * macro sets the limit on how many simultaneous PUBLISH states an MQTT
  * context maintains.
  */
-#define MQTT_STATE_ARRAY_MAX_COUNT    10U
+#define MQTT_STATE_ARRAY_MAX_COUNT                   10U
 
 #define MQTT_AGENT_COMMAND_QUEUE_LENGTH              ( 25 )
 
@@ -112,6 +112,6 @@
  * a small value since the agent more frequently polls the queue.
  *
  */
-#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME        ( 10 )
+#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME         ( 10 )
 
 #endif /* ifndef CORE_MQTT_CONFIG_H */

@@ -38,11 +38,11 @@
 #include "fsl_debug_console.h"
 
 #ifndef configLOGGING_MAX_MESSAGE_LENGTH
-    #error configLOGGING_MAX_MESSAGE_LENGTH must be defined in FreeRTOSConfig.h to use this logging file.  configLOGGING_MAX_MESSAGE_LENGTH sets the size of the buffer into which formatted text is written, so also sets the maximum log message length.
+#error configLOGGING_MAX_MESSAGE_LENGTH must be defined in FreeRTOSConfig.h to use this logging file.  configLOGGING_MAX_MESSAGE_LENGTH sets the size of the buffer into which formatted text is written, so also sets the maximum log message length.
 #endif
 
 #ifndef configLOGGING_INCLUDE_TIME_AND_TASK_NAME
-    #error configLOGGING_INCLUDE_TIME_AND_TASK_NAME must be defined in FreeRTOSConfig.h to use this logging file.  Set configLOGGING_INCLUDE_TIME_AND_TASK_NAME to 1 to prepend a time stamp, message number and the name of the calling task to each logged message.  Otherwise set to 0.
+#error configLOGGING_INCLUDE_TIME_AND_TASK_NAME must be defined in FreeRTOSConfig.h to use this logging file.  Set configLOGGING_INCLUDE_TIME_AND_TASK_NAME to 1 to prepend a time stamp, message number and the name of the calling task to each logged message.  Otherwise set to 0.
 #endif
 
 /*
@@ -156,29 +156,29 @@ static void prvLoggingPrintfCommon( uint8_t usLoggingLevel,
         if( strcmp( pcFormat, "\n" ) != 0 )
         {
             /* Add metadata of task name and tick count if config is enabled. */
-            #if ( configLOGGING_INCLUDE_TIME_AND_TASK_NAME == 1 )
+#if ( configLOGGING_INCLUDE_TIME_AND_TASK_NAME == 1 )
+            {
+                const char * pcTaskName;
+                const char * pcNoTask = "None";
+                static BaseType_t xMessageNumber = 0;
+
+                /* Add a time stamp and the name of the calling task to the
+                 * start of the log. */
+                if( xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED )
                 {
-                    const char * pcTaskName;
-                    const char * pcNoTask = "None";
-                    static BaseType_t xMessageNumber = 0;
-
-                    /* Add a time stamp and the name of the calling task to the
-                     * start of the log. */
-                    if( xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED )
-                    {
-                        pcTaskName = pcTaskGetName( NULL );
-                    }
-                    else
-                    {
-                        pcTaskName = pcNoTask;
-                    }
-
-                    xLength += snprintf_safe( pcPrintString, configLOGGING_MAX_MESSAGE_LENGTH, "%lu %lu [%s] ",
-                                              ( unsigned long ) xMessageNumber++,
-                                              ( unsigned long ) xTaskGetTickCount(),
-                                              pcTaskName );
+                    pcTaskName = pcTaskGetName( NULL );
                 }
-            #endif /* if ( configLOGGING_INCLUDE_TIME_AND_TASK_NAME == 1 ) */
+                else
+                {
+                    pcTaskName = pcNoTask;
+                }
+
+                xLength += snprintf_safe( pcPrintString, configLOGGING_MAX_MESSAGE_LENGTH, "%lu %lu [%s] ",
+                                          ( unsigned long ) xMessageNumber++,
+                                          ( unsigned long ) xTaskGetTickCount(),
+                                          pcTaskName );
+            }
+#endif /* if ( configLOGGING_INCLUDE_TIME_AND_TASK_NAME == 1 ) */
         }
 
         /* Choose the string for the log level metadata for the log message. */

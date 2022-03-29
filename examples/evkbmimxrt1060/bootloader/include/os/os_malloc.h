@@ -20,26 +20,30 @@
 #ifndef H_OS_MALLOC_
 #define H_OS_MALLOC_
 
-#if defined(USE_RTOS)
+#if defined( USE_RTOS )
 #include "FreeRTOS.h"
 
+/* *INDENT-OFF* */
 #ifdef __cplusplus
 extern "C" {
 #endif
+/* *INDENT-ON* */
 
 #undef malloc
-#define malloc pvPortMalloc // os_malloc
+#define malloc     pvPortMalloc /* os_malloc */
 
 #undef free
-#define free vPortFree // os_free
+#define free       vPortFree /* os_free */
 
 #undef realloc
-#define realloc os_realloc
+#define realloc    os_realloc
 
+/* *INDENT-OFF* */
 #ifdef __cplusplus
 }
 #endif
+/* *INDENT-ON* */
 
 #endif /* define(USE_RTOS) */
 
-#endif
+#endif /* ifndef H_OS_MALLOC_ */

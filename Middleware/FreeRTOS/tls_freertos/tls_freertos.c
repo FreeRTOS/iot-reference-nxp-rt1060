@@ -37,7 +37,7 @@
 #include "mbedtls/pk_internal.h"
 #include "mbedtls/debug.h"
 #ifdef MBEDTLS_DEBUG_C
-    #define tlsDEBUG_VERBOSE    4
+#define tlsDEBUG_VERBOSE    4
 #endif
 
 /* C runtime includes. */
@@ -47,12 +47,14 @@
 
 #if SSS_HAVE_SSS
 #include <ex_sss_boot.h>
-extern ex_sss_boot_ctx_t* pex_sss_demo_boot_ctx;
-extern ex_sss_cloud_ctx_t *pex_sss_demo_tls_ctx;
+extern ex_sss_boot_ctx_t * pex_sss_demo_boot_ctx;
+extern ex_sss_cloud_ctx_t * pex_sss_demo_tls_ctx;
 
 /* To overwrite the default curve list in ssl config */
-extern int mbedtls_ssl_set_curve_list(mbedtls_ssl_config *conf, uint32_t keyIndex);
+extern int mbedtls_ssl_set_curve_list( mbedtls_ssl_config * conf,
+                                       uint32_t keyIndex );
 #endif
+
 /**
  * @brief Internal context structure.
  *
@@ -538,14 +540,16 @@ static int prvInitializeClientCredential( TLSContext_t * pxCtx )
                                                                     ( CK_UTF8CHAR_PTR ) configPKCS11_DEFAULT_USER_PIN,
                                                                     sizeof( configPKCS11_DEFAULT_USER_PIN ) - 1 );
     }
+
 #if SSS_HAVE_SSS
-    char keyLabel[20];
-    memset(keyLabel, 0, sizeof(keyLabel));
-    snprintf(keyLabel, sizeof(keyLabel), "sss:%08lx", pex_sss_demo_tls_ctx->client_keyPair_index);
-    const char * pcKeyLabelName = (const char * ) &keyLabel[0];
+    char keyLabel[ 20 ];
+    memset( keyLabel, 0, sizeof( keyLabel ) );
+    snprintf( keyLabel, sizeof( keyLabel ), "sss:%08lx", pex_sss_demo_tls_ctx->client_keyPair_index );
+    const char * pcKeyLabelName = ( const char * ) &keyLabel[ 0 ];
 #else
     const char * pcKeyLabelName = pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS;
 #endif
+
     if( CKR_OK == xResult )
     {
         /* Get the handle of the device private key. */
@@ -601,14 +605,16 @@ static int prvInitializeClientCredential( TLSContext_t * pxCtx )
         pxCtx->xMbedPkCtx.pk_info = &pxCtx->xMbedPkInfo;
         pxCtx->xMbedPkCtx.pk_ctx = pxCtx;
     }
+
 #if SSS_HAVE_SSS
-    char certLabel[20];
-    memset(certLabel, 0, sizeof(certLabel));
-    snprintf(certLabel, sizeof(certLabel), "sss:%08lx", pex_sss_demo_tls_ctx->client_cert_index);
-    const char * pcCertLabelName = (const char * ) &certLabel[0];
+    char certLabel[ 20 ];
+    memset( certLabel, 0, sizeof( certLabel ) );
+    snprintf( certLabel, sizeof( certLabel ), "sss:%08lx", pex_sss_demo_tls_ctx->client_cert_index );
+    const char * pcCertLabelName = ( const char * ) &certLabel[ 0 ];
 #else
     const char * pcCertLabelName = pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS;
 #endif
+
     /* Get the handle of the device client certificate. */
     if( xResult == CKR_OK )
     {
@@ -721,20 +727,20 @@ BaseType_t TLS_Init( void ** ppvContext,
 /*-----------------------------------------------------------*/
 
 #ifdef MBEDTLS_DEBUG_C
-    static void prvTlsDebugPrint( void * ctx,
-                                  int lLevel,
-                                  const char * pcFile,
-                                  int lLine,
-                                  const char * pcStr )
-    {
-        /* Unused parameters. */
-        ( void ) ctx;
-        ( void ) pcFile;
-        ( void ) lLine;
+static void prvTlsDebugPrint( void * ctx,
+                              int lLevel,
+                              const char * pcFile,
+                              int lLine,
+                              const char * pcStr )
+{
+    /* Unused parameters. */
+    ( void ) ctx;
+    ( void ) pcFile;
+    ( void ) lLine;
 
-        /* Send the debug string to the portable logger. */
-        vLoggingPrintf( "mbedTLS: |%d| %s", lLevel, pcStr );
-    }
+    /* Send the debug string to the portable logger. */
+    vLoggingPrintf( "mbedTLS: |%d| %s", lLevel, pcStr );
+}
 #endif /* ifdef MBEDTLS_DEBUG_C */
 
 /*-----------------------------------------------------------*/
@@ -805,19 +811,22 @@ BaseType_t TLS_Connect( void * pvContext )
         }
     }
 
- #if SSS_HAVE_SSS
-    if (0 == xResult)
+#if SSS_HAVE_SSS
+    if( 0 == xResult )
     {
-        sss_status_t sss_status = sss_key_object_init(&pex_sss_demo_tls_ctx->obj, &pex_sss_demo_boot_ctx->ks);
-        sss_status = sss_key_object_get_handle(&pex_sss_demo_tls_ctx->obj, pex_sss_demo_tls_ctx->client_keyPair_index);
-        if(sss_status != kStatus_SSS_Success) {
+        sss_status_t sss_status = sss_key_object_init( &pex_sss_demo_tls_ctx->obj, &pex_sss_demo_boot_ctx->ks );
+        sss_status = sss_key_object_get_handle( &pex_sss_demo_tls_ctx->obj, pex_sss_demo_tls_ctx->client_keyPair_index );
+
+        if( sss_status != kStatus_SSS_Success )
+        {
             xResult = 1;
         }
-        else if(pex_sss_demo_tls_ctx->obj.cipherType == kSSS_CipherType_EC_NIST_P) {
-            xResult = mbedtls_ssl_set_curve_list(&pxCtx->xMbedSslConfig, pex_sss_demo_tls_ctx->client_keyPair_index);
+        else if( pex_sss_demo_tls_ctx->obj.cipherType == kSSS_CipherType_EC_NIST_P )
+        {
+            xResult = mbedtls_ssl_set_curve_list( &pxCtx->xMbedSslConfig, pex_sss_demo_tls_ctx->client_keyPair_index );
         }
     }
-#endif
+#endif /* if SSS_HAVE_SSS */
 
     if( 0 == xResult )
     {
@@ -848,13 +857,13 @@ BaseType_t TLS_Connect( void * pvContext )
             pxCtx->ppcAlpnProtocols );
     }
 
-    #ifdef MBEDTLS_DEBUG_C
+#ifdef MBEDTLS_DEBUG_C
 
-        /* If mbedTLS is being compiled with debug support, assume that the
-         * runtime configuration should use verbose output. */
-        mbedtls_ssl_conf_dbg( &pxCtx->xMbedSslConfig, prvTlsDebugPrint, NULL );
-        mbedtls_debug_set_threshold( tlsDEBUG_VERBOSE );
-    #endif
+    /* If mbedTLS is being compiled with debug support, assume that the
+     * runtime configuration should use verbose output. */
+    mbedtls_ssl_conf_dbg( &pxCtx->xMbedSslConfig, prvTlsDebugPrint, NULL );
+    mbedtls_debug_set_threshold( tlsDEBUG_VERBOSE );
+#endif
 
     if( 0 == xResult )
     {
@@ -865,15 +874,14 @@ BaseType_t TLS_Connect( void * pvContext )
     if( 0 == xResult )
     {
 #if SSS_HAVE_ALT_SSS
-            pex_sss_demo_tls_ctx->pHost_ks = &pex_sss_demo_boot_ctx->host_ks;
-           if (pex_sss_demo_tls_ctx->obj.cipherType == kSSS_CipherType_EC_NIST_P) {
-                xResult = sss_mbedtls_associate_ecdhctx(pxCtx->xMbedSslCtx.handshake, &pex_sss_demo_tls_ctx->obj, pex_sss_demo_tls_ctx->pHost_ks);
-            }
-#endif  /*SSS_HAVE_ALT_SSS*/
+        pex_sss_demo_tls_ctx->pHost_ks = &pex_sss_demo_boot_ctx->host_ks;
 
+        if( pex_sss_demo_tls_ctx->obj.cipherType == kSSS_CipherType_EC_NIST_P )
+        {
+            xResult = sss_mbedtls_associate_ecdhctx( pxCtx->xMbedSslCtx.handshake, &pex_sss_demo_tls_ctx->obj, pex_sss_demo_tls_ctx->pHost_ks );
+        }
+#endif /*SSS_HAVE_ALT_SSS*/
     }
-
-
 
     /* Set the hostname, if requested. */
     if( ( 0 == xResult ) && ( NULL != pxCtx->pcDestination ) )
@@ -1043,4 +1051,3 @@ void TLS_Cleanup( void * pvContext )
         vPortFree( pxCtx );
     }
 }
-

@@ -9,28 +9,28 @@
 
 #include "fsl_debug_console.h"
 
-#define MCUBOOT_LOG_MODULE_DECLARE(domain)  // LOG_MODULE_DECLARE(domain, CONFIG_MCUBOOT_LOG_LEVEL)
-#define MCUBOOT_LOG_MODULE_REGISTER(domain) // LOG_MODULE_REGISTER(domain, CONFIG_MCUBOOT_LOG_LEVEL)
+#define MCUBOOT_LOG_MODULE_DECLARE( domain )     /* LOG_MODULE_DECLARE(domain, CONFIG_MCUBOOT_LOG_LEVEL) */
+#define MCUBOOT_LOG_MODULE_REGISTER( domain )    /* LOG_MODULE_REGISTER(domain, CONFIG_MCUBOOT_LOG_LEVEL) */
 
-#define MCUBOOT_LOG_ERR(...)            \
-    {                                   \
-        DbgConsole_Printf(__VA_ARGS__); \
-        DbgConsole_Printf("\r\n");      \
+#define MCUBOOT_LOG_ERR( ... )            \
+    {                                     \
+        DbgConsole_Printf( __VA_ARGS__ ); \
+        DbgConsole_Printf( "\r\n" );      \
     }
-#define MCUBOOT_LOG_WRN(...)            \
-    {                                   \
-        DbgConsole_Printf(__VA_ARGS__); \
-        DbgConsole_Printf("\r\n");      \
+#define MCUBOOT_LOG_WRN( ... )            \
+    {                                     \
+        DbgConsole_Printf( __VA_ARGS__ ); \
+        DbgConsole_Printf( "\r\n" );      \
     }
-#define MCUBOOT_LOG_INF(...)            \
-    {                                   \
-        DbgConsole_Printf(__VA_ARGS__); \
-        DbgConsole_Printf("\r\n");      \
+#define MCUBOOT_LOG_INF( ... )            \
+    {                                     \
+        DbgConsole_Printf( __VA_ARGS__ ); \
+        DbgConsole_Printf( "\r\n" );      \
     }
-#define MCUBOOT_LOG_DBG(...)            \
-    {                                   \
-        DbgConsole_Printf(__VA_ARGS__); \
-        DbgConsole_Printf("\r\n");      \
+#define MCUBOOT_LOG_DBG( ... )            \
+    {                                     \
+        DbgConsole_Printf( __VA_ARGS__ ); \
+        DbgConsole_Printf( "\r\n" );      \
     }
 
 #endif /* __MCUBOOT_LOGGING_H__ */

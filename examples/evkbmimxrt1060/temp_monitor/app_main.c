@@ -68,33 +68,33 @@ int app_main( void )
         xResult = xStartMQTTAgent( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
     }
 
-    #if ( appmainINCLUDE_CLI == 1 )
+#if ( appmainINCLUDE_CLI == 1 )
+    {
+        if( xResult == pdPASS )
         {
-            if( xResult == pdPASS )
-            {
-                xResult = xTaskCreate( vCLITask,
-                                       "CLI",
-                                       appmainCLI_TASK_STACK_SIZE,
-                                       NULL,
-                                       appmainCLI_TASK_PRIORITY,
-                                       NULL );
-            }
+            xResult = xTaskCreate( vCLITask,
+                                   "CLI",
+                                   appmainCLI_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainCLI_TASK_PRIORITY,
+                                   NULL );
         }
-    #endif /* if ( appmainINCLUDE_CLI == 1 ) */
+    }
+#endif /* if ( appmainINCLUDE_CLI == 1 ) */
 
-    #if ( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 )
+#if ( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 )
+    {
+        if( xResult == pdPASS )
         {
-            if( xResult == pdPASS )
-            {
-                xResult = xTaskCreate( vTemperatureMonitorTask,
-                                       "TEMPMON",
-                                       appmainTEMP_MONITOR_TASK_STACK_SIZE,
-                                       NULL,
-                                       appmainTEMP_MONITOR_TASK_PRIORITY,
-                                       NULL );
-            }
+            xResult = xTaskCreate( vTemperatureMonitorTask,
+                                   "TEMPMON",
+                                   appmainTEMP_MONITOR_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainTEMP_MONITOR_TASK_PRIORITY,
+                                   NULL );
         }
-    #endif /* if ( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 ) */
+    }
+#endif /* if ( appmainINCLUDE_TEMP_MONITOR_DEMO == 1 ) */
 
 
     return pdPASS;

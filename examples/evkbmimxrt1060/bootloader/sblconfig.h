@@ -17,7 +17,7 @@
 
 /* MCU SBL core */
 
-#define CONFIG_MCUBOOT_MAX_IMG_SECTORS 800
+#define CONFIG_MCUBOOT_MAX_IMG_SECTORS    800
 
 /* MCU SBL Flash Map */
 
@@ -32,14 +32,14 @@
 
 /* Flash device parameters */
 
-#define COMPONENT_FLASHIAP_SIZE 8388608
+#define COMPONENT_FLASHIAP_SIZE    8388608
 
 /* secure */
 
 #define COMPONENT_MCUBOOT_SECURE
 #define CONFIG_BOOT_SIGNATURE
 #define CONFIG_BOOT_SIGNATURE_TYPE_RSA
-#define CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN 2048
+#define CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN    2048
 #define COMPONENT_MBEDTLS
 #define CONFIG_BOOT_BOOTSTRAP
 
@@ -47,7 +47,7 @@
 
 #define COMPONENT_SERIAL_MANAGER
 #define COMPONENT_SERIAL_MANAGER_LPUART
-#define SERIAL_PORT_TYPE_UART 1
+#define SERIAL_PORT_TYPE_UART    1
 
 /* mcu isp support */
 
@@ -69,4 +69,4 @@
 
 /* Board extended module Drivers */
 
-#endif
+#endif /* ifndef SBL_CONFIG_H__ */

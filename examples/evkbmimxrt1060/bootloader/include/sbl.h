@@ -11,17 +11,21 @@
 #include <sblconfig.h>
 #include <sbldef.h>
 
+/* *INDENT-OFF* */
 #ifdef __cplusplus
 extern "C" {
 #endif
+/* *INDENT-ON* */
 
 /*
  * boot interface
  */
-int sbl_boot_main(void);
+int sbl_boot_main( void );
 
+/* *INDENT-OFF* */
 #ifdef __cplusplus
 }
 #endif
+/* *INDENT-ON* */
 
-#endif
+#endif /* ifndef __SBL_H__ */

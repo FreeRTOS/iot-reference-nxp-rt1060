@@ -39,7 +39,7 @@
 
 
 #if !defined( LWIP_TCPIP_CORE_LOCKING ) || ( LWIP_TCPIP_CORE_LOCKING == 0 )
-    #error "Network metrics are only supported in core locking mode. Please define LWIP_TCPIP_CORE_LOCKING to 1 in lwipopts.h."
+#error "Network metrics are only supported in core locking mode. Please define LWIP_TCPIP_CORE_LOCKING to 1 in lwipopts.h."
 #endif
 
 /* Helper macros to get bytes in/out and packets in/out. */
@@ -238,15 +238,15 @@ MetricsCollectorStatus_t GetEstablishedConnections( TCPConnection_t * pOutConnec
                     /* The output array member to fill. */
                     pEstablishedConnection = &( pOutConnectionsArray[ pcbCnt ] );
 
-                    #if LWIP_IPV4 && LWIP_IPV6
-                        pEstablishedConnection->remoteIp = pCurrPcb->remote_ip.u_addr.ip4.addr; /* Network byte order. */
-                        pEstablishedConnection->localIp = pCurrPcb->local_ip.u_addr.ip4.addr;   /* Network byte order. */
-                    #elif LWIP_IPV4
-                        pEstablishedConnection->ulRemoteIPAddr = pCurrPcb->remote_ip.addr;      /* Network byte order. */
-                        pEstablishedConnection->ulLocalIPAddr = pCurrPcb->local_ip.addr;        /* Network byte order. */
-                    #else
-                    #error "IPV6 only is not supported."
-                    #endif
+#if LWIP_IPV4 && LWIP_IPV6
+                    pEstablishedConnection->remoteIp = pCurrPcb->remote_ip.u_addr.ip4.addr; /* Network byte order. */
+                    pEstablishedConnection->localIp = pCurrPcb->local_ip.u_addr.ip4.addr;   /* Network byte order. */
+#elif LWIP_IPV4
+                    pEstablishedConnection->ulRemoteIPAddr = pCurrPcb->remote_ip.addr;      /* Network byte order. */
+                    pEstablishedConnection->ulLocalIPAddr = pCurrPcb->local_ip.addr;        /* Network byte order. */
+#else
+#error "IPV6 only is not supported."
+#endif
 
                     pEstablishedConnection->usLocalPort = pCurrPcb->local_port;   /* Host byte order. */
                     pEstablishedConnection->usRemotePort = pCurrPcb->remote_port; /* Host byte order. */

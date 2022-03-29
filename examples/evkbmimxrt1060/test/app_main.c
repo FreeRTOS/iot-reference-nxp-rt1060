@@ -62,40 +62,40 @@ int app_main( void )
     BaseType_t xResult = pdFAIL;
 
     xResult = KVStore_init();
-    #if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 )
+#if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 )
+    {
+        if( xResult == pdPASS )
         {
-            if( xResult == pdPASS )
-            {
-                xResult = xTaskCreate( prvQualificationTestTask,
-                                       "TEST",
-                                       appmainTEST_TASK_STACK_SIZE,
-                                       NULL,
-                                       appmainTEST_TASK_PRIORITY,
-                                       NULL );
-            }
+            xResult = xTaskCreate( prvQualificationTestTask,
+                                   "TEST",
+                                   appmainTEST_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainTEST_TASK_PRIORITY,
+                                   NULL );
         }
-    #endif /* if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 ) */
+    }
+#endif /* if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 ) */
 
 
 
-    #if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 )
+#if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 )
+    {
+        if( xResult == pdPASS )
         {
-            if( xResult == pdPASS )
-            {
-                xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-            }
-
-            if( xResult == pdPASS )
-            {
-                xResult = xTaskCreate( vSubscribePublishTestTask,
-                                       "TEST",
-                                       appmainTEST_TASK_STACK_SIZE,
-                                       NULL,
-                                       appmainTEST_TASK_PRIORITY,
-                                       NULL );
-            }
+            xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
         }
-    #endif /* if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 ) */
+
+        if( xResult == pdPASS )
+        {
+            xResult = xTaskCreate( vSubscribePublishTestTask,
+                                   "TEST",
+                                   appmainTEST_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainTEST_TASK_PRIORITY,
+                                   NULL );
+        }
+    }
+#endif /* if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 ) */
 
     return pdPASS;
 }

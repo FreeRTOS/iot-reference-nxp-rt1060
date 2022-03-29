@@ -29,12 +29,12 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define VERSION_SPACER     "."
-#define STR2(VERSION)      #VERSION
-#define STR(VERSION)       STR2(VERSION)
-#define BOOTLOADER_VERSION STR(MAJOR_VERSION) VERSION_SPACER STR(MINOR_VERSION) VERSION_SPACER STR(REVISE_VERSION)
+#define VERSION_SPACER        "."
+#define STR2( VERSION )    # VERSION
+#define STR( VERSION )     STR2( VERSION )
+#define BOOTLOADER_VERSION    STR( MAJOR_VERSION ) VERSION_SPACER STR( MINOR_VERSION ) VERSION_SPACER STR( REVISE_VERSION )
 
-#define IMAGE_TRAILER_SIZE sizeof(struct image_trailer)
+#define IMAGE_TRAILER_SIZE    sizeof( struct image_trailer )
 
 typedef enum
 {
@@ -44,38 +44,44 @@ typedef enum
 
 #ifdef TEST_FUNCTION
 /* write the image trailer at the end of the flash partition */
-void enable_image(image2_mode_t mode);
+void enable_image( image2_mode_t mode );
 #endif
 
 #ifdef SINGLE_IMAGE
-int boot_single_go(struct boot_rsp *rsp);
+int boot_single_go( struct boot_rsp * rsp );
 #endif
-extern void SBL_DisablePeripherals(void);
+extern void SBL_DisablePeripherals( void );
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-#if (defined(COMPONENT_KBOOT))
-extern int isp_kboot_main(bool isInfiniteIsp);
+#if ( defined( COMPONENT_KBOOT ) )
+extern int isp_kboot_main( bool isInfiniteIsp );
 #endif
 
 #ifdef SOC_REMAP_ENABLE
-int boot_remap_go(struct boot_rsp *rsp);
+int boot_remap_go( struct boot_rsp * rsp );
 #endif
 
 #ifdef CONFIG_BOOT_SIGNATURE
-status_t CRYPTO_InitHardware(void);
+status_t CRYPTO_InitHardware( void );
 #endif
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-flash_ops_s mcuboot_flash = {.flash_init  = sbl_flash_init,
-                             .flash_erase = sbl_flash_erase,
-                             .flash_read  = sbl_flash_read,
-                             .flash_write = sbl_flash_write,
-                             .align_val   = 1,
-                             .erased_val  = 0xFF};
+flash_ops_s mcuboot_flash =
+{
+    .flash_init  = sbl_flash_init,
+    .flash_erase = sbl_flash_erase,
+    .flash_read  = sbl_flash_read,
+    .flash_write = sbl_flash_write,
+    .align_val   = 1,
+    .erased_val  = 0xFF
+};
 
 struct image_trailer image_trailer2;
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -84,29 +90,31 @@ struct image_trailer image_trailer2;
  * @brief Application entry point.
  */
 /* mbedtls\port\ksdk\ksdk_mbedtls.c */
-// extern void CRYPTO_InitHardware(void);
-void os_heap_init(void);
+/* extern void CRYPTO_InitHardware(void); */
+void os_heap_init( void );
 
 #ifdef SINGLE_IMAGE
 
 static struct boot_loader_state boot_data_single;
 
-static int boot_read_first_image_header(struct image_header *out_hdr)
+static int boot_read_first_image_header( struct image_header * out_hdr )
 {
-    const struct flash_area *fap;
+    const struct flash_area * fap;
     int area_id;
     int rc;
 
-    area_id = flash_area_id_from_image_slot(BOOT_PRIMARY_SLOT);
-    rc      = flash_area_open(area_id, &fap);
-    if (rc != 0)
+    area_id = flash_area_id_from_image_slot( BOOT_PRIMARY_SLOT );
+    rc = flash_area_open( area_id, &fap );
+
+    if( rc != 0 )
     {
         rc = BOOT_EFLASH;
         goto done;
     }
 
-    rc = flash_area_read(fap, 0, out_hdr, sizeof *out_hdr);
-    if (rc != 0)
+    rc = flash_area_read( fap, 0, out_hdr, sizeof *out_hdr );
+
+    if( rc != 0 )
     {
         rc = BOOT_EFLASH;
         goto done;
@@ -115,42 +123,48 @@ static int boot_read_first_image_header(struct image_header *out_hdr)
     rc = 0;
 
 done:
-    flash_area_close(fap);
+    flash_area_close( fap );
     return rc;
 }
 
-static inline bool boot_data_check(uint8_t val, void *data, size_t len)
+static inline bool boot_data_check( uint8_t val,
+                                    void * data,
+                                    size_t len )
 {
     uint8_t i;
-    uint8_t *p = (uint8_t *)data;
-    for (i = 0; i < len; i++)
+    uint8_t * p = ( uint8_t * ) data;
+
+    for( i = 0; i < len; i++ )
     {
-        if (val != p[i])
+        if( val != p[ i ] )
         {
             return false;
         }
     }
+
     return true;
 }
 
-static int boot_check_first_header_erased(void)
+static int boot_check_first_header_erased( void )
 {
-    const struct flash_area *fap;
-    struct image_header *hdr;
+    const struct flash_area * fap;
+    struct image_header * hdr;
     uint8_t erased_val;
     int rc;
 
-    rc = flash_area_open(flash_area_id_from_image_slot(BOOT_PRIMARY_SLOT), &fap);
-    if (rc != 0)
+    rc = flash_area_open( flash_area_id_from_image_slot( BOOT_PRIMARY_SLOT ), &fap );
+
+    if( rc != 0 )
     {
         return -1;
     }
 
-    erased_val = flash_area_erased_val(fap);
-    flash_area_close(fap);
+    erased_val = flash_area_erased_val( fap );
+    flash_area_close( fap );
 
-    hdr = boot_img_hdr(&boot_data_single, BOOT_PRIMARY_SLOT);
-    if (!boot_data_check(erased_val, &hdr->ih_magic, sizeof(hdr->ih_magic)))
+    hdr = boot_img_hdr( &boot_data_single, BOOT_PRIMARY_SLOT );
+
+    if( !boot_data_check( erased_val, &hdr->ih_magic, sizeof( hdr->ih_magic ) ) )
     {
         return -1;
     }
@@ -161,46 +175,51 @@ static int boot_check_first_header_erased(void)
 /*
  * Validate image hash/signature in a slot.
  */
-static int boot_first_image_check(struct image_header *hdr, const struct flash_area *fap, struct boot_status *bs)
+static int boot_first_image_check( struct image_header * hdr,
+                                   const struct flash_area * fap,
+                                   struct boot_status * bs )
 {
-    static uint8_t tmpbuf[BOOT_TMPBUF_SZ];
+    static uint8_t tmpbuf[ BOOT_TMPBUF_SZ ];
 
-    if (bootutil_img_validate(NULL, 0, hdr, fap, tmpbuf, BOOT_TMPBUF_SZ, NULL, 0, NULL))
+    if( bootutil_img_validate( NULL, 0, hdr, fap, tmpbuf, BOOT_TMPBUF_SZ, NULL, 0, NULL ) )
     {
         return BOOT_EBADIMAGE;
     }
+
     return 0;
 }
 
-static int boot_validate_first_slot(struct boot_status *bs)
+static int boot_validate_first_slot( struct boot_status * bs )
 {
-    const struct flash_area *fap;
-    struct image_header *hdr;
+    const struct flash_area * fap;
+    struct image_header * hdr;
     int rc;
 
-    rc = flash_area_open(flash_area_id_from_image_slot(BOOT_PRIMARY_SLOT), &fap);
-    if (rc != 0)
+    rc = flash_area_open( flash_area_id_from_image_slot( BOOT_PRIMARY_SLOT ), &fap );
+
+    if( rc != 0 )
     {
         return BOOT_EFLASH;
     }
 
-    hdr = boot_img_hdr(&boot_data_single, BOOT_PRIMARY_SLOT);
-    if (boot_check_first_header_erased() == 0 || (hdr->ih_flags & IMAGE_F_NON_BOOTABLE))
+    hdr = boot_img_hdr( &boot_data_single, BOOT_PRIMARY_SLOT );
+
+    if( ( boot_check_first_header_erased() == 0 ) || ( hdr->ih_flags & IMAGE_F_NON_BOOTABLE ) )
     {
         /* No bootable image in slot; continue booting from the primary slot. */
         rc = -1;
         goto out;
     }
 
-    if ((hdr->ih_magic != IMAGE_MAGIC || boot_first_image_check(hdr, fap, bs) != 0))
+    if( ( ( hdr->ih_magic != IMAGE_MAGIC ) || ( boot_first_image_check( hdr, fap, bs ) != 0 ) ) )
     {
-        BOOT_LOG_ERR("Image is not valid!");
+        BOOT_LOG_ERR( "Image is not valid!" );
         rc = -1;
         goto out;
     }
 
 out:
-    flash_area_close(fap);
+    flash_area_close( fap );
     return rc;
 }
 
@@ -212,7 +231,7 @@ out:
  *
  * @return                      0 on success; nonzero on failure.
  */
-int boot_single_go(struct boot_rsp *rsp)
+int boot_single_go( struct boot_rsp * rsp )
 {
     int rc;
     int fa_id;
@@ -222,31 +241,34 @@ int boot_single_go(struct boot_rsp *rsp)
      * necessary because the gcc option "-fdata-sections" doesn't seem to have
      * any effect in older gcc versions (e.g., 4.8.4).
      */
-    static boot_sector_t primary_slot_sectors[BOOT_MAX_IMG_SECTORS];
-    boot_data_single.imgs[0][BOOT_PRIMARY_SLOT].sectors = primary_slot_sectors;
+    static boot_sector_t primary_slot_sectors[ BOOT_MAX_IMG_SECTORS ];
 
-    fa_id = flash_area_id_from_image_slot(BOOT_PRIMARY_SLOT);
-    rc    = flash_area_open(fa_id, &BOOT_IMG_AREA(&boot_data_single, BOOT_PRIMARY_SLOT));
-    assert(rc == 0);
+    boot_data_single.imgs[ 0 ][ BOOT_PRIMARY_SLOT ].sectors = primary_slot_sectors;
 
-    //    /* Determine the sector layout of the image slot. */
-    //    rc = boot_initialize_area(&boot_data_single, FLASH_AREA_IMAGE_PRIMARY(0));
-    //    if (rc != 0) {
-    //        BOOT_LOG_WRN("Failed reading sectors; BOOT_MAX_IMG_SECTORS=%d - too small?",
-    //                BOOT_MAX_IMG_SECTORS);
-    //        goto out;
-    //    }
+    fa_id = flash_area_id_from_image_slot( BOOT_PRIMARY_SLOT );
+    rc = flash_area_open( fa_id, &BOOT_IMG_AREA( &boot_data_single, BOOT_PRIMARY_SLOT ) );
+    assert( rc == 0 );
+
+    /*    / * Determine the sector layout of the image slot. * / */
+    /*    rc = boot_initialize_area(&boot_data_single, FLASH_AREA_IMAGE_PRIMARY(0)); */
+    /*    if (rc != 0) { */
+    /*        BOOT_LOG_WRN("Failed reading sectors; BOOT_MAX_IMG_SECTORS=%d - too small?", */
+    /*                BOOT_MAX_IMG_SECTORS); */
+    /*        goto out; */
+    /*    } */
 
     /* Attempt to read an image header from each slot. */
-    rc = boot_read_first_image_header(boot_img_hdr(&boot_data_single, BOOT_PRIMARY_SLOT));
-    if (rc != 0)
+    rc = boot_read_first_image_header( boot_img_hdr( &boot_data_single, BOOT_PRIMARY_SLOT ) );
+
+    if( rc != 0 )
     {
         goto out;
     }
 
 #ifdef CONFIG_BOOT_SIGNATURE
-    rc = boot_validate_first_slot(NULL);
-    if (rc != 0)
+    rc = boot_validate_first_slot( NULL );
+
+    if( rc != 0 )
     {
         rc = BOOT_EBADIMAGE;
         goto out;
@@ -254,21 +276,21 @@ int boot_single_go(struct boot_rsp *rsp)
 #endif
 
     /* Always boot from the primary slot. */
-    rsp->br_flash_dev_id = boot_data_single.imgs[0][BOOT_PRIMARY_SLOT].area->fa_device_id;
-    rsp->br_image_off    = boot_img_slot_off(&boot_data_single, BOOT_PRIMARY_SLOT);
-    rsp->br_hdr          = boot_img_hdr(&boot_data_single, BOOT_PRIMARY_SLOT);
+    rsp->br_flash_dev_id = boot_data_single.imgs[ 0 ][ BOOT_PRIMARY_SLOT ].area->fa_device_id;
+    rsp->br_image_off = boot_img_slot_off( &boot_data_single, BOOT_PRIMARY_SLOT );
+    rsp->br_hdr = boot_img_hdr( &boot_data_single, BOOT_PRIMARY_SLOT );
 
 out:
-    flash_area_close(BOOT_IMG_AREA(&boot_data_single, BOOT_PRIMARY_SLOT));
+    flash_area_close( BOOT_IMG_AREA( &boot_data_single, BOOT_PRIMARY_SLOT ) );
     return rc;
 }
 #endif /* SINGLE_IMAGE */
 
-int sbl_boot_main(void)
+int sbl_boot_main( void )
 {
-    struct image_header br_hdr1 = {.ih_hdr_size = 0x2000};
-    struct boot_rsp rsp         = {.br_hdr = &br_hdr1, .br_flash_dev_id = 1, .br_image_off = 0x80000};
-    int rc                      = 0;
+    struct image_header br_hdr1 = { .ih_hdr_size = 0x2000 };
+    struct boot_rsp rsp = { .br_hdr = &br_hdr1, .br_flash_dev_id = 1, .br_image_off = 0x80000 };
+    int rc = 0;
 
 #ifdef CONFIG_BOOT_SIGNATURE
     CRYPTO_InitHardware();
@@ -277,38 +299,43 @@ int sbl_boot_main(void)
     sbl_flash_init();
 
 #ifdef TEST_FUNCTION
-    enable_image(Permanent_mode);
+    enable_image( Permanent_mode );
 #endif
-    BOOT_LOG_INF("Bootloader Version %s", BOOTLOADER_VERSION);
+    BOOT_LOG_INF( "Bootloader Version %s", BOOTLOADER_VERSION );
     os_heap_init();
 
 #ifdef SINGLE_IMAGE
-    rc = boot_single_go(&rsp);
+    rc = boot_single_go( &rsp );
 #else
 #ifdef SOC_REMAP_ENABLE
-    rc = boot_remap_go(&rsp);
+    rc = boot_remap_go( &rsp );
 #else
-    rc = boot_go(&rsp);
+    rc = boot_go( &rsp );
 #endif
 #endif /* SINGLE_IMAGE*/
-    if (rc != 0)
+
+    if( rc != 0 )
     {
-        BOOT_LOG_ERR("Unable to find bootable image");
-        for (;;)
-            ;
+        BOOT_LOG_ERR( "Unable to find bootable image" );
+
+        for( ; ; )
+        {
+        }
     }
 
-    BOOT_LOG_INF("Bootloader chainload address offset: 0x%x", rsp.br_image_off);
-    BOOT_LOG_INF("Reset_Handler address offset: 0x%x", rsp.br_image_off + rsp.br_hdr->ih_hdr_size);
-    BOOT_LOG_INF("Jumping to the image\r\n\r\n");
-    do_boot(&rsp);
+    BOOT_LOG_INF( "Bootloader chainload address offset: 0x%x", rsp.br_image_off );
+    BOOT_LOG_INF( "Reset_Handler address offset: 0x%x", rsp.br_image_off + rsp.br_hdr->ih_hdr_size );
+    BOOT_LOG_INF( "Jumping to the image\r\n\r\n" );
+    do_boot( &rsp );
 
-    BOOT_LOG_ERR("Never should get here");
-    for (;;)
-        ;
+    BOOT_LOG_ERR( "Never should get here" );
+
+    for( ; ; )
+    {
+    }
 }
 
-void cleanup(void)
+void cleanup( void )
 {
 #ifdef SOC_IMXRTYYYY_SERIES
     SCB_DisableICache();
@@ -320,26 +347,27 @@ void cleanup(void)
 
 #ifdef TEST_FUNCTION
 /* write the image trailer at the end of the flash partition */
-void enable_image(image2_mode_t mode)
+void enable_image( image2_mode_t mode )
 {
     uint32_t off;
     uint32_t erase_off;
 
-    memset((void *)&image_trailer2, 0xff, IMAGE_TRAILER_SIZE);
-    memcpy((void *)image_trailer2.magic, boot_img_magic, sizeof(boot_img_magic));
+    memset( ( void * ) &image_trailer2, 0xff, IMAGE_TRAILER_SIZE );
+    memcpy( ( void * ) image_trailer2.magic, boot_img_magic, sizeof( boot_img_magic ) );
 
-    if (mode == Permanent_mode)
+    if( mode == Permanent_mode )
     {
         image_trailer2.image_ok = BOOT_FLAG_SET;
     }
+
     off = FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE - IMAGE_TRAILER_SIZE;
 
     erase_off = FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE - FLASH_AREA_IMAGE_SECTOR_SIZE;
 
-    sbl_flash_erase(erase_off, FLASH_AREA_IMAGE_SECTOR_SIZE);
+    sbl_flash_erase( erase_off, FLASH_AREA_IMAGE_SECTOR_SIZE );
 
-    PRINTF("Write OK flag: off = 0x%x\r\n", off);
+    PRINTF( "Write OK flag: off = 0x%x\r\n", off );
 
-    sbl_flash_write(off, (void *)&image_trailer2, IMAGE_TRAILER_SIZE);
+    sbl_flash_write( off, ( void * ) &image_trailer2, IMAGE_TRAILER_SIZE );
 }
-#endif
+#endif /* ifdef TEST_FUNCTION */

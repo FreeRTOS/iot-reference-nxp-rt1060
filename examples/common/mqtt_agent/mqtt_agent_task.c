@@ -94,14 +94,14 @@
  * anticipated MQTT payload.
  */
 #ifndef MQTT_AGENT_NETWORK_BUFFER_SIZE
-    #define MQTT_AGENT_NETWORK_BUFFER_SIZE    ( 5000 )
+#define MQTT_AGENT_NETWORK_BUFFER_SIZE    ( 5000 )
 #endif
 
 /**
  * @brief Maximum number of subscriptions maintained by the MQTT agent in the subscription store.
  */
 #ifndef MQTT_AGENT_MAX_SUBSCRIPTIONS
-    #define MQTT_AGENT_MAX_SUBSCRIPTIONS    10U
+#define MQTT_AGENT_MAX_SUBSCRIPTIONS    10U
 #endif
 
 /**
@@ -430,15 +430,15 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
      * previous session data. Also, establishing a connection with clean session
      * will ensure that the broker does not store any data when this client
      * gets disconnected. */
-    #if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 1 )
-        {
-            xConnectInfo.cleanSession = false;
-        }
-    #else
-        {
-            xConnectInfo.cleanSession = true;
-        }
-    #endif
+#if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 1 )
+    {
+        xConnectInfo.cleanSession = false;
+    }
+#else
+    {
+        xConnectInfo.cleanSession = true;
+    }
+#endif
 
     /* The client identifier is used to uniquely identify this MQTT client to
      * the MQTT broker. In a production device the identifier can be something
@@ -454,27 +454,27 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
     xConnectInfo.keepAliveSeconds = mqttexampleKEEP_ALIVE_INTERVAL_SECONDS;
 
     /* Append metrics when connecting to the AWS IoT Core broker. */
-    #ifdef democonfigUSE_AWS_IOT_CORE_BROKER
-        #ifdef democonfigCLIENT_USERNAME
-            xConnectInfo.pUserName = CLIENT_USERNAME_WITH_METRICS;
-            xConnectInfo.userNameLength = ( uint16_t ) strlen( CLIENT_USERNAME_WITH_METRICS );
-            xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
-            xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
-        #else
-            xConnectInfo.pUserName = AWS_IOT_METRICS_STRING;
-            xConnectInfo.userNameLength = AWS_IOT_METRICS_STRING_LENGTH;
-            /* Password for authentication is not used. */
-            xConnectInfo.pPassword = NULL;
-            xConnectInfo.passwordLength = 0U;
-        #endif
-    #else /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
-        #ifdef democonfigCLIENT_USERNAME
-            xConnectInfo.pUserName = democonfigCLIENT_USERNAME;
-            xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME );
-            xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
-            xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
-        #endif /* ifdef democonfigCLIENT_USERNAME */
-    #endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
+#ifdef democonfigUSE_AWS_IOT_CORE_BROKER
+#ifdef democonfigCLIENT_USERNAME
+    xConnectInfo.pUserName = CLIENT_USERNAME_WITH_METRICS;
+    xConnectInfo.userNameLength = ( uint16_t ) strlen( CLIENT_USERNAME_WITH_METRICS );
+    xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
+    xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
+#else
+    xConnectInfo.pUserName = AWS_IOT_METRICS_STRING;
+    xConnectInfo.userNameLength = AWS_IOT_METRICS_STRING_LENGTH;
+    /* Password for authentication is not used. */
+    xConnectInfo.pPassword = NULL;
+    xConnectInfo.passwordLength = 0U;
+#endif
+#else /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
+#ifdef democonfigCLIENT_USERNAME
+    xConnectInfo.pUserName = democonfigCLIENT_USERNAME;
+    xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME );
+    xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
+    xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
+#endif /* ifdef democonfigCLIENT_USERNAME */
+#endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
 
     LogInfo( ( "Creating an MQTT connection to the broker." ) );
 
@@ -509,20 +509,21 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     TlsTransportStatus_t xNetworkStatus = TLS_TRANSPORT_CONNECT_FAILURE;
     NetworkCredentials_t xNetworkCredentials = { 0 };
 
-    #ifdef democonfigUSE_AWS_IOT_CORE_BROKER
-        /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
-         * the first entry will contain the actual ALPN protocol string while the
-         * second entry must remain NULL. */
-        const char * pcAlpnProtocols[] = { NULL, NULL };
+#ifdef democonfigUSE_AWS_IOT_CORE_BROKER
 
-        /* The ALPN string changes depending on whether username/password authentication is used. */
-        #ifdef democonfigCLIENT_USERNAME
-            pcAlpnProtocols[ 0 ] = AWS_IOT_CUSTOM_AUTH_ALPN;
-        #else
-            pcAlpnProtocols[ 0 ] = AWS_IOT_MQTT_ALPN;
-        #endif
-        xNetworkCredentials.pAlpnProtos = pcAlpnProtocols;
-    #endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
+    /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
+     * the first entry will contain the actual ALPN protocol string while the
+     * second entry must remain NULL. */
+    const char * pcAlpnProtocols[] = { NULL, NULL };
+
+    /* The ALPN string changes depending on whether username/password authentication is used. */
+#ifdef democonfigCLIENT_USERNAME
+    pcAlpnProtocols[ 0 ] = AWS_IOT_CUSTOM_AUTH_ALPN;
+#else
+    pcAlpnProtocols[ 0 ] = AWS_IOT_MQTT_ALPN;
+#endif
+    xNetworkCredentials.pAlpnProtos = pcAlpnProtocols;
+#endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
 
     /* Set the credentials for establishing a TLS connection. */
     xNetworkCredentials.pRootCa = ( unsigned char * ) democonfigROOT_CA_PEM;

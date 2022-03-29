@@ -35,21 +35,21 @@
 #define ISSI_IS25WPxxxA
 
 /* Total Flash Size */
-#define COMPONENT_FLASHIAP_SIZE 8388608
+#define COMPONENT_FLASHIAP_SIZE    8388608
 
 /* MCU Flash layout. */
-#define BOOT_FLASH_BASE        0x60000000
-#define BOOT_FLASH_ACT_APP     0x60040000
-#define BOOT_FLASH_CAND_APP    0x60240000
+#define BOOT_FLASH_BASE            0x60000000
+#define BOOT_FLASH_ACT_APP         0x60040000
+#define BOOT_FLASH_CAND_APP        0x60240000
 
 
 /* Offsets for each image slots used for OTA. */
-#define FLASH_AREA_IMAGE_1_OFFSET       (BOOT_FLASH_ACT_APP - BOOT_FLASH_BASE)  //MCUboot occupies 512KB
-#define FLASH_AREA_IMAGE_1_SIZE         (BOOT_FLASH_CAND_APP - BOOT_FLASH_ACT_APP)//image1 slot occupies 2MB
-#define FLASH_AREA_IMAGE_2_OFFSET       (FLASH_AREA_IMAGE_1_OFFSET + FLASH_AREA_IMAGE_1_SIZE)
-#define FLASH_AREA_IMAGE_2_SIZE         FLASH_AREA_IMAGE_1_SIZE //image2 slot occupies 2MB
-#define FLASH_AREA_IMAGE_3_OFFSET       (FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE)
-#define FLASH_AREA_IMAGE_3_SIZE          0x80000 // scratch slot occupies 512KB
+#define FLASH_AREA_IMAGE_1_OFFSET    ( BOOT_FLASH_ACT_APP - BOOT_FLASH_BASE )     /*MCUboot occupies 512KB */
+#define FLASH_AREA_IMAGE_1_SIZE      ( BOOT_FLASH_CAND_APP - BOOT_FLASH_ACT_APP ) /*image1 slot occupies 2MB */
+#define FLASH_AREA_IMAGE_2_OFFSET    ( FLASH_AREA_IMAGE_1_OFFSET + FLASH_AREA_IMAGE_1_SIZE )
+#define FLASH_AREA_IMAGE_2_SIZE      FLASH_AREA_IMAGE_1_SIZE                      /*image2 slot occupies 2MB */
+#define FLASH_AREA_IMAGE_3_OFFSET    ( FLASH_AREA_IMAGE_2_OFFSET + FLASH_AREA_IMAGE_2_SIZE )
+#define FLASH_AREA_IMAGE_3_SIZE      0x80000                                      /* scratch slot occupies 512KB */
 
 
 #endif /* FLASH_PARTITIONING_H */

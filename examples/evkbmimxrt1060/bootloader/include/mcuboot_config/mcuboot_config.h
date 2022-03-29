@@ -18,24 +18,24 @@
 /* Uncomment to enable RSA signature */
 #ifdef CONFIG_BOOT_SIGNATURE_TYPE_RSA
 #define MCUBOOT_SIGN_RSA
-#if (CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN != 2048 && CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN != 3072)
+#if ( CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN != 2048 && CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN != 3072 )
 #error "Invalid RSA key size (must be 2048 or 3072)"
 #else
-#define MCUBOOT_SIGN_RSA_LEN CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN
+#define MCUBOOT_SIGN_RSA_LEN    CONFIG_BOOT_SIGNATURE_TYPE_RSA_LEN
 #endif
-#elif defined(CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256)
+#elif defined( CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256 )
 #define MCUBOOT_SIGN_EC256
-#elif defined(CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+#elif defined( CONFIG_BOOT_SIGNATURE_TYPE_ED25519 )
 #define MCUBOOT_SIGN_ED25519
-#endif
+#endif /* ifdef CONFIG_BOOT_SIGNATURE_TYPE_RSA */
 
 /* Uncomment to enable BOOTROM signature */
 #ifdef CONFIG_BOOT_SIGNATURE_TYPE_ROM
 #define MCUBOOT_SIGN_ROM
 #ifdef SOC_LPC55S69_SERIES
-#define HAB_IVT_OFFSET 0x0u
+#define HAB_IVT_OFFSET    0x0u
 #else
-#define HAB_IVT_OFFSET 0x1000u
+#define HAB_IVT_OFFSET    0x1000u
 #endif
 #endif
 
@@ -48,6 +48,7 @@
 #ifdef CONFIG_BOOT_HW_KEY
 #define MCUBOOT_HW_KEY
 #endif
+
 /*
  * Upgrade mode
  *
@@ -60,6 +61,7 @@
 /* #define MCUBOOT_OVERWRITE_ONLY */
 
 #ifdef MCUBOOT_OVERWRITE_ONLY
+
 /* Uncomment to only erase and overwrite those primary slot sectors needed
  * to install the new image, rather than the entire image slot. */
 #define MCUBOOT_OVERWRITE_ONLY_FAST
@@ -81,6 +83,7 @@
 #endif
 
 #ifdef COMPONENT_MCUBOOT_SECURE
+
 /*
  * Always check the signature of the image in the primary slot before booting,
  * even if no upgrade was performed. This is recommended if the boot
@@ -93,12 +96,12 @@
 
 #define CONFIG_BOOT_SWAP_USING_MOVE
 
-#define MCUBOOT_SWAP_USING_MOVE 1
+#define MCUBOOT_SWAP_USING_MOVE    1
 
 #ifdef CONFIG_UPDATEABLE_IMAGE_NUMBER
-#define MCUBOOT_IMAGE_NUMBER CONFIG_UPDATEABLE_IMAGE_NUMBER
+#define MCUBOOT_IMAGE_NUMBER       CONFIG_UPDATEABLE_IMAGE_NUMBER
 #else
-#define MCUBOOT_IMAGE_NUMBER 1
+#define MCUBOOT_IMAGE_NUMBER       1
 #endif
 
 /*
@@ -112,7 +115,7 @@
 /* Default maximum number of flash sectors per image slot; change
  * as desirable. */
 #ifdef CONFIG_MCUBOOT_MAX_IMG_SECTORS
-#define MCUBOOT_MAX_IMG_SECTORS CONFIG_MCUBOOT_MAX_IMG_SECTORS
+#define MCUBOOT_MAX_IMG_SECTORS    CONFIG_MCUBOOT_MAX_IMG_SECTORS
 #else
 #error "CONFIG_MCUBOOT_MAX_IMG_SECTORS is not defined"
 #endif
@@ -157,13 +160,13 @@
 #endif
 
 #ifdef CONFIG_BOOT_BOOTSTRAP
-#define MCUBOOT_BOOTSTRAP 1
+#define MCUBOOT_BOOTSTRAP    1
 #endif
 
 /* Not enabled, no feed activity */
 #define MCUBOOT_WATCHDOG_FEED() \
     do                          \
     {                           \
-    } while (0)
+    } while( 0 )
 
 #endif /* __MCUBOOT_CONFIG_H__ */

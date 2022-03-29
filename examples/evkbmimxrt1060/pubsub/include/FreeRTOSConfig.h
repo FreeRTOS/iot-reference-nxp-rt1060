@@ -41,10 +41,11 @@
 *----------------------------------------------------------*/
 
 /* Ensure stdint is only used by the compiler, and not the assembler. */
-#if defined( __ICCARM__ ) || defined( __ARMCC_VERSION ) || defined( __GNUC__)
-    extern uint32_t SystemCoreClock;
-    extern void print_string( const char * string );
-    extern void vLoggingPrintf( const char *pcFormat, ... );
+#if defined( __ICCARM__ ) || defined( __ARMCC_VERSION ) || defined( __GNUC__ )
+extern uint32_t SystemCoreClock;
+extern void print_string( const char * string );
+extern void vLoggingPrintf( const char * pcFormat,
+                            ... );
 #endif
 
 
@@ -104,21 +105,23 @@
 
 /* Normal assert() semantics without relying on the provision of an assert.h
  * header file. */
-#define configASSERT( x )                                       \
-    if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ) {; } \
+#define configASSERT( x )                                        \
+    if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ; ; ) {; } \
     }
 
 /* Map the FreeRTOS printf() to the logging task printf. */
-extern void vLoggingPrintf( const char * pcFormat, ... );
-#define configPRINTF( x )          vLoggingPrintf x
+extern void vLoggingPrintf( const char * pcFormat,
+                            ... );
+#define configPRINTF( x )    vLoggingPrintf x
 
 /* Non-format version thread-safe print. */
 extern void vLoggingPrint( const char * pcMessage );
-#define configPRINT( X )     vLoggingPrint( X )
+#define configPRINT( X )    vLoggingPrint( X )
 
 /* Map the logging task's printf to the board specific output function. */
-extern int DbgConsole_Printf(const char *fmt_s, ...);
-#define configPRINT_STRING    DbgConsole_Printf
+extern int DbgConsole_Printf( const char * fmt_s,
+                              ... );
+#define configPRINT_STRING                          DbgConsole_Printf
 
 /* Sets the length of the buffers into which logging messages are written - so
  * also defines the maximum length of each log message. */
@@ -135,9 +138,9 @@ extern int DbgConsole_Printf(const char *fmt_s, ...);
  * called pre and post the low power SLEEP mode being entered and exited.  These
  * macros can be used to turn turn off and on IO, clocks, the Flash etc. to obtain
  * the lowest power possible while the tick is off. */
-#if defined( __ICCARM__ ) || defined(__CC_ARM) || defined(__ARMCC_VERSION) || defined( __GNUC__ )
-    void vMainPreStopProcessing( void );
-    void vMainPostStopProcessing( void );
+#if defined( __ICCARM__ ) || defined( __CC_ARM ) || defined( __ARMCC_VERSION ) || defined( __GNUC__ )
+void vMainPreStopProcessing( void );
+void vMainPostStopProcessing( void );
 #endif /* defined(__ICCARM__) || defined(__CC_ARM) || defined(__ARMCC_VERSION) || defined(__GNUC__) */
 
 #define configPRE_STOP_PROCESSING     vMainPreStopProcessing
@@ -164,54 +167,55 @@ extern int DbgConsole_Printf(const char *fmt_s, ...);
 
 /* Prevent the assembler seeing code it doesn't understand. */
 #ifdef __ICCARM__
-	/* Logging task definitions. */
-	extern void vMainUARTPrintString( char * pcString );
+/* Logging task definitions. */
+extern void vMainUARTPrintString( char * pcString );
 
-	extern int iMainRand32( void );
+extern int iMainRand32( void );
 
-	/* Pseudo random number generator, just used by demos so does not have to be
-	 * secure.  Do not use the standard C library rand() function as it can cause
-	 * unexpected behaviour, such as calls to malloc(). */
-	#define configRAND32()    iMainRand32()
+/* Pseudo random number generator, just used by demos so does not have to be
+ * secure.  Do not use the standard C library rand() function as it can cause
+ * unexpected behaviour, such as calls to malloc(). */
+#define configRAND32()    iMainRand32()
 #endif
 
 
 
-#if defined(__ICCARM__)||defined(__CC_ARM)||defined(__GNUC__)
-    /* Clock manager provides in this variable system core clock frequency */
-    #include <stdint.h>
-    extern uint32_t SystemCoreClock;
+#if defined( __ICCARM__ ) || defined( __CC_ARM ) || defined( __GNUC__ )
+/* Clock manager provides in this variable system core clock frequency */
+#include <stdint.h>
+extern uint32_t SystemCoreClock;
 #endif
 
 /* Interrupt nesting behaviour configuration. Cortex-M specific. */
 #ifdef __NVIC_PRIO_BITS
 /* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
-#define configPRIO_BITS __NVIC_PRIO_BITS
+#define configPRIO_BITS    __NVIC_PRIO_BITS
 #else
-#define configPRIO_BITS 4 /* 15 priority levels */
+#define configPRIO_BITS    4 /* 15 priority levels */
 #endif
 
 /* The lowest interrupt priority that can be used in a call to a "set priority"
-function. */
-#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY ((1U << (configPRIO_BITS)) - 1)
+ * function. */
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY         ( ( 1U << ( configPRIO_BITS ) ) - 1 )
 
 /* The highest interrupt priority that can be used by any interrupt service
-routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
-INTERRUPT SAFE FREERTOS API FUNCTIONS FROM ANY INTERRUPT THAT HAS A HIGHER
-PRIORITY THAN THIS! (higher priorities are lower numeric values. */
-#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY 2
+ * routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
+ * INTERRUPT SAFE FREERTOS API FUNCTIONS FROM ANY INTERRUPT THAT HAS A HIGHER
+ * PRIORITY THAN THIS! (higher priorities are lower numeric values. */
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY    2
 
 /* Interrupt priorities used by the kernel port layer itself.  These are generic
-to all Cortex-M ports, and do not rely on any particular library functions. */
-#define configKERNEL_INTERRUPT_PRIORITY (configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS))
+* to all Cortex-M ports, and do not rely on any particular library functions. */
+#define configKERNEL_INTERRUPT_PRIORITY                 ( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << ( 8 - configPRIO_BITS ) )
+
 /* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
-See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS))
+ * See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY            ( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << ( 8 - configPRIO_BITS ) )
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
-standard names. */
-#define vPortSVCHandler SVC_Handler
-#define xPortPendSVHandler PendSV_Handler
-#define xPortSysTickHandler SysTick_Handler
+ * standard names. */
+#define vPortSVCHandler                                 SVC_Handler
+#define xPortPendSVHandler                              PendSV_Handler
+#define xPortSysTickHandler                             SysTick_Handler
 
 #endif /* FREERTOS_CONFIG_H */
