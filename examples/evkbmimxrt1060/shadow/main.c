@@ -94,6 +94,9 @@ void Board_InitNetwork( void );
 
 static const char * prvGetDHCPStateStr( dhcp_state_enum_t state );
 
+
+int app_main( void );
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -220,7 +223,7 @@ void Board_InitNetwork( void )
     {
         if( dhcp->state != prevState )
         {
-            PRINTF( "DHCP State:%s.\r\n", prvGetDHCPStateStr( dhcp->state ) );
+            PRINTF( "DHCP State: %s.\r\n", prvGetDHCPStateStr( dhcp->state ) );
             prevState = dhcp->state;
         }
 
@@ -328,10 +331,11 @@ void vApplicationDaemonTaskStartupHook( void )
     /* Initialize file system. */
     if( mflash_init( dir_template, false ) != kStatus_Success )
     {
-        LOG_E( "Failed to initialize file system" );
+        PRINTF( "\r\nFailed to initialize file system.\r\n" );
 
         for( ; ; )
         {
+            __asm( "NOP" );
         }
     }
 
@@ -341,17 +345,21 @@ void vApplicationDaemonTaskStartupHook( void )
     /* Initialize Logging locks */
     if( nLog_Init() != 0 )
     {
-        LOG_E( "Logging initialization failed" );
+        PRINTF( "\r\nLogging initialization failed.\r\n" );
 
         for( ; ; )
         {
+            __asm( "NOP" );
         }
     }
 
     if( app_main() != pdPASS )
     {
+        PRINTF( "\r\nApp main initialization failed.\r\n" );
+
         for( ; ; )
         {
+            __asm( "NOP" );
         }
     }
 }
@@ -370,7 +378,8 @@ void vApplicationDaemonTaskStartupHook( void )
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
                                     char * pcTaskName )
 {
-    PRINTF( "ERROR: stack overflow\r\n" );
+    PRINTF( "ERROR: stack overflow on task %s.\r\n", pcTaskName );
+
     portDISABLE_INTERRUPTS();
 
     /* Unused Parameters */
@@ -380,6 +389,7 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask,
     /* Loop forever */
     for( ; ; )
     {
+        __asm( "NOP" );
     }
 }
 

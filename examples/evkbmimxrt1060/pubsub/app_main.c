@@ -34,23 +34,50 @@
 #include "mqtt_agent_task.h"
 
 /**
- * @brief Flag which enables OTA update task along with the demo.
+ * @brief Flag which enables OTA update task in background along with other demo tasks.
+ * OTA update task polls regularly for firmware update jobs or acts on a new firmware update
+ * available notification from OTA service.
  */
 #define appmainINCLUDE_OTA_UPDATE_TASK            ( 1 )
 
+/**
+ * @brief Flag to enable or disable provisioning mode for the demo.
+ * Enabling the flags starts a CLI task, so that user can perform provisioning of the device through
+ * a serial terminal. Provisioning involves running commands to fetch or set the PKI and configuration
+ * information for the device to connect to broker and perform OTA updates. Disabling the flag results
+ * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
+ */
 #define appmainPROVISIONING_MODE                  ( 1 )
 
-
+/**
+ * @brief Subscribe Publish demo tasks configuration.
+ * Subscribe publish demo task shows the basic functionality of connecting to an MQTT broker, subscribing
+ * to a topic, publishing messages to a topic and reporting the incoming messages on subscribed topic.
+ * Number of subscribe publish demo tasks to be spawned is configurable.
+ */
 #define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 
+/**
+ * @brief Stack size and priority for OTA Update task.
+ */
 #define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
 #define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
 
+/**
+ * @brief Stack size and priority for MQTT agent task.
+ * Stack size is capped to an adequate value based on requirements from MbedTLS stack
+ * for establishing a TLS connection. Task priority of MQTT agent is set to a priority
+ * higher than other MQTT application tasks, so that the agent can drain the queue
+ * as work is being produced.
+ */
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
+/**
+ * @brief Stack size and priority for CLI task.
+ */
 #define appmainCLI_TASK_STACK_SIZE                ( 6144 )
 #define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
 

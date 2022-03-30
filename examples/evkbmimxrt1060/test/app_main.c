@@ -33,9 +33,6 @@
 #include "kvstore.h"
 #include "mqtt_agent_task.h"
 
-/**
- * @brief Flag which enables OTA update task along with the demo.
- */
 
 #define appmainRUN_QUALIFICATION_TEST_SUITE       ( 1 )
 
@@ -50,6 +47,13 @@
 #define appmainTEST_TASK_STACK_SIZE               ( 6144 )
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
 
+/**
+ * @brief Stack size and priority for MQTT agent task.
+ * Stack size is capped to an adequate value based on requirements from MbedTLS stack
+ * for establishing a TLS connection. Task priority of MQTT agent is set to a priority
+ * higher than other MQTT application tasks, so that the agent can drain the queue
+ * as work is being produced.
+ */
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
