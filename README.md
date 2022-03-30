@@ -38,8 +38,7 @@ Source code in this repository includes the following demo projects:
 * **bootloader**: an MCUBoot bootloader ported to the i.MX RT1060 MCU. This is the second stage bootloader which performs application image signature verification 
   and encryption. 
   The key pair for MCUBoot signature verification is generated at the time the bootloader is prepared. The MCUBoot private key is stored securely on the customer's 
-  premises and the public key for verification is embedded into the bootloader. The first stage bootloader uses an immutable ROM bootloader which verifies the 
-  signature of this MCUBoot second stage bootloader using the keys stored in One Time Programmable (OTP) memory. 
+  premises and the public key for verification is embedded into the bootloader. The first stage bootloader uses an immutable ROM bootloader which is shipped with the i.MX RT1060 MCU. 
 All other application projects are configured to flash the demo to an address known to the bootloader and require the bootloader to be pre-programmed prior to 
 loading the application project. 
 All demos include an over-the-air firmware update running in a background task, concurrently with other demo tasks, using the coreMQTT and coreMQTT-Agent libraries 
