@@ -35,18 +35,18 @@ The root of the repository contains the following top level folders:
 * `projects`  contains MCUXpresso IDE projects for the examples provided. Currently all projects are tested on the MCUXpresso IDE on a Windows platform.
 ### Demos
 Source code in this repository includes the following demo projects:
-* **bootloader**: an MCUBoot bootloader ported to the i.MX RT1060 MCU. This is the second stage bootloader which performs application image signature verification 
+* **bootloader**: an [MCUBoot](https://www.mcuboot.com/) bootloader ported to the i.MX RT1060 MCU. This is the second stage bootloader which performs application image signature verification 
   and encryption. 
   The key pair for MCUBoot signature verification is generated at the time the bootloader is prepared. The MCUBoot private key is stored securely on the customer's 
   premises and the public key for verification is embedded into the bootloader. The first stage bootloader uses an immutable ROM bootloader which is shipped with the i.MX RT1060 MCU. 
 All other application projects are configured to flash the demo to an address known to the bootloader and require the bootloader to be pre-programmed prior to 
 loading the application project. 
 All demos include an over-the-air firmware update running in a background task, concurrently with other demo tasks, using the coreMQTT and coreMQTT-Agent libraries 
-to manage the thread safety for the MQTT connection:
+to manage the thread safety for the MQTT connection. See [coreMQTT](https://www.freertos.org/mqtt/index.html), [AWS IoT Over-the-air](https://www.freertos.org/ota/index.html) (OTA), [coreMQTT-Agent](https://www.freertos.org/mqtt-agent/index.html) for details.
 * **aws_iot_pubsub**: a simple publish subscribe example. By default, there're 2 tasks concurrently sending incremental counters to cloud and listening to the data from cloud. These tasks are running concurrently with the over-the-air firmware update background task. 
-* **aws_iot_shadow**: a simple shadow demo that updates the device’s powerOn state and runs concurrently with the over-the-air firmware update background task.
-* **aws_iot_defender**: a basic device defender demo that sends basic metrics about device health and runs concurrently with the over-the-air firmware update task.
-* **aws_iot_qual_test**: a test project set up to run FreeRTOS integration tests and Device Advisor tests with AWS IoT Core.
+* **aws_iot_shadow**: a simple shadow demo that updates the device’s powerOn state and runs concurrently with the over-the-air firmware update background task. See [AWS IoT Device Shadow](https://www.freertos.org/iot-device-shadow/index.html) for details.
+* **aws_iot_defender**: a basic device defender demo that sends basic metrics about device health and runs concurrently with the over-the-air firmware update task. See [AWS IoT Device Defender](https://www.freertos.org/iot-device-defender/index.html) for details.
+* **aws_iot_qual_test**: a test project set up executing tests against FreeRTOS integration and AWS IoT Core interoperability and best practices. See [FreeRTOS Libraries Integration Tests](https://github.com/FreeRTOS/Labs-FreeRTOS-Libraries-Integration-Tests) github repository, and [Device Advisor](https://docs.aws.amazon.com/iot/latest/developerguide/device-advisor.html) for details.
 ### Cloning the Repository
 To clone using HTTPS:
 ```
