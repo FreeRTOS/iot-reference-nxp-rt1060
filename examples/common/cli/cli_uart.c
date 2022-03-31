@@ -29,7 +29,7 @@
 
 /**
  * @brief UART console blocking read for requested number of bytes.
- * Function blocks reading from UART console untill the requested
+ * Function blocks reading from UART console until the requested
  * number of bytes are read.
  */
 static int32_t prvUARTConsoleRead( char * const pcInputBuffer,

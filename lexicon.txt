@@ -186,6 +186,7 @@ jacobi
 kbyte
 ksdk
 kv
+kvstore
 kbytes
 kconfig
 keystore
