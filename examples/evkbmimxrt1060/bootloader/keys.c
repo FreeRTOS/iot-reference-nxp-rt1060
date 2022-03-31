@@ -19,13 +19,6 @@
 
 #include <bootutil/sign_key.h>
 
-/*
- * Even though this is in principle a Zephyr-specific file, the
- * simulator builds it and uses it as well. Because of that, we can't
- * use Kconfig symbols for key types, and have to rely on the MCUBoot
- * symbols (which Zephyr provides via this header, and the simulator
- * provides via the compiler command line).
- */
 #include <mcuboot_config.h>
 
 #if defined( MCUBOOT_SIGN_RSA )

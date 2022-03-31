@@ -79,7 +79,7 @@
  */
 #define APP_VERSION_MAJOR                                0
 #define APP_VERSION_MINOR                                9
-#define APP_VERSION_BUILD                                2
+#define APP_VERSION_BUILD                                3
 
 /**
  * @brief The maximum size of the file paths used in the demo.

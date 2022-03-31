@@ -59,6 +59,7 @@
 #if NO_SYS
 #include "lwip/init.h"
 #endif
+#include "core_pkcs11.h"
 
 #ifndef errno
 int errno = 0;
@@ -73,6 +74,7 @@ void sys_assert( char * pcMessage )
 #ifdef LWIP_DEBUG
     PRINTF( pcMessage );
     PRINTF( "\n\r" );
+    DbgConsole_Flush();
 #endif
 #if !NO_SYS
     portENTER_CRITICAL();
@@ -84,14 +86,27 @@ void sys_assert( char * pcMessage )
 }
 
 /************************************************************************
- * Generates a pseudo-random number.
- * NOTE: Contributed by the FNET project.
+ * Generates a random number from secure element using PKCS11 interface.
  *************************************************************************/
-static u32_t _rand_value;
 u32_t lwip_rand( void )
 {
-    _rand_value = _rand_value * 1103515245u + 12345u;
-    return( ( u32_t ) ( _rand_value >> 16u ) % ( 32767u + 1u ) );
+    CK_RV xResult;
+    CK_SESSION_HANDLE xPkcs11Session;
+    CK_FUNCTION_LIST_PTR pxP11FunctionList;
+    u32_t ulRandomValue = 0U;
+
+    xInitializePkcs11Session( &( xPkcs11Session ) );
+
+    xResult = C_GetFunctionList( &pxP11FunctionList );
+    LWIP_ASSERT( "Failed to get function list for PKCS11.", xResult == CKR_OK );
+
+    xResult = pxP11FunctionList->C_GenerateRandom( xPkcs11Session, ( uint8_t * ) ( &ulRandomValue ), sizeof( u32_t ) );
+    LWIP_ASSERT( "Failed to generate random bytes from the PKCS #11 module.", xResult == CKR_OK );
+
+    xResult = pxP11FunctionList->C_CloseSession( xPkcs11Session );
+    LWIP_ASSERT( "Failed to close PKCS11 session.", xResult == CKR_OK );
+
+    return ulRandomValue;
 }
 
 #if !NO_SYS

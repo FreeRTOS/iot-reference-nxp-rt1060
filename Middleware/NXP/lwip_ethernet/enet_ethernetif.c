@@ -89,7 +89,6 @@ void ethernetif_phy_init(struct ethernetif *ethernetif,
     while ((initWaitCount < ENET_ATONEGOTIATION_TIMEOUT) && (!(link && autonego)))
     {
         status = PHY_Init(ethernetifConfig->phyHandle, &phyConfig);
-        PRINTF("\r\nstatus = %d\r\n", status);
 
         if (kStatus_Success != status)
         {

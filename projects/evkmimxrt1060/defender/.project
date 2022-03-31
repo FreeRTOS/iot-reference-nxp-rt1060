@@ -399,7 +399,7 @@
 		<link>
 			<name>source/device_defender_task.c</name>
 			<type>1</type>
-			<location>Z:/workspace/lab-iot-reference-nxp-rt1060/examples/evkbmimxrt1060/defender/device_defender_task.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/defender/device_defender_task.c</locationURI>
 		</link>
 		<link>
 			<name>source/kvstore</name>

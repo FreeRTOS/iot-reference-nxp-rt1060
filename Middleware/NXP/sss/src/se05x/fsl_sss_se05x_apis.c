@@ -427,8 +427,7 @@ sss_status_t sss_se05x_session_open(sss_se05x_session_t *session,
     }
     else {
         if ((pAuthCtx->auth.authType == kSSS_AuthType_None) && (connection_type == kSSS_ConnectionType_Plain)) {
-            LOG_W("Communication channel is Plain.");
-            LOG_W("!!!Not recommended for production use.!!!");
+            LOG_W("Communication channel is plaintext and not recommended for production use.!!!");
             se05xSession->fp_Transform = &se05x_Transform;
             se05xSession->fp_DeCrypt   = &se05x_DeCrypt;
             se05xSession->authType     = kSSS_AuthType_None;

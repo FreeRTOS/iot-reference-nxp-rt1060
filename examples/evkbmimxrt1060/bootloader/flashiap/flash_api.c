@@ -204,7 +204,7 @@ out:
 /*
  * This depends on the mappings defined in sysflash.h.
  * MCUBoot uses continuous numbering for the primary slot, the secondary slot,
- * and the scratch while zephyr might number it differently.
+ * and the scratch.
  */
 int flash_area_id_from_multi_image_slot( int image_index,
                                          int slot )
@@ -231,7 +231,7 @@ int flash_area_id_from_multi_image_slot( int image_index,
 /*
  * This depends on the mappings defined in sysflash.h.
  * MCUBoot uses continuous numbering for the primary slot, the secondary slot,
- * and the scratch while zephyr might number it differently.
+ * and the scratch.
  */
 int flash_area_id_from_image_slot( int slot )
 {
