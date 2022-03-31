@@ -22,6 +22,16 @@
  * https://github.com/FreeRTOS
  *
  */
+
+/**
+ * @file kvstore.c
+ * @brief File contains the implementation of a configuration store (key-value pair store)
+ * persisted in non-volatile memory. APIs are provided to insert or retrieve values of
+ * different data types such as unsigned/signed integer types, base types, string or a byte blob.
+ * Values are stored and retrieved using a key string. APIs are thread safe and can be called
+ * concurrently from different tasks.
+ */
+
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "kvstore.h"

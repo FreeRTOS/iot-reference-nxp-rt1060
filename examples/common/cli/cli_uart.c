@@ -27,48 +27,69 @@
 #include "FreeRTOS_CLI_Console.h"
 #include "fsl_debug_console.h"
 
+/**
+ * @brief UART console blocking read for requested number of bytes.
+ * Function blocks reading from UART console until the requested
+ * number of bytes are read.
+ */
+static int32_t prvUARTConsoleRead( char * const pcInputBuffer,
+                                   uint32_t ulInputBufferLen,
+                                   uint32_t * pulBytesRead );
 
-int32_t uart_read( char * const pcInputBuffer,
-                   uint32_t xInputBufferLen );
-
-void uart_write( const char * const pcOutputBuffer,
-                 uint32_t xOutputBufferLen );
+/**
+ * @brief UART console blocking write for requested number of bytes.
+ * Function returns only after the requested number of
+ * bytes are written to console.
+ */
+static void prvUARTConsoleWrite( const char * const pcOutputBuffer,
+                                 uint32_t xOutputBufferLen );
 
 xConsoleIO_t uartConsoleIO =
 {
-    .read  = uart_read,
-    .write = uart_write
+    .getChar = DbgConsole_Getchar,
+    .read    = prvUARTConsoleRead,
+    .write   = prvUARTConsoleWrite
 };
 
-int32_t uart_read( char * const pcInputBuffer,
-                   uint32_t xInputBufferLen )
+int32_t prvUARTConsoleRead( char * const pcInputBuffer,
+                            uint32_t ulInputBufferLen,
+                            uint32_t * pulBytesRead )
 {
+    uint32_t ulIndex = 0;
     int charRead;
+    int32_t retStatus = 0;
 
-    /*
-     * Read one character at a time from Debug console waiting if necessary for any characters
-     * to be entered.
-     */
-    charRead = DbgConsole_Getchar();
+    for( ulIndex = 0; ulIndex < ulInputBufferLen; ulIndex++ )
+    {
+        charRead = DbgConsole_Getchar();
 
+        if( ( charRead >= 0 ) && ( charRead <= 255 ) )
+        {
+            pcInputBuffer[ ulIndex ] = ( char ) ( charRead );
+        }
+        else
+        {
+            retStatus = charRead;
+            break;
+        }
+    }
 
-    pcInputBuffer[ 0 ] = charRead;
+    ( *pulBytesRead ) = ( ulIndex );
 
-    return 1U;
+    return retStatus;
 }
 
-void uart_write( const char * const pcOutputBuffer,
-                 uint32_t xOutputBufferLen )
+void prvUARTConsoleWrite( const char * const pcOutputBuffer,
+                          uint32_t xOutputBufferLen )
 {
     int32_t status;
+
     uint32_t index;
 
     if( xOutputBufferLen > 0 )
     {
         for( index = 0; index < xOutputBufferLen; index++ )
         {
-            /*configPRINTF(( "%.*s", xOutputBufferLen, pcOutputBuffer )); */
-
             status = DbgConsole_Putchar( pcOutputBuffer[ index ] );
 
             if( status < 0 )

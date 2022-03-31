@@ -124,7 +124,7 @@ static void sslContextFree( SSLContext_t * pSslContext );
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Callback that wraps PKCS#11 for pseudo-random number generation.
+ * @brief Callback that wraps PKCS#11 using secure element for random number generation.
  *
  * @param[in] pvCtx Caller context.
  * @param[in] pucRandom Byte array to fill with random data.

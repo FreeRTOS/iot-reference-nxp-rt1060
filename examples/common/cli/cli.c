@@ -35,13 +35,26 @@
 #include "mbedtls/x509_crt.h"
 #include "mbedtls/pem.h"
 
+/**
+ * @brief Maximum length of the buffer used to send a command output to console.
+ * The implementation uses this buffer to return success or failure code along with
+ * any reason to the output console.
+ */
 #define MAX_COMMAND_BUFFER_LENGTH    ( 512 )
 
-#define MAX_OUTPUT_BUFFER_LENGTH     ( 512 )
-
-#define MAX_PKCS11_OBJECT_LENGTH     ( 2048 )
+/**
+ * @brief Maximum length of a PKI object retrieved through CLI.
+ * PKI objects can be Certificate or a public key which are DER/PEM encoded.
+ */
+#define MAX_PKI_OBJECT_LENGTH        ( 2048 )
 
 #define MODULUS_LENGTH               pkcs11RSA_2048_MODULUS_BITS / 8
+
+/**
+ * @brief This static buffer is used to read a PKCS11 object from secure element
+ * or write the object read from console into secure element.
+ */
+static uint8_t pkcs11Object[ MAX_PKI_OBJECT_LENGTH ];
 
 static BaseType_t prvConfigCommandHandler( char * pcWriteBuffer,
                                            size_t xWriteBufferLen,
@@ -54,7 +67,10 @@ static BaseType_t prvPKICommandHandler( char * pcWriteBuffer,
 static CLI_Command_Definition_t xCommandConfig =
 {
     .pcCommand                   = "conf",
-    .pcHelpString                = "Configures the device. Usage: conf [get|set] key [value]\r\n",
+    .pcHelpString                = "\r\n"
+                                   "conf:\r\n"
+                                   "    Command to change or retrieve configuration for the device.\r\n"
+                                   "    Usage: conf [get|set] key [value]\r\n",
     .pxCommandInterpreter        = prvConfigCommandHandler,
     .cExpectedNumberOfParameters = -1
 };
@@ -62,7 +78,10 @@ static CLI_Command_Definition_t xCommandConfig =
 static CLI_Command_Definition_t xPKICommandConfig =
 {
     .pcCommand                   = "pki",
-    .pcHelpString                = "Command for interfacing with PKI for the device. usage: pki [get|set] [cert|pub_key] label\r\n",
+    .pcHelpString                = "\r\n"
+                                   "pki:\r\n"
+                                   "   Perform Public Key Infrastructure operations for device.\r\n"
+                                   "   Usage: pki [get|set] [cert|pub_key] label\r\n",
     .pxCommandInterpreter        = prvPKICommandHandler,
     .cExpectedNumberOfParameters = -1
 };
@@ -283,11 +302,10 @@ static CK_RV prvWriteCertificate( const char * pcLabelName,
 {
     CK_RV pkcs11ret = CKR_OK;
     int ret;
+    uint32_t objectLength = MAX_PKI_OBJECT_LENGTH;
+    mbedtls_x509_crt certificate = { 0 };
 
-    static uint8_t pkcs11Object[ MAX_PKCS11_OBJECT_LENGTH ];
-    static uint32_t objectLength = MAX_PKCS11_OBJECT_LENGTH;
-
-    mbedtls_x509_crt certificate;
+    memset( pkcs11Object, 0x00, sizeof( pkcs11Object ) );
 
     pkcs11ret = prvGetPKCS11Object( pcLabelName,
                                     labelLength,
@@ -297,7 +315,6 @@ static CK_RV prvWriteCertificate( const char * pcLabelName,
     if( pkcs11ret == CKR_OK )
     {
         mbedtls_x509_crt_init( &certificate );
-
 
         ret = mbedtls_x509_crt_parse( &certificate, ( const unsigned char * ) pkcs11Object, objectLength );
 
@@ -311,6 +328,8 @@ static CK_RV prvWriteCertificate( const char * pcLabelName,
         {
             pkcs11ret = CKR_FUNCTION_FAILED;
         }
+
+        mbedtls_x509_crt_free( &certificate );
     }
 
     return pkcs11ret;
@@ -458,61 +477,55 @@ CK_RV prvProvisionPublicKey( uint8_t * pucKey,
 CK_RV prvReadAndProvisionPublicKey( uint8_t * pucPublicKeyLabel,
                                     size_t xPublicKeyLabeLength )
 {
-    static uint8_t pubKey[ MAX_PKCS11_OBJECT_LENGTH ] = { 0 };
-    char readLine[ 256 ] = { 0 };
-    size_t readOffset = 0, pubKeyLength = 0;
-    BaseType_t readComplete = pdFALSE;
+    int32_t byteRead;
+    uint32_t ulReadOffset = 0, ulLineStart = 0, ulLineLength;
+    BaseType_t xReadComplete = pdFALSE;
     CK_RV result = CKR_FUNCTION_FAILED;
 
-    memset( pubKey, 0x00, MAX_PKCS11_OBJECT_LENGTH );
+    memset( pkcs11Object, 0x00, MAX_PKI_OBJECT_LENGTH );
 
-    for( ; ; )
+    /* The object needs to be null terminated for successful parsing. */
+    while( ulReadOffset < MAX_PKI_OBJECT_LENGTH - 1U )
     {
-        if( readOffset < 256 )
+        byteRead = uartConsoleIO.getChar();
+
+        if( ( byteRead == '\r' ) || ( byteRead == '\n' ) )
         {
-            uartConsoleIO.read( &readLine[ readOffset ], 1U );
-
-            if( ( readLine[ readOffset ] == '\r' ) || ( readLine[ readOffset ] == '\n' ) )
+            /* End of a line detected. Process the line now. */
+            if( ( ulReadOffset > 0 ) &&
+                ( pkcs11Object[ ulReadOffset - 1U ] != '\n' ) )
             {
-                if( pubKeyLength + readOffset < MAX_PKCS11_OBJECT_LENGTH )
-                {
-                    if( readOffset > 1U )
-                    {
-                        readLine[ readOffset ] = '\n';
-                        readOffset++;
-                        memcpy( ( pubKey + pubKeyLength ), readLine, readOffset );
-                        pubKeyLength += readOffset;
+                ulLineLength = ulReadOffset - ulLineStart;
+                pkcs11Object[ ulReadOffset++ ] = '\n';
 
-                        if( strncmp( readLine, "-----END PUBLIC KEY-----", readOffset - 1 ) == 0 )
-                        {
-                            readComplete = pdTRUE;
-                            break;
-                        }
-                    }
-
-                    memset( readLine, 0x00, 256 );
-                    readOffset = 0;
-                }
-                else
+                if( ( ulLineLength > 0 ) &&
+                    ( strncmp( ( char * ) ( pkcs11Object + ulLineStart ),
+                               "-----END PUBLIC KEY-----",
+                               ulLineLength ) == 0 ) )
                 {
+                    pkcs11Object[ ulReadOffset++ ] = '\0';
+                    xReadComplete = pdTRUE;
                     break;
                 }
+
+                ulLineStart = ulReadOffset;
             }
-            else
-            {
-                readOffset++;
-            }
+        }
+        else if( ( byteRead >= 0 ) && ( byteRead <= 255 ) )
+        {
+            pkcs11Object[ ulReadOffset++ ] = ( char ) ( byteRead );
         }
         else
         {
+            /* There was an error in reading a character. Break out of loop. */
             break;
         }
     }
 
-    if( readComplete == pdTRUE )
+    if( xReadComplete == pdTRUE )
     {
-        result = prvProvisionPublicKey( pubKey,
-                                        pubKeyLength + 1U,
+        result = prvProvisionPublicKey( pkcs11Object,
+                                        ulReadOffset,
                                         CKK_EC,
                                         pucPublicKeyLabel,
                                         xPublicKeyLabeLength );
@@ -580,7 +593,7 @@ static BaseType_t prvPKICommandHandler( char * pcWriteBuffer,
                     }
                     else
                     {
-                        snprintf( pcWriteBuffer, xWriteBufferLen, "OK\r\n" );
+                        snprintf( pcWriteBuffer, xWriteBufferLen, "\r\nOK\r\n" );
                     }
                 }
                 else

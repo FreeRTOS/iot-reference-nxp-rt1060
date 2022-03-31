@@ -18,10 +18,10 @@
 #define NX_LOG_ENABLE_DEFAULT_DEBUG 0
 
 /* Same as NX_LOG_ENABLE_DEFAULT_DEBUG but for Info Level */
-#define NX_LOG_ENABLE_DEFAULT_INFO 1
+#define NX_LOG_ENABLE_DEFAULT_INFO 0
 
 /* Same as NX_LOG_ENABLE_DEFAULT_DEBUG but for Warn Level */
-#define NX_LOG_ENABLE_DEFAULT_WARN 1
+#define NX_LOG_ENABLE_DEFAULT_WARN 0
 
 /* Same as NX_LOG_ENABLE_DEFAULT_DEBUG but for Error Level.
  * Ideally, this shoudl alwasy be kept enabled */

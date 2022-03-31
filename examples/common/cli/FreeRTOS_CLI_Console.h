@@ -41,9 +41,15 @@
 typedef struct xConsoleIO
 {
     /**
+     * Function reads one character at a time blocking if necessary, when the
+     * character is not available. On error it returns a value less than 0.
+     */
+    int32_t ( * getChar )( void );
+
+    /**
      * Function reads input bytes from the console into a finite length buffer upto the length
-     * requested by the second parameter. It returns the number of bytes read which can
-     * be less than or equal to the requested value. If no input bytes are available,
+     * requested by the second parameter. It stores the number of bytes read within the last parameter.
+     * Bytes read which can be less than or equal to the requested value. If no input bytes are available,
      * function can either block or return immediately with 0 bytes read. If there is an error for the
      * read, it returns negative error code.
      * FreeRTOS CLI uses this function to read the command string from input console.
@@ -51,7 +57,8 @@ typedef struct xConsoleIO
      *
      */
     int32_t ( * read )( char * const buffer,
-                        uint32_t length );
+                        uint32_t length,
+                        uint32_t * pOutLength );
 
     /**
      * Function writes the output of a finite length buffer to the console. The buffer will be a null
@@ -74,34 +81,5 @@ void FreeRTOS_CLIEnterConsoleLoop( xConsoleIO_t consoleIO,
                                    size_t commandBufferLength,
                                    char * pOutputBuffer,
                                    size_t outputBufferLength );
-
-
-/**
- * @brief Adds incoming data from console input interface (@p pConsoleInput)
- * to the input command buffer (@pCommandBuffer), and if the input command is
- * complete, it checks against commands registered with FreeRTOS+CLI and calls
- * the matching command's handler for processing the input command.
- *
- * @param[in] consoleIO The console interface object for read/write operations.
- * @param[in] pConsoleInput The buffer containing the data read from the console.
- * @param[in] inputSize The size of the @p pConsoleInput buffer.
- * @param[in, out] pCommandBuffer The buffer which represents the complete command
- * entered on the console. This buffer is incrementally filled with data from
- * @p pConsoleInput on each call to this function.
- * @param[in] commandBufferLength The size of the @p pCommandBuffer buffer.
- * @param[in, out] pCommandBufferIndex The index till where the data has been
- * populated in the @p pCommandBuffer buffer.
- * @param[out] pOutputBuffer This buffer is populated with the output from
- * processing a command with FreeRTOS+CLI.
- * @param[in] outpuBufferLength The size of the output buffer.
- */
-void FreeRTOS_CLI_ProcessInputBuffer( xConsoleIO_t consoleIO,
-                                      char * pConsoleInput,
-                                      int32_t inputSize,
-                                      char * pCommandBuffer,
-                                      size_t commandBufferLength,
-                                      size_t * pCommandBufferIndex,
-                                      char * pOutputBuffer,
-                                      size_t outpuBufferLength );
 
 #endif /* ifndef FREERTOS_CLI_CONSOLE_H */

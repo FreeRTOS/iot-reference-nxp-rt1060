@@ -109,9 +109,9 @@
  * switches to receive packet from network.
  *
  * Since the transport interface is non blocking, the queue wait time is set to
- * a small value since the agent more frequently polls the queue.
+ * a interval such that agent does not polls busy on the socket.
  *
  */
-#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME         ( 10 )
+#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME         ( 50 )
 
 #endif /* ifndef CORE_MQTT_CONFIG_H */

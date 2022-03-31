@@ -56,7 +56,7 @@
 #define appmainSHADOW_DEVICE_TASK_PRIORITY        ( tskIDLE_PRIORITY + 1 )
 
 /**
- * @brief Stacksize and priority for shadow update application task.
+ * @brief Stack size and priority for shadow update application task.
  */
 #define appmainSHADOW_UPDATE_TASK_STACK_SIZE      ( 2048 )
 #define appmainSHADOW_UPDATE_TASK_PRIORITY        ( tskIDLE_PRIORITY + 1 )
