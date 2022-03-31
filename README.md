@@ -61,7 +61,7 @@ If you have downloaded the repo without using the `--recurse-submodules` argumen
 git submodule update --init --recursive
 ```
 ### Running the demos
-To get started running demos, see the Getting Started Guide.
+To get started running demos, see the [Getting Started Guide](GSG.md).
 ### Security
 See [CONTRIBUTING](https://github.com/FreeRTOS/lab-iot-reference-nxp-rt1060/blob/main/CONTRIBUTING.md) for more information.
 ### License
