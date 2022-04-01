@@ -1,0 +1,85 @@
+name : "NXP i.MXRT1060 and EdgeLock® SE050 Reference Integration"
+version: "v202203.00"
+description: |-
+  "Reference IoT integration project using NXP i.MX RT1060 with EdgeLock® SE050 secure element and FreeRTOS LTS libraries"
+dependencies:
+  - name: "FreeRTOS-Kernel"
+    version: "V10.4.3"
+    repository:
+      type: "git"
+      url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
+  - name: "coreJSON"
+    version: "V3.0.0"
+    repository:
+      type: "git"
+      url: "https://github.com/FreeRTOS/coreJSON.git"
+  - name: "coreMQTT"
+    version: "v1.1.0"
+    repository:
+      type: "git"
+      url: "https://github.com/FreeRTOS/coreMQTT.git"
+  - name: "corePKCS11"
+    version: "v3.0.0"
+    repository:
+      type: "git"
+      url: "https://github.com/FreeRTOS/corePKCS11.git"
+  - name: "device-shadow"
+    version: "v1.0.2"
+    repository:
+      type: "git"
+      url: "https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git"
+  - name: "backoffAlgorithm"
+    version: "v1.0.0"
+    repository:
+      type: "git"
+      url: "https://github.com/FreeRTOS/backoffAlgorithm"
+  - name: "device-defender"
+    version: "v1.1.0"
+    repository:
+      type: "git"
+      url: "https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git"
+  - name: "ota"
+    version: "v3.3.0"
+    repository:
+      type: "git"
+      url: "https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git"
+  - name: "device-shadow"
+    version: "v1.0.2"
+    repository:
+      type: "git"
+      url: "https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git"
+ - name: "coreMQTT-Agent"
+    version: "v1.0.1"
+    repository:
+      type: "git"
+      url: "https://github.com/FreeRTOS/coreMQTT-Agent.git"
+ - name: "mcux-sdk"
+    version: "MCUX_2.10.0"
+    repository:
+      type: "git"
+      url: "https://github.com/NXPmicro/mcux-sdk.git"
+ - name: "lwip"
+    version: "2.1.2"
+    repository:
+      type: "git"
+      url: "https://github.com/lwip-tcpip/lwip.git"
+ - name: "mbedtls"
+    version: "2.26.0"
+    repository:
+      type: "git"
+      url: "https://github.com/Mbed-TLS/mbedtls.git"
+ - name: "mcuboot"
+    version: "v1.7.2"
+    repository:
+      type: "git"
+      url: "https://github.com/mcu-tools/mcuboot.git"
+ - name: "tinycbor"
+    version: "0.6.0"
+    repository:
+      type: "git"
+      url: "https://github.com/intel/tinycbor.git"
+ - name: "unity"
+    version: "db878ccaedaea3d07b3c5443a00d131ecacd30b3"
+    repository:
+      type: "git"
+      url: "https://github.com/ThrowTheSwitch/Unity.git"
