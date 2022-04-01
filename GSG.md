@@ -517,13 +517,17 @@ The following steps walk you through OTA job creation and monitoring the OTA pro
      1. Under "Path name of file on device", type "NA"
      1. Under "IAM role for OTA update job", choose the role that you created earlier for the OTA update from the
           drop down list.
+
           ![Image](https://user-images.githubusercontent.com/45887168/161103579-5359e546-7a34-4e7c-a1b5-e69b55471a23.png)
+
           Then, click "Next" to create OTA job. Confirm if the Job was created successfully.
           Note: If it fails to create an OTA job, make sure the role for this OTA job update has the correct
           permissions (policies) attached.
           Below is the list of managed policies used and custom policies defined for the account ID, role and S3
           bucket resource.
+
           ![Image](https://user-images.githubusercontent.com/45887168/161103610-743a6067-7729-4cc8-8dcb-d18f3ebb4f1e.png)
+
           GetSetRolePolicy:
           ```
           {
@@ -614,13 +618,16 @@ The following steps walk you through OTA job creation and monitoring the OTA pro
 1. On the device side, check that the device reboots, and the bootloader verifies, swaps, then
      erases the new image in the secondary slot and jumps to the application. Verify the version
      of the new application.
+
      ![Image](https://user-images.githubusercontent.com/45887168/161142357-18afd557-6f79-451a-8d04-5614b932db95.png)
 
 1. Verify that the bootloader updates the primary and secondary slots correctly and jumps to the
      application correctly.
+
      ![Image](https://user-images.githubusercontent.com/45887168/161142363-9bdae63b-8f0e-4cfd-8e4e-424f823226b2.png)
 
 1. On the AWS IoT console, confirm that the "Status" of the OTA job is "Completed".
+
      ![Image](https://user-images.githubusercontent.com/45887168/161142364-e4ed3234-2b0c-465e-9426-eaa8f3e39cfc.png)
 
 
