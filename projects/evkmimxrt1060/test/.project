@@ -427,6 +427,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/semihost_hardfault.c</locationURI>
 		</link>
 		<link>
+			<name>source/test_logging.c</name>
+			<type>1</type>
+			<location>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.c</location>
+		</link>
+		<link>
+			<name>source/test_logging.h</name>
+			<type>1</type>
+			<location>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.h</location>
+		</link>
+		<link>
 			<name>startup/startup_mimxrt1062.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/core/devices/MIMXRT1062/mcuxpresso/startup_mimxrt1062.c</locationURI>
