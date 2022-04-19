@@ -429,12 +429,12 @@
 		<link>
 			<name>source/test_logging.c</name>
 			<type>1</type>
-			<location>Y:/workspace/nxp-gri-idt/examples/evkbmimxrt1060/test/test_logging.c</location>
+			<location>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.c</location>
 		</link>
 		<link>
 			<name>source/test_logging.h</name>
 			<type>1</type>
-			<location>Y:/workspace/nxp-gri-idt/examples/evkbmimxrt1060/test/test_logging.h</location>
+			<location>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.h</location>
 		</link>
 		<link>
 			<name>startup/startup_mimxrt1062.c</name>
