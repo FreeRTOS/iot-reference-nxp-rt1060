@@ -36,7 +36,7 @@
 
 #define appmainRUN_QUALIFICATION_TEST_SUITE       ( 1 )
 
-#define appmainRUN_DEVICE_ADVISOR_TEST_SUITE      ( 1 )
+#define appmainRUN_DEVICE_ADVISOR_TEST_SUITE      ( 0 )
 
 #define appmainRUN_OTA_END_TO_END_TEST_SUITE      ( 0 )
 
