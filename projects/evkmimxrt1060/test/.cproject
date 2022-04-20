@@ -141,6 +141,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Middleware\FreeRTOS\tests\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Middleware\unity\extras\fixture\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Middleware\unity\src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Middleware\FreeRTOS\tests\src\pkcs11&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Middleware\FreeRTOS\tests\src\ota&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}\..\..\..\Middleware\FreeRTOS\tests\src\pkcs11\dev_mode_key_provisioning&quot;"/>
 								</option>
 								<option id="com.crt.advproject.c.misc.dialect.694419664" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.specs.604491904" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
@@ -284,7 +287,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MIMXRT1060-EVKB</sdkName>
-		<sdkVersion>2.10.0</sdkVersion>
+		<sdkVersion>2.11.1</sdkVersion>
 	</storageModule>
 	<storageModule moduleId="com.crt.config">
 		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
