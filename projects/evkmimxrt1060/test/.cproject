@@ -59,6 +59,7 @@
 									<listOptionValue builtIn="false" value="DEBUG_CONSOLE_RECEIVE_BUFFER_LEN=2048"/>
 									<listOptionValue builtIn="false" value="DEBUG_CONSOLE_ENABLE_ECHO=1"/>
 									<listOptionValue builtIn="false" value="UNITY_INCLUDE_CONFIG_H"/>
+									<listOptionValue builtIn="false" value="DISABLE_OTA_CLOSE_FILE_HEADER_CHECK=1"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1579638486" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fomit-frame-pointer -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.401864418" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-common" valueType="string"/>

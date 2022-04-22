@@ -131,4 +131,40 @@
 /* #define PKCS11_TEST_LABEL_JITP_CERTIFICATE    pkcs11configLABEL_JITP_CERTIFICATE */
 /* #define PKCS11_TEST_LABEL_ROOT_CERTIFICATE    pkcs11configLABEL_ROOT_CERTIFICATE */
 
+
+#define OTA_RSA_SHA1      1
+#define OTA_RSA_SHA256    2
+#define OTA_ECDSA_SHA256  3
+/**
+ * @brief Certificate type for OTA PAL test.
+ * Valid options are: OTA_RSA_SHA1, OTA_RSA_SHA256, OTA_ECDSA_SHA256.
+ *
+ * #define OTA_PAL_TEST_CERT_TYPE OTA_ECDSA_SHA256
+ */
+#define OTA_PAL_TEST_CERT_TYPE OTA_ECDSA_SHA256
+
+/**
+ * @brief Path to cert for OTA test PAL. Used to verify signature.
+ * If applicable, the device must be pre-provisioned with this certificate. Please see
+ * test/common/ota/test_files for the set of certificates.
+ */
+#define OTA_PAL_CERTIFICATE_FILE                         "sss:00223344"
+
+/**
+ * @brief Some devices have a hard-coded name for the firmware image to boot.
+ */
+#define OTA_PAL_FIRMWARE_FILE                            "dummy.bin"
+
+/**
+ * @brief Some boards OTA PAL layers will use the file names passed into it for the
+ * image and the certificates because their non-volatile memory is abstracted by a
+ * file system. Set this to 1 if that is the case for your device.
+ */
+#define OTA_PAL_USE_FILE_SYSTEM                          0
+
+/**
+ * @brief 1 if using PKCS #11 to access the code sign certificate from NVM.
+ */
+#define OTA_PAL_READ_CERTIFICATE_FROM_NVM_WITH_PKCS11    0
+
 #endif /* TEST_PARAM_CONFIG_H */

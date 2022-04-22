@@ -31,7 +31,9 @@
 #include "test_param_config.h"
 #include "qualification_test.h"
 #include "transport_interface_test.h"
+#include "ota_pal_test.h"
 #include "using_mbedtls.h"
+#include "mflash_drv.h"
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -47,6 +49,7 @@
 static NetworkCredentials_t xNetworkCredentials = { 0 };
 static TransportInterface_t xTransport = { 0 };
 static NetworkContext_t xNetworkContext = { 0 };
+static NetworkContext_t xSecondNetworkContext = { 0 };
 
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
@@ -192,9 +195,15 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
 
     pTestParam->pTransport = &xTransport;
     pTestParam->pNetworkContext = &xNetworkContext;
+    pTestParam->pSecondNetworkContext = &xSecondNetworkContext;
     pTestParam->pNetworkConnect = prvTransportNetworkConnect;
     pTestParam->pNetworkDisconnect = prvTransportNetworkDisconnect;
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
+}
+
+void SetupOtaPalTestParam( OtaPalTestParam_t * pTestParam )
+{
+    pTestParam->pageSize = MFLASH_PAGE_SIZE;
 }
 
 void prvQualificationTestTask( void * pvParameters )
