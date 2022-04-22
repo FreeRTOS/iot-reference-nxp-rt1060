@@ -115,7 +115,7 @@
  *
  * The public key corresponding to pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS.
  */
-#define pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS        "sss:F0000000"
+#define pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS        "sss:00223345"
 
 /**
  * @brief The PKCS #11 label for the device certificate.
