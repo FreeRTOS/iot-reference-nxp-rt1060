@@ -196,7 +196,7 @@ OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const C )
         LogError( ( "[OTA-NXP] Failed to set image state" ) );
         result = OtaPalBootInfoCreateFailed;
     }
-#endif
+#endif /* ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK */
 
     C->pFile = NULL;
     return OTA_PAL_COMBINE_ERR( result, 0U );

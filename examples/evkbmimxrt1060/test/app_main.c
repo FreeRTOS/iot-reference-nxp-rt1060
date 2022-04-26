@@ -78,6 +78,7 @@ int app_main( void )
     BaseType_t xResult = pdFAIL;
 
     xResult = KVStore_init();
+
     if( xResult == pdFAIL )
     {
         configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
@@ -98,17 +99,17 @@ int app_main( void )
 #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 
 #if ( appmainRUN_OTA_END_TO_END_TEST_SUITE == 1 )
+    {
+        if( xResult == pdPASS )
         {
-            if( xResult == pdPASS )
-            {
-                xResult = xTaskCreate( vOTAUpdateTask,
-                                       "OTA",
-                                       appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-                                       NULL,
-                                       appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
-                                       NULL );
-            }
+            xResult = xTaskCreate( vOTAUpdateTask,
+                                   "OTA",
+                                   appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                                   NULL );
         }
+    }
 #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
 
 #if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 )

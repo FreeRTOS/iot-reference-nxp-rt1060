@@ -94,6 +94,7 @@ static void ThreadWrapper( void * pParam )
         /* Give the mutex. */
         xSemaphoreGive( pTaskParam->joinMutexHandle );
     }
+
     vTaskDelete( NULL );
 }
 
@@ -114,12 +115,12 @@ FRTestThreadHandle_t FRTest_ThreadCreate( FRTestThreadFunction_t threadFunc,
 
     pTaskParam->threadFunc = threadFunc;
     pTaskParam->pParam = pParam;
-    
-    xReturned = xTaskCreate( ThreadWrapper,          /* Task code. */
-                             "ThreadWrapper",        /* All tasks have same name. */
-                             8192,                   /* Task stack size. */
-                             pTaskParam,             /* Where the task writes its result. */
-                             tskIDLE_PRIORITY,       /* Task priority. */
+
+    xReturned = xTaskCreate( ThreadWrapper,    /* Task code. */
+                             "ThreadWrapper",  /* All tasks have same name. */
+                             8192,             /* Task stack size. */
+                             pTaskParam,       /* Where the task writes its result. */
+                             tskIDLE_PRIORITY, /* Task priority. */
                              &pTaskParam->taskHandle );
     configASSERT( xReturned == pdPASS );
 
@@ -143,9 +144,10 @@ int FRTest_ThreadTimedJoin( FRTestThreadHandle_t threadHandle,
 
     /* Wait for the thread. */
     xReturned = xSemaphoreTake( pTaskParam->joinMutexHandle, pdMS_TO_TICKS( timeoutMs ) );
+
     if( xReturned != pdTRUE )
     {
-        /* LogError( "Waiting thread exist failed after %u %d. Task abort.", timeoutMs, xReturned ); */
+        PRINTF( "Waiting thread exist failed after %u %d. Task abort.", timeoutMs, xReturned );
 
         /* Return negative value to indicate error. */
         retValue = -1;
@@ -155,7 +157,7 @@ int FRTest_ThreadTimedJoin( FRTestThreadHandle_t threadHandle,
     }
 
     free( pTaskParam );
-    
+
     return retValue;
 }
 
