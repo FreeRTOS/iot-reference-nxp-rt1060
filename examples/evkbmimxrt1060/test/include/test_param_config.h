@@ -55,14 +55,12 @@
  *
  * #define ECHO_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ENDPOINT    "192.168.4.159"
 
 /**
  * @brief Port of the echo server to connect to in transport interface test.
  *
  * #define ECHO_SERVER_PORT       (9000)
  */
-#define ECHO_SERVER_PORT        ( 9001 )
 
 /**
  * @brief Root certificate of the echo server.
@@ -76,28 +74,6 @@
  *
  * #define ECHO_SERVER_ROOT_CA "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ROOT_CA                                              \
-    "-----BEGIN CERTIFICATE-----\n"                                      \
-    "MIIDhDCCAmwCCQDk6zBIvVIj1zANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMC\n" \
-    "VVMxCzAJBgNVBAgMAldBMQ4wDAYDVQQHDAVQbGFjZTEPMA0GA1UECgwGQW1hem9u\n" \
-    "MQswCQYDVQQLDAJJVDEWMBQGA1UEAwwNMTkyLjE2OC40LjE1OTEhMB8GCSqGSIb3\n" \
-    "DQEJARYSeW91ckVtYWlsQHlvdXIuY29tMB4XDTIyMDMxMzE4MjU1M1oXDTIzMDMx\n" \
-    "MzE4MjU1M1owgYMxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJXQTEOMAwGA1UEBwwF\n" \
-    "UGxhY2UxDzANBgNVBAoMBkFtYXpvbjELMAkGA1UECwwCSVQxFjAUBgNVBAMMDTE5\n" \
-    "Mi4xNjguNC4xNTkxITAfBgkqhkiG9w0BCQEWEnlvdXJFbWFpbEB5b3VyLmNvbTCC\n" \
-    "ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKIF5KtA9Q0Dib9k33bDDi5G\n" \
-    "lGPrQR6xr0N19c+HIrfQ8bylWHp0BUGuE+Khg87CmSPqpLehaVVYQz8SuxFO/a18\n" \
-    "/IMl+I4dtfV7RSS8GHmHMPK24EAs6AwPF1yGq4d+euKlHOphPpRMZnngJrsWjtz7\n" \
-    "rgYkfw3hjI6oHktPEZt002bSLCTBXUFIENPKuupb/Mh348V6WKU2eIx/Hy80WGqg\n" \
-    "acUDkQW1VH4g/f7Gu3PkeeN5SN0zw3mkAr0U9Y8J5CN50TiQuaVFOQuinc2UTi+P\n" \
-    "nXKMDg+4adCqpJBKuucI/ymW8Yj/eboDkgsIXfpyAf8/TwYg3b/7GR7lqcDymgEC\n" \
-    "AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAlznEfy73X/93MYRNsONcwdQ8ogagGj1p\n" \
-    "KfafLazNyUJ46yBCEKAJd9JttUQjheGnR1XgKSPniK3l9Ep0p37vi21G6OOzcXeM\n" \
-    "iutXhdcA3k6aqOVc9TGWjLbpmvtqkkFHIfa7218TONo5ESQlXI1eyxYPE3FF5Mj7\n" \
-    "OAzJvsKkA+rLffL1svXL5hS59XTb9oCxk2DpJQN51XardfqDs6WMZowo2fizzp0S\n" \
-    "tnYBaOPYjMTBGiGtGKsFcaSyJ0+efsFOmqJF8Vgqi+fj8nnsQmFm2QBnAy69dZqF\n" \
-    "CBNYoQJfbpCFO6z56SvOHtgxkc4/IkrpV9HVZOltBrwbvHRLYSTBfQ==\n"         \
-    "-----END CERTIFICATE-----"
 
 /**
  * @brief Client certificate to connect to echo server.
@@ -121,5 +97,51 @@
  *
  * #define TRANSPORT_CLIENT_PRIVATE_KEY  NULL
  */
+
+#define PKCS11_TEST_RSA_KEY_SUPPORT                      ( 0 )
+#define PKCS11_TEST_EC_KEY_SUPPORT                       ( 1 )
+#define PKCS11_TEST_IMPORT_PRIVATE_KEY_SUPPORT           ( 0 )
+#define PKCS11_TEST_GENERATE_KEYPAIR_SUPPORT             ( 0 )
+#define PKCS11_TEST_PREPROVISIONED_SUPPORT               ( 1 )
+#define PKCS11_TEST_LABEL_DEVICE_PRIVATE_KEY_FOR_TLS     pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS
+#define PKCS11_TEST_LABEL_DEVICE_PUBLIC_KEY_FOR_TLS      pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS
+#define PKCS11_TEST_LABEL_DEVICE_CERTIFICATE_FOR_TLS     pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS
+
+
+#define OTA_RSA_SHA1                                     1
+#define OTA_RSA_SHA256                                   2
+#define OTA_ECDSA_SHA256                                 3
+
+/**
+ * @brief Certificate type for OTA PAL test.
+ * Valid options are: OTA_RSA_SHA1, OTA_RSA_SHA256, OTA_ECDSA_SHA256.
+ *
+ * #define OTA_PAL_TEST_CERT_TYPE OTA_ECDSA_SHA256
+ */
+#define OTA_PAL_TEST_CERT_TYPE                           OTA_ECDSA_SHA256
+
+/**
+ * @brief Path to cert for OTA test PAL. Used to verify signature.
+ * If applicable, the device must be pre-provisioned with this certificate. Please see
+ * test/common/ota/test_files for the set of certificates.
+ */
+#define OTA_PAL_CERTIFICATE_FILE                         "sss:00223344"
+
+/**
+ * @brief Some devices have a hard-coded name for the firmware image to boot.
+ */
+#define OTA_PAL_FIRMWARE_FILE                            "dummy.bin"
+
+/**
+ * @brief Some boards OTA PAL layers will use the file names passed into it for the
+ * image and the certificates because their non-volatile memory is abstracted by a
+ * file system. Set this to 1 if that is the case for your device.
+ */
+#define OTA_PAL_USE_FILE_SYSTEM                          0
+
+/**
+ * @brief 1 if using PKCS #11 to access the code sign certificate from NVM.
+ */
+#define OTA_PAL_READ_CERTIFICATE_FROM_NVM_WITH_PKCS11    0
 
 #endif /* TEST_PARAM_CONFIG_H */

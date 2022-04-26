@@ -100,7 +100,7 @@
  * If set to 0, PAL does not support storage mechanism for these, and
  * they are accessed via headers compiled into the code.
  */
-#define pkcs11configJITP_CODEVERIFY_ROOT_CERT_SUPPORTED    0
+#define pkcs11configJITP_CODEVERIFY_ROOT_CERT_SUPPORTED    1
 
 /**
  * @brief The PKCS #11 label for device private key.
@@ -115,7 +115,7 @@
  *
  * The public key corresponding to pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS.
  */
-#define pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS        "Device Pub TLS Key"
+#define pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS        "sss:00223345"
 
 /**
  * @brief The PKCS #11 label for the device certificate.
@@ -138,13 +138,13 @@
  * (pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS) when using the JITR or
  * JITP flow.
  */
-#define pkcs11configLABEL_JITP_CERTIFICATE                 "JITP Cert"
+#define pkcs11configLABEL_JITP_CERTIFICATE                 "sss:20181004"
 
 /**
  * @brief The PKCS #11 label for the AWS Trusted Root Certificate.
  *
  * @see aws_default_root_certificates.h
  */
-#define pkcs11configLABEL_ROOT_CERTIFICATE                 "Root Cert"
+#define pkcs11configLABEL_ROOT_CERTIFICATE                 "sss:20181002"
 
 #endif /* _AWS_PKCS11_CONFIG_H_ include guard. */

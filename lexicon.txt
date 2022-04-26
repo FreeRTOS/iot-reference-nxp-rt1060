@@ -87,6 +87,7 @@ cbc
 cbor
 ccm
 ccm
+cert
 certificatehandle
 certprofile
 certs
@@ -480,6 +481,7 @@ nordic
 ns
 num
 nv
+nvm
 nxp
 oaep
 oid
@@ -626,6 +628,7 @@ psignature
 psk
 pss
 psslcontext
+ptaskparam
 pthread
 ptopic
 ptopicfilter
@@ -797,8 +800,10 @@ thingname
 thingname
 thingname
 thingname
+threadwrapper
 timedout
 timeoutinms
+timeoutms
 tinycrypt
 tls
 tls
@@ -904,10 +909,12 @@ xreadlength
 xreceivelength
 xresult
 xreturn
+xreturned
 xreturnstatus
 xsession
 xstatetowait
 xtal
+xtaskcreate
 xtasknotify
 xtea
 xtea

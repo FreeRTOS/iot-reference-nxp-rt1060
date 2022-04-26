@@ -31,7 +31,13 @@
 #include "test_param_config.h"
 #include "qualification_test.h"
 #include "transport_interface_test.h"
+#include "ota_pal_test.h"
 #include "using_mbedtls.h"
+#include "mflash_drv.h"
+/* FreeRTOS includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 
 /**
@@ -43,6 +49,7 @@
 static NetworkCredentials_t xNetworkCredentials = { 0 };
 static TransportInterface_t xTransport = { 0 };
 static NetworkContext_t xNetworkContext = { 0 };
+static NetworkContext_t xSecondNetworkContext = { 0 };
 
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
@@ -67,9 +74,112 @@ static void prvTransportNetworkDisconnect( void * pNetworkContext )
     TLS_FreeRTOS_Disconnect( pNetworkContext );
 }
 
-static void prvTransportTestDelay( uint32_t delayMs )
+typedef struct TaskParam
+{
+    StaticSemaphore_t joinMutexBuffer;
+    SemaphoreHandle_t joinMutexHandle;
+    FRTestThreadFunction_t threadFunc;
+    void * pParam;
+    TaskHandle_t taskHandle;
+} TaskParam_t;
+
+static void ThreadWrapper( void * pParam )
+{
+    TaskParam_t * pTaskParam = pParam;
+
+    if( ( pTaskParam != NULL ) && ( pTaskParam->threadFunc != NULL ) && ( pTaskParam->joinMutexHandle != NULL ) )
+    {
+        pTaskParam->threadFunc( pTaskParam->pParam );
+
+        /* Give the mutex. */
+        xSemaphoreGive( pTaskParam->joinMutexHandle );
+    }
+
+    vTaskDelete( NULL );
+}
+
+/*-----------------------------------------------------------*/
+
+FRTestThreadHandle_t FRTest_ThreadCreate( FRTestThreadFunction_t threadFunc,
+                                          void * pParam )
+{
+    TaskParam_t * pTaskParam = NULL;
+    FRTestThreadHandle_t threadHandle = NULL;
+    BaseType_t xReturned;
+
+    pTaskParam = malloc( sizeof( TaskParam_t ) );
+    configASSERT( pTaskParam != NULL );
+
+    pTaskParam->joinMutexHandle = xSemaphoreCreateBinaryStatic( &pTaskParam->joinMutexBuffer );
+    configASSERT( pTaskParam->joinMutexHandle != NULL );
+
+    pTaskParam->threadFunc = threadFunc;
+    pTaskParam->pParam = pParam;
+
+    xReturned = xTaskCreate( ThreadWrapper,    /* Task code. */
+                             "ThreadWrapper",  /* All tasks have same name. */
+                             8192,             /* Task stack size. */
+                             pTaskParam,       /* Where the task writes its result. */
+                             tskIDLE_PRIORITY, /* Task priority. */
+                             &pTaskParam->taskHandle );
+    configASSERT( xReturned == pdPASS );
+
+    threadHandle = pTaskParam;
+
+    return threadHandle;
+}
+
+/*-----------------------------------------------------------*/
+
+int FRTest_ThreadTimedJoin( FRTestThreadHandle_t threadHandle,
+                            uint32_t timeoutMs )
+{
+    TaskParam_t * pTaskParam = threadHandle;
+    BaseType_t xReturned;
+    int retValue = 0;
+
+    /* Check the parameters. */
+    configASSERT( pTaskParam != NULL );
+    configASSERT( pTaskParam->joinMutexHandle != NULL );
+
+    /* Wait for the thread. */
+    xReturned = xSemaphoreTake( pTaskParam->joinMutexHandle, pdMS_TO_TICKS( timeoutMs ) );
+
+    if( xReturned != pdTRUE )
+    {
+        PRINTF( "Waiting thread exist failed after %u %d. Task abort.", timeoutMs, xReturned );
+
+        /* Return negative value to indicate error. */
+        retValue = -1;
+
+        /* There may be used after free. Assert here to indicate error. */
+        configASSERT( false );
+    }
+
+    free( pTaskParam );
+
+    return retValue;
+}
+
+/*-----------------------------------------------------------*/
+
+void FRTest_TimeDelay( uint32_t delayMs )
 {
     vTaskDelay( pdMS_TO_TICKS( delayMs ) );
+}
+
+/*-----------------------------------------------------------*/
+
+void * FRTest_MemoryAlloc( size_t size )
+{
+    return pvPortMalloc( size );
+}
+
+/*-----------------------------------------------------------*/
+
+void FRTest_MemoryFree( void * ptr )
+{
+    return vPortFree( ptr );
 }
 
 void SetupTransportTestParam( TransportTestParam_t * pTestParam )
@@ -87,10 +197,15 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
 
     pTestParam->pTransport = &xTransport;
     pTestParam->pNetworkContext = &xNetworkContext;
+    pTestParam->pSecondNetworkContext = &xSecondNetworkContext;
     pTestParam->pNetworkConnect = prvTransportNetworkConnect;
     pTestParam->pNetworkDisconnect = prvTransportNetworkDisconnect;
-    pTestParam->pTransportTestDelay = prvTransportTestDelay;
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
+}
+
+void SetupOtaPalTestParam( OtaPalTestParam_t * pTestParam )
+{
+    pTestParam->pageSize = MFLASH_PAGE_SIZE;
 }
 
 void prvQualificationTestTask( void * pvParameters )

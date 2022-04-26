@@ -34,11 +34,13 @@
 #include "mqtt_agent_task.h"
 
 
-#define appmainRUN_QUALIFICATION_TEST_SUITE       ( 1 )
+#define appmainRUN_QUALIFICATION_TEST_SUITE       ( 0 )
 
 #define appmainRUN_DEVICE_ADVISOR_TEST_SUITE      ( 0 )
 
-#define appmainRUN_OTA_END_TO_END_TEST_SUITE      ( 0 )
+#define appmainRUN_OTA_END_TO_END_TEST_SUITE      ( 1 )
+
+#define appmainPROVISIONING_MODE                  ( 0 )
 
 
 #define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
@@ -46,6 +48,12 @@
 
 #define appmainTEST_TASK_STACK_SIZE               ( 6144 )
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
+
+#define appmainCLI_TASK_STACK_SIZE                ( 6144 )
+#define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
+
+#define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
+#define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
 
 /**
  * @brief Stack size and priority for MQTT agent task.
@@ -61,11 +69,49 @@ extern void prvQualificationTestTask( void * pvParameters );
 
 extern void vSubscribePublishTestTask( void * pvParameters );
 
+extern void vCLITask( void * pvParam );
+
+extern void vOTAUpdateTask( void * pvParam );
+
 int app_main( void )
 {
     BaseType_t xResult = pdFAIL;
 
     xResult = KVStore_init();
+
+    if( xResult == pdFAIL )
+    {
+        configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
+    }
+
+#if ( appmainPROVISIONING_MODE == 1 )
+    {
+        if( xResult == pdPASS )
+        {
+            xResult = xTaskCreate( vCLITask,
+                                   "CLI",
+                                   appmainCLI_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainCLI_TASK_PRIORITY,
+                                   NULL );
+        }
+    }
+#endif /* if ( appmainPROVISIONING_MODE == 1 ) */
+
+#if ( appmainRUN_OTA_END_TO_END_TEST_SUITE == 1 )
+    {
+        if( xResult == pdPASS )
+        {
+            xResult = xTaskCreate( vOTAUpdateTask,
+                                   "OTA",
+                                   appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                                   NULL,
+                                   appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                                   NULL );
+        }
+    }
+#endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
+
 #if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 )
     {
         if( xResult == pdPASS )
@@ -100,6 +146,8 @@ int app_main( void )
         }
     }
 #endif /* if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 ) */
+
+
 
     return pdPASS;
 }
