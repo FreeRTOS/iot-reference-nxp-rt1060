@@ -55,14 +55,12 @@
  *
  * #define ECHO_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ENDPOINT    "ec2-52-32-139-69.us-west-2.compute.amazonaws.com"
 
 /**
  * @brief Port of the echo server to connect to in transport interface test.
  *
  * #define ECHO_SERVER_PORT       (9000)
  */
-#define ECHO_SERVER_PORT        ( 9000 )
 
 /**
  * @brief Root certificate of the echo server.
@@ -76,24 +74,6 @@
  *
  * #define ECHO_SERVER_ROOT_CA "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ROOT_CA                                              \
-    "-----BEGIN CERTIFICATE-----\n"                                      \
-    "MIICzDCCAnOgAwIBAgIUBV5JDBwC7wOuQENIeT06Rp/z6icwCgYIKoZIzj0EAwIw\n" \
-    "gbsxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJXQTEOMAwGA1UEBwwFUGxhY2UxFDAS\n" \
-    "BgNVBAoMC1lvdXJDb21wYW55MQswCQYDVQQLDAJJVDE5MDcGA1UEAwwwZWMyLTUy\n" \
-    "LTMyLTEzOS02OS51cy13ZXN0LTIuY29tcHV0ZS5hbWF6b25hd3MuY29tMTEwLwYJ\n" \
-    "KoZIhvcNAQkBFiJ5b3VyRW1haWxAeW91ci1jb21wYW55LXdlYnNpdGUuY29tMB4X\n" \
-    "DTIyMDIyMTE4NDQzN1oXDTIzMDIyMTE4NDQzN1owgbsxCzAJBgNVBAYTAlVTMQsw\n" \
-    "CQYDVQQIDAJXQTEOMAwGA1UEBwwFUGxhY2UxFDASBgNVBAoMC1lvdXJDb21wYW55\n" \
-    "MQswCQYDVQQLDAJJVDE5MDcGA1UEAwwwZWMyLTUyLTMyLTEzOS02OS51cy13ZXN0\n" \
-    "LTIuY29tcHV0ZS5hbWF6b25hd3MuY29tMTEwLwYJKoZIhvcNAQkBFiJ5b3VyRW1h\n" \
-    "aWxAeW91ci1jb21wYW55LXdlYnNpdGUuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0D\n" \
-    "AQcDQgAE5KEaznZ8ZwSaKogP1g5RemAL/RtH3mwCnHOXM6fO3zUGUOOtFmSGThJt\n" \
-    "5eWR19LFaxWmaFp0/1/mQOKFIwJmuaNTMFEwHQYDVR0OBBYEFOdah57IXV6CBB1w\n" \
-    "cwGYN3UZoU3IMB8GA1UdIwQYMBaAFOdah57IXV6CBB1wcwGYN3UZoU3IMA8GA1Ud\n" \
-    "EwEB/wQFMAMBAf8wCgYIKoZIzj0EAwIDRwAwRAIgHpkUxi+hpZhzeyr+a8dQxW6d\n" \
-    "aLndkUqx0l92Bpmqt2QCIF14OKWK5HDlFFQabUdfGTXy7fNxD9oDOlWlWgr8yO7i\n" \
-    "-----END CERTIFICATE-----\n"
 
 /**
  * @brief Client certificate to connect to echo server.
