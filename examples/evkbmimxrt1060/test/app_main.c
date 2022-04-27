@@ -102,6 +102,10 @@ int app_main( void )
     {
         if( xResult == pdPASS )
         {
+            xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+        }
+        if( xResult == pdPASS )
+        {
             xResult = xTaskCreate( vOTAUpdateTask,
                                    "OTA",
                                    appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
