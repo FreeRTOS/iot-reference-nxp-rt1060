@@ -29,6 +29,7 @@
 
 #include "core_pkcs11_config.h"
 #include "test_param_config.h"
+#include "test_execution_config.h"
 #include "qualification_test.h"
 #include "transport_interface_test.h"
 #include "ota_pal_test.h"
@@ -182,6 +183,7 @@ void FRTest_MemoryFree( void * ptr )
     return vPortFree( ptr );
 }
 
+#if ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 )
 void SetupTransportTestParam( TransportTestParam_t * pTestParam )
 {
     configASSERT( pTestParam != NULL );
@@ -202,11 +204,14 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
     pTestParam->pNetworkDisconnect = prvTransportNetworkDisconnect;
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
 }
+#endif /* if ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 ) */
 
+#if ( OTA_PAL_TEST_ENABLED == 1 )
 void SetupOtaPalTestParam( OtaPalTestParam_t * pTestParam )
 {
     pTestParam->pageSize = MFLASH_PAGE_SIZE;
 }
+#endif /* if ( OTA_PAL_TEST_ENABLED == 1 ) */
 
 void prvQualificationTestTask( void * pvParameters )
 {
