@@ -104,6 +104,7 @@ int app_main( void )
         {
             xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
         }
+
         if( xResult == pdPASS )
         {
             xResult = xTaskCreate( vOTAUpdateTask,
