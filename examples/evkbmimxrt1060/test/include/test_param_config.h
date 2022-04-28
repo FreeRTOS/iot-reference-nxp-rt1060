@@ -43,14 +43,14 @@
  *
  * #define MQTT_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define MQTT_SERVER_ENDPOINT "PLACE_HOLDER"
+#define MQTT_SERVER_ENDPOINT    "PLACE_HOLDER"
 
 /**
  * @brief Port of the MQTT broker to connect to in mqtt test.
  *
  * #define MQTT_SERVER_PORT       (8883)
  */
-#define MQTT_SERVER_PORT       (8883)
+#define MQTT_SERVER_PORT        ( 8883 )
 
 /**
  * @brief Endpoint of the echo server to connect to in transport interface test.
@@ -146,6 +146,6 @@
  */
 #define OTA_PAL_READ_CERTIFICATE_FROM_NVM_WITH_PKCS11    0
 
-#define OTA_IOT_THING_NAME  "PLACE_HOLDER"
+#define OTA_IOT_THING_NAME                               "PLACE_HOLDER"
 
 #endif /* TEST_PARAM_CONFIG_H */
