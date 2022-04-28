@@ -27,7 +27,7 @@
 #define _KVSTORE_CONFIG_H
 
 
-#include "demo_config.h"
+#include "test_param_config.h"
 #include "core_pkcs11_config.h"
 
 typedef enum KVStoreKey
@@ -45,8 +45,8 @@ typedef enum KVStoreKey
 } KVStoreKey_t;
 
 /* Define default values for common attributes */
-#define THING_NAME_DFLT        democonfigCLIENT_IDENTIFIER
-#define MQTT_ENDOPOINT_DFLT    democonfigMQTT_BROKER_ENDPOINT
+#define THING_NAME_DFLT        OTA_THING_NAME
+#define MQTT_ENDOPOINT_DFLT    OTA_MQTT_BROKER_ENDPOINT
 
 #define KVSTORE_KEY_MAX_LEN    32
 #define KVSTORE_VAL_MAX_LEN    256
@@ -69,9 +69,9 @@ typedef enum KVStoreKey
 
 #define KV_STORE_DEFAULTS                                                                                   \
     {                                                                                                       \
-        KV_DFLT( KV_TYPE_STRING, democonfigCLIENT_IDENTIFIER ),                  /* THINGNAME */            \
-        KV_DFLT( KV_TYPE_STRING, democonfigMQTT_BROKER_ENDPOINT ),               /* MQTT_ENDPOINT */        \
-        KV_DFLT( KV_TYPE_UINT32, 8883 ),                                         /* MQTT_PORT */            \
+        KV_DFLT( KV_TYPE_STRING, OTA_IOT_THING_NAME ),                           /* THINGNAME */            \
+        KV_DFLT( KV_TYPE_STRING, MQTT_SERVER_ENDPOINT ),                         /* MQTT_ENDPOINT */        \
+        KV_DFLT( KV_TYPE_UINT32, MQTT_SERVER_PORT ),                             /* MQTT_PORT */            \
         KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS ), /* DEVICE_PRIVKEY_ID */    \
         KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_PUBLIC_KEY_FOR_TLS ),  /* DEVICE_PUBKEY_ID */     \
         KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_CERTIFICATE_FOR_TLS ), /* DEVICE_CERT_ID */       \

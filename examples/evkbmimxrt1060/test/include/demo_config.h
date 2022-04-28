@@ -68,7 +68,7 @@
  *
  * #define democonfigCLIENT_IDENTIFIER				"insert here."
  */
-#define democonfigCLIENT_IDENTIFIER       "NXP_RT_1060"
+/* #define democonfigCLIENT_IDENTIFIER       "nxp_gri_tianmc" */
 
 /**
  * @brief Endpoint of the MQTT broker to connect to.
@@ -87,7 +87,6 @@
  *
  * #define democonfigMQTT_BROKER_ENDPOINT    "...insert here..."
  */
-#define democonfigMQTT_BROKER_ENDPOINT    "t8sloutbvw8e.deviceadvisor.iot.us-east-1.amazonaws.com"
 /*#define democonfigMQTT_BROKER_ENDPOINT    "a31zvyed820ljz-ats.iot.us-east-1.amazonaws.com" */
 
 /**
@@ -102,7 +101,6 @@
  *
  * #define democonfigMQTT_BROKER_PORT    ( insert here. )
  */
-#define democonfigMQTT_BROKER_PORT    8883
 
 /**
  * @brief Server's root CA certificate.
