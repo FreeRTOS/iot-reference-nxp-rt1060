@@ -98,6 +98,6 @@ dependencies:
    repository:
      type: "git"
      url: "https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests"
-     path: "Middleware/FreeRTOS/tests"
+     path: "/Middleware/FreeRTOS/tests"
 
 license: "MIT"
