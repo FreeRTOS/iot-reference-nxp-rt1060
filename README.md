@@ -62,7 +62,7 @@ git submodule update --init --recursive
 ```
 ### Running the demos
 To get started running demos, see the [Getting Started Guide](GSG.md).
-### Security
+### Contributing
 See [CONTRIBUTING](https://github.com/FreeRTOS/lab-iot-reference-nxp-rt1060/blob/main/CONTRIBUTING.md) for more information.
 ### License
 The example source code under `./examples/` and the libraries under `./Middleware/AWS` and `./Middleware/FreeRTOS` are licensed under the MIT-0 License. See 
