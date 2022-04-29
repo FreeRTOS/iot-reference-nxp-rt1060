@@ -57,6 +57,12 @@
 
 #include "logging.h"
 
+#include "test_param_config.h"
+
+#define APP_VERSION_MAJOR                      OTA_APP_VERSION_MAJOR
+#define APP_VERSION_MINOR                      OTA_APP_VERSION_MINOR
+#define APP_VERSION_BUILD                      OTA_APP_VERSION_BUILD
+
 /**
  * @brief The number of words allocated to the stack for the OTA agent.
  */

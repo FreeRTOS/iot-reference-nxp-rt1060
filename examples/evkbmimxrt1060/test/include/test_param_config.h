@@ -148,4 +148,10 @@
 
 #define OTA_IOT_THING_NAME                               "PLACE_HOLDER"
 
+#define OTA_APP_VERSION_MAJOR                            0
+
+#define OTA_APP_VERSION_MINOR                            9
+
+#define OTA_APP_VERSION_BUILD                            1
+
 #endif /* TEST_PARAM_CONFIG_H */

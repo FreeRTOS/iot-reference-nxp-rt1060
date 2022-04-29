@@ -73,15 +73,6 @@
 /*------------- Demo configurations -------------------------*/
 
 /**
- * @brief OTA Application firmware version numbers.
- * The version number is used for validation of a new OTA job and to
- * prevent roll back to an older firmware image version.
- */
-#define APP_VERSION_MAJOR                                0
-#define APP_VERSION_MINOR                                9
-#define APP_VERSION_BUILD                                3
-
-/**
  * @brief The maximum size of the file paths used in the demo.
  */
 #define otaexampleMAX_FILE_PATH_SIZE                     ( 260 )
