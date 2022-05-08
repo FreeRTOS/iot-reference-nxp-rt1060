@@ -216,4 +216,5 @@ void SetupOtaPalTestParam( OtaPalTestParam_t * pTestParam )
 void prvQualificationTestTask( void * pvParameters )
 {
     RunQualificationTest();
+    vTaskDelete( NULL );
 }
