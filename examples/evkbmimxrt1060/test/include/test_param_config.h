@@ -127,7 +127,7 @@
  * If applicable, the device must be pre-provisioned with this certificate. Please see
  * test/common/ota/test_files for the set of certificates.
  */
-#define OTA_PAL_CERTIFICATE_FILE                         "sss:00223344"
+#define OTA_PAL_CERTIFICATE_FILE                         "sss:00223346"
 
 /**
  * @brief Some devices have a hard-coded name for the firmware image to boot.
