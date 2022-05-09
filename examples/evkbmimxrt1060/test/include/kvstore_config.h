@@ -44,10 +44,6 @@ typedef enum KVStoreKey
     KVS_NUM_KEYS
 } KVStoreKey_t;
 
-/* Define default values for common attributes */
-#define THING_NAME_DFLT        OTA_THING_NAME
-#define MQTT_ENDOPOINT_DFLT    OTA_MQTT_BROKER_ENDPOINT
-
 #define KVSTORE_KEY_MAX_LEN    32
 #define KVSTORE_VAL_MAX_LEN    256
 
