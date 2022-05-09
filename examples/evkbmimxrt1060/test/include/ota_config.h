@@ -60,14 +60,15 @@
 #include "test_param_config.h"
 #include "test_execution_config.h"
 
-#define APP_VERSION_MAJOR                      OTA_APP_VERSION_MAJOR
-#define APP_VERSION_MINOR                      OTA_APP_VERSION_MINOR
-#define APP_VERSION_BUILD                      OTA_APP_VERSION_BUILD
+#define APP_VERSION_MAJOR    OTA_APP_VERSION_MAJOR
+#define APP_VERSION_MINOR    OTA_APP_VERSION_MINOR
+#define APP_VERSION_BUILD    OTA_APP_VERSION_BUILD
 
 
-#if( OTA_PAL_TEST_ENABLED == 1 )
-#define DISABLE_OTA_CLOSE_FILE_HEADER_CHECK 1
+#if ( OTA_PAL_TEST_ENABLED == 1 )
+#define DISABLE_OTA_CLOSE_FILE_HEADER_CHECK    1
 #endif
+
 /**
  * @brief The number of words allocated to the stack for the OTA agent.
  */
