@@ -29,7 +29,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
+#include "ota_config.h"
 #include "ota_pal.h"
 #include "fsl_common.h"
 #include "mflash_drv.h"

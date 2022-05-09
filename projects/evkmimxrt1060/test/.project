@@ -152,11 +152,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>xip</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>component/lists</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/core/components/lists</locationURI>
@@ -429,12 +424,12 @@
 		<link>
 			<name>source/test_logging.c</name>
 			<type>1</type>
-			<location>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.c</location>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.c</locationURI>
 		</link>
 		<link>
 			<name>source/test_logging.h</name>
 			<type>1</type>
-			<location>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.h</location>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/test_logging.h</locationURI>
 		</link>
 		<link>
 			<name>startup/startup_mimxrt1062.c</name>
@@ -475,26 +470,6 @@
 			<name>utilities/fsl_str.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/core/utilities/debug_console/str/fsl_str.h</locationURI>
-		</link>
-		<link>
-			<name>xip/evkbmimxrt1060_flexspi_nor_config.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/core/boards/evkbmimxrt1060/xip/evkbmimxrt1060_flexspi_nor_config.c</locationURI>
-		</link>
-		<link>
-			<name>xip/evkbmimxrt1060_flexspi_nor_config.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/core/boards/evkbmimxrt1060/xip/evkbmimxrt1060_flexspi_nor_config.h</locationURI>
-		</link>
-		<link>
-			<name>xip/fsl_flexspi_nor_boot.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.c</locationURI>
-		</link>
-		<link>
-			<name>xip/fsl_flexspi_nor_boot.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/core/devices/MIMXRT1062/xip/fsl_flexspi_nor_boot.h</locationURI>
 		</link>
 		<link>
 			<name>component/mflash/mflash_file.c</name>

@@ -32,13 +32,10 @@
 #include "task.h"
 #include "kvstore.h"
 #include "mqtt_agent_task.h"
+#include "test_execution_config.h"
 
-
-#define appmainRUN_QUALIFICATION_TEST_SUITE       ( 0 )
 
 #define appmainRUN_DEVICE_ADVISOR_TEST_SUITE      ( 0 )
-
-#define appmainRUN_OTA_END_TO_END_TEST_SUITE      ( 1 )
 
 #define appmainPROVISIONING_MODE                  ( 0 )
 
@@ -98,8 +95,13 @@ int app_main( void )
     }
 #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 
-#if ( appmainRUN_OTA_END_TO_END_TEST_SUITE == 1 )
+#if ( OTA_E2E_TEST_ENABLED == 1 )
     {
+        if( xResult == pdPASS )
+        {
+            xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+        }
+
         if( xResult == pdPASS )
         {
             xResult = xTaskCreate( vOTAUpdateTask,
@@ -110,9 +112,8 @@ int app_main( void )
                                    NULL );
         }
     }
-#endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
+#endif /* if ( OTA_E2E_TEST_ENABLED == 1 ) */
 
-#if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 )
     {
         if( xResult == pdPASS )
         {
@@ -124,7 +125,6 @@ int app_main( void )
                                    NULL );
         }
     }
-#endif /* if ( appmainRUN_QUALIFICATION_TEST_SUITE == 1 ) */
 
 
 

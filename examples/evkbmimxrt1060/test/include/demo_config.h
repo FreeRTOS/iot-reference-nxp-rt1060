@@ -54,55 +54,9 @@
 
 #include "logging.h"
 
+
 /************ End of logging configuration ****************/
 
-/**
- * @brief The MQTT client identifier used in this example.  Each client identifier
- * must be unique; so edit as required to ensure that no two clients connecting to
- * the same broker use the same client identifier.
- *
- *!!! Please note a #defined constant is used for convenience of demonstration
- *!!! only.  Production devices can use something unique to the device that can
- *!!! be read by software, such as a production serial number, instead of a
- *!!! hard coded constant.
- *
- * #define democonfigCLIENT_IDENTIFIER				"insert here."
- */
-#define democonfigCLIENT_IDENTIFIER       "NXP_RT_1060"
-
-/**
- * @brief Endpoint of the MQTT broker to connect to.
- *
- * This demo application can be run with any MQTT broker, that supports mutual
- * authentication.
- *
- * For AWS IoT MQTT broker, this is the Thing's REST API Endpoint.
- *
- * @note Your AWS IoT Core endpoint can be found in the AWS IoT console under
- * Settings/Custom Endpoint, or using the describe-endpoint REST API (with
- * AWS CLI command line tool).
- *
- * @note If you would like to setup an MQTT broker for running this demo,
- * please see `mqtt_broker_setup.txt`.
- *
- * #define democonfigMQTT_BROKER_ENDPOINT    "...insert here..."
- */
-#define democonfigMQTT_BROKER_ENDPOINT    "t8sloutbvw8e.deviceadvisor.iot.us-east-1.amazonaws.com"
-/*#define democonfigMQTT_BROKER_ENDPOINT    "a31zvyed820ljz-ats.iot.us-east-1.amazonaws.com" */
-
-/**
- * @brief The port to use for the demo.
- *
- * In general, port 8883 is for secured MQTT connections.
- *
- * @note Port 443 requires use of the ALPN TLS extension with the ALPN protocol
- * name. Using ALPN with this demo would require additional changes, including
- * setting the `pAlpnProtos` member of the `NetworkCredentials_t` struct before
- * forming the TLS connection. When using port 8883, ALPN is not required.
- *
- * #define democonfigMQTT_BROKER_PORT    ( insert here. )
- */
-#define democonfigMQTT_BROKER_PORT    8883
 
 /**
  * @brief Server's root CA certificate.
@@ -169,20 +123,6 @@
     "WE9gyn6CagsCqiUXObXbf+eEZSqVir2G3l6BFoMtEMze/aiCKm0oHw0LxOXnGiYZ\n" \
     "4fQRbxC1lfznQgUy286dUV4otp6F01vvpX1FQHKOtw5rDgb7MzVIcbidJ4vEZV8N\n" \
     "hnacRHr2lVz2XTIIM6RUthg/aFzyQkqFOFSDX9HoLPKsEdao7WNq\n"             \
-    "-----END CERTIFICATE-----\n"
-
-#define democonfigROOT_CA_PEM_ECC_256                                    \
-    "-----BEGIN CERTIFICATE-----\n"                                      \
-    "MIIBtjCCAVugAwIBAgITBmyf1XSXNmY/Owua2eiedgPySjAKBggqhkjOPQQDAjA5\n" \
-    "MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6b24g\n" \
-    "Um9vdCBDQSAzMB4XDTE1MDUyNjAwMDAwMFoXDTQwMDUyNjAwMDAwMFowOTELMAkG\n" \
-    "A1UEBhMCVVMxDzANBgNVBAoTBkFtYXpvbjEZMBcGA1UEAxMQQW1hem9uIFJvb3Qg\n" \
-    "Q0EgMzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCmXp8ZBf8ANm+gBG1bG8lKl\n" \
-    "ui2yEujSLtf6ycXYqm0fc4E7O5hrOXwzpcVOho6AF2hiRVd9RFgdszflZwjrZt6j\n" \
-    "QjBAMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgGGMB0GA1UdDgQWBBSr\n" \
-    "ttvXBp43rDCGB5Fwx5zEGbF4wDAKBggqhkjOPQQDAgNJADBGAiEA4IWSoxe3jfkr\n" \
-    "BqWTrBqYaGFy+uGh0PsceGCmQ5nFuMQCIQCcAu/xlJyzlvnrxir4tiz+OpAUFteM\n" \
-    "YyRIHN8wfdVoOw==\n"                                                 \
     "-----END CERTIFICATE-----\n"
 
 /**

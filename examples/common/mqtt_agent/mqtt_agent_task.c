@@ -1086,8 +1086,8 @@ BaseType_t xAddMQTTTopicFilterCallback( const char * pcTopicFilter,
                      ( strncmp( pcTopicFilter, xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter, ( size_t ) usTopicFilterLength ) == 0 ) )
             {
                 /* If a subscription already exists, don't do anything. */
-                if( ( xTopicFilterSubscriptions[ ulAvailableIndex ].pxIncomingPublishCallback == pxCallback ) &&
-                    ( xTopicFilterSubscriptions[ ulAvailableIndex ].pvIncomingPublishCallbackContext == pvCallbackContext ) )
+                if( ( xTopicFilterSubscriptions[ ulIndex ].pxIncomingPublishCallback == pxCallback ) &&
+                    ( xTopicFilterSubscriptions[ ulIndex ].pvIncomingPublishCallbackContext == pvCallbackContext ) )
                 {
                     ulAvailableIndex = MQTT_AGENT_MAX_SUBSCRIPTIONS;
                     xResult = pdPASS;

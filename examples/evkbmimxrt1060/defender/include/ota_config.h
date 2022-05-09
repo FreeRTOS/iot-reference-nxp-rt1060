@@ -57,6 +57,10 @@
 
 #include "logging.h"
 
+#define APP_VERSION_MAJOR                      0
+#define APP_VERSION_MINOR                      9
+#define APP_VERSION_BUILD                      3
+
 /**
  * @brief The number of words allocated to the stack for the OTA agent.
  */

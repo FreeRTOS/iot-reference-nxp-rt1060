@@ -73,15 +73,6 @@
 /*------------- Demo configurations -------------------------*/
 
 /**
- * @brief OTA Application firmware version numbers.
- * The version number is used for validation of a new OTA job and to
- * prevent roll back to an older firmware image version.
- */
-#define APP_VERSION_MAJOR                                0
-#define APP_VERSION_MINOR                                9
-#define APP_VERSION_BUILD                                3
-
-/**
  * @brief The maximum size of the file paths used in the demo.
  */
 #define otaexampleMAX_FILE_PATH_SIZE                     ( 260 )
@@ -684,8 +675,6 @@ static void prvProcessIncomingData( void * pxSubscriptionContext,
     {
         if( pPublishInfo->payloadLength <= OTA_DATA_BLOCK_SIZE )
         {
-            LogDebug( ( "Received OTA image block, size %d.\n\n", pPublishInfo->payloadLength ) );
-
             pData = prvOTAEventBufferGet();
 
             if( pData != NULL )
@@ -832,7 +821,7 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
                                                pxSubscribeArgs->pSubscribeInfo[ 0 ].topicFilterLength,
                                                prvProcessIncomingMessage,
                                                NULL,
-                                               pdTRUE );
+                                               pdFALSE );
         configASSERT( xResult == pdTRUE );
     }
 
@@ -862,6 +851,7 @@ static void prvUnSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommand
 }
 
 /*-----------------------------------------------------------*/
+
 
 static OtaMqttStatus_t prvMQTTSubscribe( const char * pTopicFilter,
                                          uint16_t topicFilterLength,
@@ -1122,6 +1112,33 @@ static void setOtaInterfaces( OtaInterfaces_t * pOtaInterfaces )
     pOtaInterfaces->pal.createFile = xOtaPalCreateFileForRx;
 }
 
+static void prvSuspendOTAUpdate( void )
+{
+    if( ( OTA_GetState() != OtaAgentStateSuspended ) && ( OTA_GetState() != OtaAgentStateStopped ) )
+    {
+        OTA_Suspend();
+
+        while( ( OTA_GetState() != OtaAgentStateSuspended ) &&
+               ( OTA_GetState() != OtaAgentStateStopped ) )
+        {
+            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
+        }
+    }
+}
+
+static void prvResumeOTAUpdate( void )
+{
+    if( OTA_GetState() == OtaAgentStateSuspended )
+    {
+        OTA_Resume();
+
+        while( OTA_GetState() == OtaAgentStateSuspended )
+        {
+            vTaskDelay( pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) );
+        }
+    }
+}
+
 void vOTAUpdateTask( void * pvParam )
 {
     /* FreeRTOS APIs return status. */
@@ -1249,7 +1266,13 @@ void vOTAUpdateTask( void * pvParam )
             if( xWaitForMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED,
                                         pdMS_TO_TICKS( otaexampleTASK_DELAY_MS ) ) == pdTRUE )
             {
+                /* Suspend ongoing OTA job if any until MQTT agent is reconnected. */
+                prvSuspendOTAUpdate();
+
                 ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
+
+                /* Resume OTA Update so that agent checks for any new jobs during a lost connection. */
+                prvResumeOTAUpdate();
             }
         }
     }
