@@ -17,7 +17,7 @@
  *          The AES-XTS block mode is standardized by NIST SP 800-38E
  *          <https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-38e.pdf>
  *          and described in detail by IEEE P1619
- *          <https://ieeexplore.ieee.org/servlet/opac?punumber=4375278>.
+ *          <https://ieeexplore.ieee.org/document/4375278>.
  */
 
 /*  Copyright (C) 2006-2018, Arm Limited (or its affiliates), All Rights Reserved.

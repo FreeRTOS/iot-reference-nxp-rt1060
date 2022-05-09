@@ -1,6 +1,6 @@
 // This hkdf implementation (RFC5869) is based upon source code retrieved from
 // the following location on 2016-09-22 :
-// https://github.com/openssl/openssl/blob/master/crypto/kdf/hkdf.c
+// https://github.com/openssl/openssl/blob/c536b6be1a72aefd632d5530106a67c516cb9f4b/crypto/kdf/hkdf.c 
 
 /*
  * Copyright 2016 The OpenSSL Project Authors. All Rights Reserved.
