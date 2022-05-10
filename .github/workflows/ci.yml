@@ -46,7 +46,7 @@ jobs:
         with:
           path: ./
           include-file-types: .c,.h,.md,.dox
-          exclude-dirs: Middleware/NXP
+          exclude-dirs: NXP
 
   formatting:
     runs-on: ubuntu-latest
