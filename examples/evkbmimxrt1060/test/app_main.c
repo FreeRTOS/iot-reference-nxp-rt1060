@@ -68,10 +68,9 @@ extern void vCLITask( void * pvParam );
 
 extern void vOTAUpdateTask( void * pvParam );
 
-int RunDeviceAdvisorDemo( void )
+BaseType_t RunDeviceAdvisorDemo( void )
 {
     BaseType_t xResult = pdFAIL;
-    int retval = -1;
 
     if( xGetMQTTAgentState() < MQTT_AGENT_STATE_INITIALIZED )
     {
@@ -90,14 +89,9 @@ int RunDeviceAdvisorDemo( void )
                                NULL,
                                appmainTEST_TASK_PRIORITY,
                                NULL );
-
-        if( xResult == pdPASS )
-        {
-            retval = 0;
-        }
     }
 
-    return retval;
+    return xResult;
 }
 
 int app_main( void )
