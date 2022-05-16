@@ -33,7 +33,7 @@
  *
  * #define DEVICE_ADVISOR_TEST_ENABLED                 (0)
  */
-#define DEVICE_ADVISOR_TEST_ENABLED         ( 0 )
+#define DEVICE_ADVISOR_TEST_ENABLED    ( 0 )
 
 /**
  * @brief Configuration to enable the MQTT test.

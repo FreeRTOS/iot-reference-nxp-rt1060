@@ -77,13 +77,13 @@ int RunDeviceAdvisorDemo( void )
     if( xResult == pdPASS )
     {
         xResult = xTaskCreate( vSubscribePublishTestTask,
-            "TEST",
-            appmainTEST_TASK_STACK_SIZE,
-            NULL,
-            appmainTEST_TASK_PRIORITY,
-            NULL );
+                               "TEST",
+                               appmainTEST_TASK_STACK_SIZE,
+                               NULL,
+                               appmainTEST_TASK_PRIORITY,
+                               NULL );
 
-        if (xResult == pdPASS)
+        if( xResult == pdPASS )
         {
             return 0;
         }
