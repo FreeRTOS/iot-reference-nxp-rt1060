@@ -71,6 +71,7 @@ extern void vOTAUpdateTask( void * pvParam );
 int RunDeviceAdvisorDemo( void )
 {
     BaseType_t xResult = pdFAIL;
+    int retval = -1;
 
     xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
 
@@ -85,11 +86,11 @@ int RunDeviceAdvisorDemo( void )
 
         if( xResult == pdPASS )
         {
-            return 0;
+            retval = 0;
         }
     }
 
-    return -1;
+    return retval;
 }
 
 int app_main( void )
