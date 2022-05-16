@@ -73,7 +73,14 @@ int RunDeviceAdvisorDemo( void )
     BaseType_t xResult = pdFAIL;
     int retval = -1;
 
-    xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+    if( xGetMQTTAgentState() < MQTT_AGENT_STATE_INITIALIZED )
+    {
+        xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+    }
+    else
+    {
+        xResult = pdPASS;
+    }
 
     if( xResult == pdPASS )
     {
