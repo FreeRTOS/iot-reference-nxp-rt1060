@@ -68,7 +68,7 @@ extern void vCLITask( void * pvParam );
 
 extern void vOTAUpdateTask( void * pvParam );
 
-int RunDeviceAdvisorTest( void )
+int RunDeviceAdvisorDemo( void )
 {
     BaseType_t xResult = pdFAIL;
     if( xResult == pdPASS )
