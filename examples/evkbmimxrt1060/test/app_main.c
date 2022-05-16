@@ -68,6 +68,25 @@ extern void vCLITask( void * pvParam );
 
 extern void vOTAUpdateTask( void * pvParam );
 
+int RunDeviceAdvisorTest( void )
+{
+    BaseType_t xResult = pdFAIL;
+    if( xResult == pdPASS )
+    {
+        xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+    }
+
+    if( xResult == pdPASS )
+    {
+        xResult = xTaskCreate( vSubscribePublishTestTask,
+            "TEST",
+            appmainTEST_TASK_STACK_SIZE,
+            NULL,
+            appmainTEST_TASK_PRIORITY,
+            NULL );
+    }
+}
+
 int app_main( void )
 {
     BaseType_t xResult = pdFAIL;
@@ -123,29 +142,6 @@ int app_main( void )
                                    NULL );
         }
     }
-
-
-
-#if ( DEVICE_ADVISOR_TEST_ENABLED == 1 )
-    {
-        if( xResult == pdPASS )
-        {
-            xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-        }
-
-        if( xResult == pdPASS )
-        {
-            xResult = xTaskCreate( vSubscribePublishTestTask,
-                                   "TEST",
-                                   appmainTEST_TASK_STACK_SIZE,
-                                   NULL,
-                                   appmainTEST_TASK_PRIORITY,
-                                   NULL );
-        }
-    }
-#endif /* if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 ) */
-
-
 
     return pdPASS;
 }
