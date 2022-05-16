@@ -35,8 +35,6 @@
 #include "test_execution_config.h"
 
 
-#define appmainRUN_DEVICE_ADVISOR_TEST_SUITE      ( 0 )
-
 #define appmainPROVISIONING_MODE                  ( 0 )
 
 
@@ -128,7 +126,7 @@ int app_main( void )
 
 
 
-#if ( appmainRUN_DEVICE_ADVISOR_TEST_SUITE == 1 )
+#if ( DEVICE_ADVISOR_TEST_ENABLED == 1 )
     {
         if( xResult == pdPASS )
         {
