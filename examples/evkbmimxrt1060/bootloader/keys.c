@@ -41,9 +41,9 @@ const int bootutil_key_cnt = 1;
 
 #elif defined( CONFIG_BOOT_SIGNATURE_TYPE_ROM )
 /* Don't need to define keys for HAB method */
-#else
+#else /* if defined( MCUBOOT_SIGN_RSA ) || defined( MCUBOOT_SIGN_EC256 ) */
 #error "Please define a signature type used to sign the MCUBoot images."
-#endif
+#endif /* if defined( MCUBOOT_SIGN_RSA ) || defined( MCUBOOT_SIGN_EC256 ) */
 
 
 #if defined( MCUBOOT_ENCRYPT_RSA )

@@ -29,17 +29,17 @@
 #if defined( MCUBOOT_SIGN_RSA )
 
 #error Please use MCUBoot imgtool.py to generate an RSA signing key \
-       and replace this file with the output of the tool.
+    and replace this file with the output of the tool.
 
 const unsigned char rsa_pub_key[] = { 0x00 };
-const unsigned int rsa_pub_key_len =  0;
+const unsigned int rsa_pub_key_len = 0;
 
-#elif defined(  MCUBOOT_SIGN_EC256 )
+#elif defined( MCUBOOT_SIGN_EC256 )
 
 #error Please use MCUBoot imgtool.py to generate an EC signing key \
-       and replace this file with the output of the tool.
+    and replace this file with the output of the tool.
 
 const unsigned char ecdsa_pub_key[] = { 0x00 };
 const unsigned int ecdsa_pub_key_len = 0;
 
-#endif
+#endif /* if defined( MCUBOOT_SIGN_RSA ) */

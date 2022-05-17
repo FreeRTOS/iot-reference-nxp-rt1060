@@ -29,9 +29,9 @@
 #if defined( MCUBOOT_ENCRYPT_RSA )
 
 #error Please use MCUBoot imgtool.py to generate an RSA encryption key \
-       and replace this file with the output of the tool.
+    and replace this file with the output of the tool.
 
 const unsigned char enc_priv_key[] = { 0x00 };
-const unsigned int enc_priv_key_len =  0;
+const unsigned int enc_priv_key_len = 0;
 
 #endif
