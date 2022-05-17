@@ -21,21 +21,31 @@
 
 #include <mcuboot_config.h>
 
-#if defined( MCUBOOT_SIGN_RSA ) || defined( MCUBOOT_SIGN_EC256 )
+#if defined( MCUBOOT_SIGN_RSA )
 
-#include "signing_pub_key.c"
+extern const unsigned char rsa_pub_key[];
+extern const unsigned int rsa_pub_key_len;
 
 const struct bootutil_key bootutil_keys[] =
 {
     {
-#if defined( MCUBOOT_SIGN_RSA )
         .key = rsa_pub_key,
         .len = &rsa_pub_key_len,
+    }
+};
+const int bootutil_key_cnt = 1;
+
 #elif defined( MCUBOOT_SIGN_EC256 )
+
+extern const unsigned char ecdsa_pub_key[];
+extern const unsigned int ecdsa_pub_key_len;
+
+const struct bootutil_key bootutil_keys[] =
+{
+    {
         .key = ecdsa_pub_key,
         .len = &ecdsa_pub_key_len,
-#endif
-    },
+    }
 };
 const int bootutil_key_cnt = 1;
 
@@ -47,8 +57,8 @@ const int bootutil_key_cnt = 1;
 
 
 #if defined( MCUBOOT_ENCRYPT_RSA )
-
-#include "encryption_priv_key.c"
+extern const unsigned char enc_priv_key[];
+extern const unsigned int enc_priv_key_len;
 
 const struct bootutil_key bootutil_enc_key =
 {

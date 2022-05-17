@@ -339,7 +339,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="source/encryption_priv_key.c|source/signing_pub_key.c|component/uart/fsl_adapter_uart.c|component/uart/fsl_adapter_usart.c|component/uart/fsl_adapter_miniusart.c|component/uart/fsl_adapter_iuart.c|mbedtls/port/mbedtls_freertos.c|components/serial_manager/fsl_component_serial_port_swo.c|components/serial_manager/fsl_component_serial_port_virtual.c|components/uart/fsl_adapter_usart.c|components/uart/fsl_adapter_miniusart.c|components/serial_manager/fsl_component_serial_port_rpmsg.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="component/uart/fsl_adapter_uart.c|component/uart/fsl_adapter_usart.c|component/uart/fsl_adapter_miniusart.c|component/uart/fsl_adapter_iuart.c|mbedtls/port/mbedtls_freertos.c|components/serial_manager/fsl_component_serial_port_swo.c|components/serial_manager/fsl_component_serial_port_virtual.c|components/uart/fsl_adapter_usart.c|components/uart/fsl_adapter_miniusart.c|components/serial_manager/fsl_component_serial_port_rpmsg.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -658,7 +658,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="source/encryption_priv_key.c|source/signing_pub_key.c|component/uart/fsl_adapter_uart.c|component/uart/fsl_adapter_usart.c|component/uart/fsl_adapter_miniusart.c|component/uart/fsl_adapter_iuart.c|mbedtls/port/mbedtls_freertos.c|components/serial_manager/fsl_component_serial_port_swo.c|components/serial_manager/fsl_component_serial_port_virtual.c|components/uart/fsl_adapter_usart.c|components/uart/fsl_adapter_miniusart.c|components/serial_manager/fsl_component_serial_port_rpmsg.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="component/uart/fsl_adapter_uart.c|component/uart/fsl_adapter_usart.c|component/uart/fsl_adapter_miniusart.c|component/uart/fsl_adapter_iuart.c|mbedtls/port/mbedtls_freertos.c|components/serial_manager/fsl_component_serial_port_swo.c|components/serial_manager/fsl_component_serial_port_virtual.c|components/uart/fsl_adapter_usart.c|components/uart/fsl_adapter_miniusart.c|components/serial_manager/fsl_component_serial_port_rpmsg.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
