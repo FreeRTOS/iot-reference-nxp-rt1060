@@ -115,9 +115,8 @@ in MAC or Linux machines.
 1. Create the RSA bootloader signing credentials. Currently, the repository only supports RSA
      signature based validation. From root folder, run the following commands:
      ```
-     mkdir -p examples\evkbmimxrt1060\bootloader\keys
-     py Middleware\mcuboot\scripts\imgtool.py keygen -k examples\evkbmimxrt1060\bootloader\keys\signing_key.pem -t rsa-2048
-     py Middleware\mcuboot\scripts\imgtool.py getpub -k examples\evkbmimxrt1060\bootloader\keys\signing_key.pem --lang c  > examples\evkbmimxrt1060\bootloader\keys\sign-rsa2048-pub.c
+     py Middleware\mcuboot\scripts\imgtool.py keygen -k examples\evkbmimxrt1060\bootloader\signing_key.pem -t rsa-2048
+     py Middleware\mcuboot\scripts\imgtool.py getpub -k examples\evkbmimxrt1060\bootloader\signing_key.pem --lang c  > examples\evkbmimxrt1060\bootloader\signing_pub_key.c
      ```
     *Note: Make sure write permission is enabled for this root folder.*
     Confirm that the files `signing_key.pem` and `sign-rsa2048-pub.c` were generated.

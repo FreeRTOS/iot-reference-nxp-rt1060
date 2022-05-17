@@ -39,9 +39,8 @@ pip3 install -r Middleware/mcuboot/scripts/requirements.txt
 ```
 2. Create RSA bootloader signing credentials. Currently repository only supports RSA signature based valdidation. From root folder execute following commands:
 ```
-mkdir -p examples/evkbmimxrt1060/bootloader/keys
-python3 Middleware/mcuboot/scripts/imgtool.py keygen -k examples/evkbmimxrt1060/bootloader/keys/signing_key.pem -t rsa-2048
-python3 Middleware/mcuboot/scripts/imgtool.py getpub -k examples/evkbmimxrt1060/bootloader/keys/signing_key.pem --lang c  > examples/evkbmimxrt1060/bootloader/keys/sign-rsa2048-pub.c
+python3 Middleware/mcuboot/scripts/imgtool.py keygen -k examples/evkbmimxrt1060/bootloader/signing_key.pem -t rsa-2048
+python3 Middleware/mcuboot/scripts/imgtool.py getpub -k examples/evkbmimxrt1060/bootloader/signing_key.pem --lang c  > examples/evkbmimxrt1060/bootloader/signing_pub_key.c
 ```
 You will need to use the `signing_key.pem` created above for signing the application image created during firmware update.
 
