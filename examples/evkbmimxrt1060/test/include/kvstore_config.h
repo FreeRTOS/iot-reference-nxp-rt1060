@@ -65,7 +65,7 @@ typedef enum KVStoreKey
 
 #define KV_STORE_DEFAULTS                                                                                   \
     {                                                                                                       \
-        KV_DFLT( KV_TYPE_STRING, OTA_THING_NAME ),                               /* THINGNAME */            \
+        KV_DFLT( KV_TYPE_STRING, IOT_THING_NAME ),                               /* THINGNAME */            \
         KV_DFLT( KV_TYPE_STRING, MQTT_SERVER_ENDPOINT ),                         /* MQTT_ENDPOINT */        \
         KV_DFLT( KV_TYPE_UINT32, MQTT_SERVER_PORT ),                             /* MQTT_PORT */            \
         KV_DFLT( KV_TYPE_STRING, pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS ), /* DEVICE_PRIVKEY_ID */    \
