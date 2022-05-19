@@ -146,7 +146,7 @@
  */
 #define OTA_PAL_READ_CERTIFICATE_FROM_NVM_WITH_PKCS11    0
 
-#define OTA_IOT_THING_NAME                               "PLACE_HOLDER"
+#define IOT_THING_NAME                                   "PLACE_HOLDER"
 
 #define OTA_APP_VERSION_MAJOR                            0
 
