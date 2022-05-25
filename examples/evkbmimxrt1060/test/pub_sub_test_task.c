@@ -323,7 +323,7 @@ static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
             xNotifyStatus = xTaskNotifyWait( 0,
                                              0,
                                              &ulNotifiedValue,
-                                             portMAX_DELAY );
+                                             pdMS_TO_TICKS( configMS_TO_WAIT_FOR_NOTIFICATION ) );
 
             if( xNotifyStatus == pdTRUE )
             {
@@ -388,7 +388,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
             xNotifyStatus = xTaskNotifyWait( 0,
                                              0,
                                              &ulNotifiedValue,
-                                             portMAX_DELAY );
+                                             pdMS_TO_TICKS( configMS_TO_WAIT_FOR_NOTIFICATION ) );
 
             if( xNotifyStatus == pdTRUE )
             {
