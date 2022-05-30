@@ -2,6 +2,37 @@ IoT Reference Integration:
 on the NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
 ========
 
+This Getting Starated Guide (GSG) walks you through steps to run the demo. For more details on the features of the demo, see the [NXP Featured IoT Reference Integration](https://www.freertos.org/NXP-RT1060-SE050/) page on FreeRTOS.org.
+
+This project and the GSG are tested using specific MXCUXpresso IDE/SDK version as listed in [1.2 Software Requirements](#12-software-requirements) section. You can use later versions. For reporting issues with the project, please use [FreeRTOS forum](https://forums.freertos.org/) or [FreeRTOS contact](https://freertos.org/RTOS-contact-and-support.html).
+
+## Contents
+*[1 Prerequisites](#1-prerequisites)\
+[1.1 Hardware Requirements](#11-hardware-requirements)\
+[1.2 Software Requirements](#12-software-requirements)\
+[2 Hardware and Software Setup](#2-hardware-and-software-setup)\
+[2.1 Setting up Device](#21-setting-up-device)\
+[2.2 Importing and Building Projects](#22-importing-and-building-projects)\
+[2.3 Running an Application Project from the Debugger](#23-running-an-application-project-from-the-debugger)\
+[3 Prepare and Run the Bootloader](#3-prepare-and-run-the-bootloader)\
+[3.1 Creating Signing Keys for the Bootloader](#31-creating-signing-keys-for-the-bootloader)\
+[3.2 Building and Running the Bootloader](#32-building-and-running-the-bootloader)\
+[3.3 Preparing an Executable Image Sent to the Device via OTA](#33-preparing-an-executable-image-sent-to-the-device-via-ota)\
+[4 Provision Device and Setup AWS Account](#4-provision-device-and-setup-aws-account)\
+[4.1 Provisioning the Device](#41-provisioning-the-device)\
+[4.2 Preparing AWS Account](#42-preparing-aws-account)\
+[5 Run the MQTT Publish Subscribe Demo](#5-run-the-mqtt-publish-subscribe-demo)\
+[5.1 Demo Introduction](#51-demo-introduction)\
+[5.2 Running the Publish Subscribe Demo](#52-running-the-publish-subscribe-demo)\
+[6 Perform Firmware Over-The-Air Updates with AWS IoT](#6-perform-firmware-over-the-air-updates-with-aws-iot)\
+[6.1 Setting up Prerequisites for OTA Cloud Resources](#61-setting-up-prerequisites-for-ota-cloud-resources)\
+[6.2 Creating an Application Code Signing Certificate](#62-creating-an-application-code-signing-certificate)\
+[6.3 Provisioning the Application Code Signing Key to the Device](#63-provisioning-the-application-code-signing-key-to-the-device)\
+[6.4 Creating and Running an OTA Update (AWS IoT console)](#64-creating-and-running-an-ota-update-aws-iot-console)\
+[7 Run the Shadow Demo](#7-run-the-shadow-demo)\
+[8 Run the Defender Demo](#8-run-the-defender-demo)\
+[9 Troubleshooting Guide](#9-troubleshooting-guide)*
+
 ## 1 Prerequisites
 
 ### 1.1 Hardware Requirements
@@ -20,7 +51,7 @@ on the NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
 * MCUXpresso IDE version 11.4.x or later to build and debug demo projects. To download, visit the
      [MCUXpresso IDE page](https://www.nxp.com/design/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE).
      (A user account is required to download.)
-* SDK version 2.10 for MIMXRT1060-EVKB to get the board configuration for the MCU i.MX RT1060.
+* SDK version 2.10 for MIMXRT1060-EVKB to get the board configuration for the MCU i.MX RT1060. This project and the GSG were tested using SDK v2.10. You can use later version. 
     To download, visit the
     [MCUXpresso Software Development Kit (SDK) page](https://www.nxp.com/design/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-software-development-kit-sdk:MCUXpresso-SDK).
     (A user account is required to download and download with the default option selected.)
@@ -47,7 +78,7 @@ on the NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
 
 ## 2 Hardware and Software Setup
 
-### 2.1 Board Setup
+### 2.1 Setting up Device
 
 1. Plug in the OM-SE050ARD development kit to the arduino headers on the MIMXRT1060-EVKB board.
      Make sure all the jumpers are in the correct positions as shown in the figure below.
@@ -91,16 +122,37 @@ on the NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
 1. Select the project you want to build, right click and then select "Build Project" to build.
      *Note: All projects use MCU libraries under the "core" folder which is submoduled from
      the NXP MCU SDK on github. However, you must install the SDK package to get the correct
-     part configuration file for the IDE and you also must install the GUI Flash Tool to
+     part configuration file for the IDE with the integrated GUI Flash Tool to
      properly perform build and flash operations. If you get the error message shown below,
      it is because you do not have the required SDK package installed.*
 
      ![Image](https://user-images.githubusercontent.com/45887168/161103683-c54b2e01-08b9-4dac-96b9-5494fe251045.png)
 
+### 2.3 Running an Application Project from the Debugger
 
-## 3 Running the Bootloader Project
+All application projects are configured to flash the demo to an address known to the bootloader.
+The instructions here are common to run all application projects, including pub/sub, shadow, defender demo.
+You must have bootloader installed before running application projects using the following steps. See [3 Prepare and Run the Bootloader](#3-prepare-and-run-the-bootloader) section for details.
 
-### 3.1 Create Signing keys for the Bootloader
+To boot a new application image from IDE, we have to jump-start the application from the debugger.
+
+1. Launch the application as normal from the debugger IDE. The debugger goes into an endless
+    loop after it flashes the image.
+
+1. Click the "Suspend" icon to pause the debugger.
+
+    ![Image](https://user-images.githubusercontent.com/45887168/161103686-0cc1b3b6-94c3-4274-8bef-9593037f239f.png)
+
+1. Go to the `Debugger Console` in the bottom pane, type `jump ResetISR` to jump to the application
+    starting address. The debugger now should jump to the start of main. From here, click the "Resume"
+    icon to continue.
+
+    ![Image](https://user-images.githubusercontent.com/45887168/161103602-1ef386da-e072-4ead-a82a-9d00e15f319a.png)
+
+
+## 3 Prepare and Run the Bootloader
+
+### 3.1 Creating Signing Keys for the Bootloader
 
 The project uses the MCUBoot python script called `imgtool.py` to create signing keys,
 and sign and verify the image locally. You can use the Command Prompt in Windows or the Terminal
@@ -121,7 +173,6 @@ in MAC or Linux machines.
     *Note: Make sure write permission is enabled for this root folder.*
     Confirm that the files `signing_key.pem` and `sign-rsa2048-pub.c` were generated.
 
-    ![Image](https://user-images.githubusercontent.com/45887168/161103575-bbfac181-20cd-4779-ab11-c8984004a8c6.png)
     You will need to use the `signing_key.pem` file created above to sign the application
     image created during the firmware update. The `sign-rsa2048-pub.c` file is used to
     build the MCUBoot bootloader.
@@ -172,30 +223,39 @@ in MAC or Linux machines.
 
 1. Now you can go ahead and flash the application image to be booted. Refer to the next section,
      "Running Application projects", for details.
+     
+### 3.3 Preparing an Executable Image Sent to the Device via OTA
+
+For a succesful OTA, follow the below steps to prepare the executable image:
+1. The version number of the image sent via OTA must be higher than that already running on the device, so temporarily update the executable image's version number.\ 
+2. Build the executable image.\
+3. Sign the executable image with the key used by the bootloader to validate the image.\
+4. Reset the executable image's version number so it is lower than the version number in the executable image signed in the previous step.\
+
+To update version number of the image:
+
+1. Under each example folder, navigate to the `include\ota_config.h`, update the following macros:
+     * `APP_VERSION_MAJOR`
+     * `APP_VERSION_MINOR`
+     * `APP_VERSION_BUILD`
+
+To create a signed application image:
+
+1. Build the project to create a new image binary.
+1. Sign the new binary image using the MCUBoot key-pair generated as part of setting up the
+     bootloader project. From the repository root folder, run the following command:
+     ```
+     py Middleware\mcuboot\scripts\imgtool.py sign  \
+         -k examples\evkbmimxrt1060\bootloader\keys\signing_key.pem --align 4  \
+         --header-size 0x400 --pad-header --slot-size 0x200000 --max-sectors 800  \
+         --version "MM.mm.bb" projects\evkmimxrt1060\pubsub\Debug\aws_iot_pubsub.bin  \
+         aws_iot_pubsub_signed.bin
+      ```
+     Replace "MM.mm.bb" with the corresponding firmware major version (MM), minor version (mm) and build version (bb).
+     This will create a new signed MCUboot image named `aws_iot_pubsub_signed.bin`
 
 
-## 4 Running Application Projects
-
-### 4.1 Running an Application Project from the Debugger
-
-All application projects are configured to flash the demo to an address known to the bootloader.
-To boot a new application image from IDE, we have to jump-start the application from the debugger.
-
-1. Launch the application as normal from the debugger IDE. The debugger goes into an endless
-    loop after it flashes the image.
-
-1. Click the "Suspend" icon to pause the debugger.
-
-    ![Image](https://user-images.githubusercontent.com/45887168/161103686-0cc1b3b6-94c3-4274-8bef-9593037f239f.png)
-
-1. Go to the `Debugger Console` in the bottom pane, type `jump ResetISR` to jump to the application
-    starting address. The debugger now should jump to the start of main. From here, click the "Resume"
-    icon to continue.
-
-    ![Image](https://user-images.githubusercontent.com/45887168/161103602-1ef386da-e072-4ead-a82a-9d00e15f319a.png)
-
-
-### 4.2 Cloud Setup and Board Provisioning
+## 4 Provision Device and Setup AWS Account
 
 The project requires a one time setup, both in your AWS account and on the device, to enable
 the device to connect to AWS IoT core. These steps include:
@@ -214,7 +274,8 @@ into a provision mode at startup where all the configuration options can be set 
 provisioning mode can be enabled/disabled using the flag `appmainPROVISIONING_MODE`
 in the `examples/evkbmimxrt1060/pubsub/app_main.c` file.
 
-Follow the steps below to set up an AWS account and provision the board:
+### 4.1 Provisioning the Device
+Follow the steps below to set up an AWS account and provision the device:
 
 1. Connect to the USB port using a serial terminal. Follow "Starting application project"
      for the "aws-iot-pubsub" project with flag `appmainPROVISIONING_MODE = 1`.
@@ -236,20 +297,22 @@ Follow the steps below to set up an AWS account and provision the board:
 
      ![Image](https://user-images.githubusercontent.com/45887168/161142361-68eac8fa-8482-439d-bf90-e602cc5a28cd.png)
 
-1. Copy the PEM certificate from the terminal console. Go to the AWS IoT Console, choose "Secure", choose
+1. Copy the PEM certificate from the terminal console and save to a file. Log into your AWS account, go to the AWS IoT Console, choose "Secure", choose
      "Certificates", and then choose "Create". Next to "Use my certificate" choose "Get started". On
      "Select a CA" choose "Next". On "Register existing device certificates", choose "Select certificates" and
      select the PEM file you just created. Select "Activate all" then choose "Register certificates".
      For more detailed instructions, see [Register a client certificate signed by an unregistered CA (console)](https://docs.aws.amazon.com/iot/latest/developerguide/manual-cert-registration.html#manual-cert-registration-console-noca).
 
      ![Image](https://user-images.githubusercontent.com/45887168/161153139-dae3151c-48f3-4d42-a47a-8f839777b425.png)
+     
+### 4.2 Preparing AWS Account     
 
 1. To get the AWS IoT MQTT broker endpoint for your account, go to the AWS IoT console and in the left navigation pane
      choose `Settings`. Copy the endpoint listed under the "Device data endpoint".
 
      ![Image](https://user-images.githubusercontent.com/45887168/161153141-67c48f02-2c23-4e7f-864b-39bd3f322f30.png)
 
-1. Run the following command to provision the endpoint:
+1. From serial terminal console, run the following command to provision the endpoint:
      ```
      conf set mqtt_endpoint <endpoint>
      ```
@@ -289,7 +352,7 @@ Follow the steps below to set up an AWS account and provision the board:
 
      ![Image](https://user-images.githubusercontent.com/45887168/161142369-778d3a83-9d40-4500-975e-90d78be0cf97.png)
 
-1. Go back to the Serial Terminal console. Provision the new thing name to the device using the following command:
+1. Go back to the serial terminal console. Provision the new thing name to the device using the following command:
      ```
      conf set thing_name <thing name>
      ```
@@ -305,34 +368,9 @@ Follow the steps below to set up an AWS account and provision the board:
      ![Image](https://user-images.githubusercontent.com/45887168/161103638-c6c33e06-4a78-4407-be04-082db33b419d.png)
 
 
-### 4.3 Create a Signed Application Image
+## 5 Run the MQTT Publish Subscribe Demo
 
-All the application images must be signed before they are released as an update, because the
-bootloader will verify the application image's signature and only allow a valid, signed image.
-They can be signed either via JTAG/SWD or Over-The-Air. To create a signed application image:
-
-1. Build the project to create a new image binary.
-1. Sign the new binary image using the MCUBoot key-pair generated as part of setting up the
-     bootloader project. From the repository root folder, run the following command:
-     ```
-     py Middleware\mcuboot\scripts\imgtool.py sign  \
-         -k examples\evkbmimxrt1060\bootloader\keys\signing_key.pem --align 4  \
-         --header-size 0x400 --pad-header --slot-size 0x200000 --max-sectors 800  \
-         --version "MM.mm.bb" projects\evkmimxrt1060\pubsub\Debug\aws_iot_pubsub.bin  \
-         aws_iot_pubsub_signed.bin
-      ```
-     Replace "MM.mm.bb" with the corresponding firmware major version (MM), minor version (mm) and build version (bb).
-     This will create a new signed MCUboot image named `aws_iot_pubsub_signed.bin`
-     Note: The version of the application image can be found and updated in
-     `examples/common/ota/ota_update.c` at the following macros:
-     * `APP_VERSION_MAJOR`
-     * `APP_VERSION_MINOR`
-     * `APP_VERSION_BUILD`
-
-
-## 5 Running the MQTT Publish/Subscribe Demo
-
-### 5.1 Introduction
+### 5.1 Demo Introduction
 
 This example demonstrates multiple MQTT publish/subscribe tasks running concurrently with an
 Over-The-Air firmware update background task. It uses the coreMQTT agent libary to manage
@@ -346,7 +384,7 @@ receives firmware chunks and sends control packets over MQTT, concurrently using
 agent task for thread safety.
 
 
-### 5.2 Runnning the Publish/Subscribe Demo
+### 5.2 Running the Publish Subscribe Demo
 
 The board should be successfully provisioned at this time. To turn off provisioning mode, set
 `appmainPROVISIONING_MODE` to `0` in `examples/evkbmimxrt1060/pubsub/app_main.c`.
@@ -371,28 +409,28 @@ to the desired value. Follow these steps to run the demo:
 
 1. On the serial console, confirm that the device receives the message.
      ![Image](https://user-images.githubusercontent.com/45887168/161103606-9ae8b9ec-f07d-4ff2-ac56-ab4e37284cb9.png)
-
+    
+*Notes: 
+1. Running the MQTT pub/sub demo will incur messaging cost.\ 
+2. Stopping from debugger will not stop the demo from running on the device and publishing messages.
 
 ## 6 Perform Firmware Over-The-Air Updates with AWS IoT
 
-This demo leverages OTA client library and the AWS IoT OTA service for code signing and secure
-download of firmware updates. A safe and secure boot process along with root of trust
-verification is performed using the open source MCUBoot secondary bootloader. As a pre-requisite,
-you should have built and flashed the bootloader project from this repository.
+This demo leverages OTA client library and the AWS IoT OTA service for code signing and secure download of firmware updates. A safe and secure boot process along with root of trust verification is performed using the open source MCUBoot secondary bootloader. The [secure boot and over-the-air update process](https://www.freertos.org/NXP-RT1060-SE050/#over-the-air-updates) include two code signing stages. The first one mentioned in [Prepare an executable image that will be sent to the device via OTA](#3-prepare-and-run-the-bootloader) is for the bootloader to verify the image on the primary slot prior to execution. The code signing in this section is for the application to verify the image prior to downloading it into the device. As a pre-requisite, you should have built and flashed the bootloader project from this repository as in [Prepare and Run the Bootloader](#3-prepare-and-run-the-bootloader).
 
-### 6.1 Setup Pre-requisites for OTA Cloud Resources
+### 6.1 Setting up Prerequisites for OTA Cloud Resources
 
 Before you create an OTA job, the following resources are required:
 * An Amazon S3 bucket to store your firmware update.
-* An OTA Update service role.
-* An OTA user policy.
+* An OTA update service role to create and manage OTA update jobs on your behalf.
+* An OTA user policy to grant your IAM user permission to perform over-the-air updates.
 
 This is a one time setup required for performing OTA firmware updates. Follow the steps listed
-in [OTA update pre-requisites](https://docs.aws.amazon.com/freertos/latest/userguide/ota-prereqs.html)
-in the *FreeRTOS User Guide* to set up the required OTA resources:
+in [OTA update pre-requisites](https://docs.aws.amazon.com/freertos/latest/userguide/ota-prereqs.html) (using MQTT)
+in the *FreeRTOS User Guide* to set up the required OTA resources.
 
 
-### 6.2 Create a Code-Signing Certificate
+### 6.2 Creating an Application Code Signing Certificate
 
 The demos support a code-signing certificate with an ECDSA P-256 key and SHA-256 hash to
 perform OTA updates.
@@ -433,7 +471,7 @@ perform OTA updates.
 1. Confirm the ARN for your certificate. You need this ARN when you create an OTA update job.
 
 
-### 6.3 Provision the Code Signining Public Key to the Board
+### 6.3 Provisioning the Application Code Signing Key to the Device
 
 1. Get the ECDSA public key from the code signing credentials generated in 6.2:
      ```
@@ -451,15 +489,13 @@ perform OTA updates.
      pki set pub_key sss:00223344
      ```
 
-1. The CLI waits for you to input the public key. Copy the PEM public key created in above
-     step and paste it to the serial terminal, then press `Enter`. (Note: Paste the
-     whole content from "-----BEGIN PUBLIC KEY-----" to "-----END PUBLIC KEY-----".)
+1. The CLI waits for you to input the public key. Copy the ***contents of*** the PEM public key created in above step and paste it to the serial terminal, then press `Enter`. (Note: Paste the whole content, including from "-----BEGIN PUBLIC KEY-----" to "-----END PUBLIC KEY-----".)
 
 1. On successful provisioning, the CLI should print `OK`. At this point, you can
      switch back to device normal mode by turning off the `appmainPROVISIONING_MODE` flag.
 
 
-### 6.4 Create and Run an OTA Update (AWS IoT console)
+### 6.4 Creating and Running an OTA Update (AWS IoT console)
 
 To perform an OTA firmware update, you must go through these steps:
 
@@ -472,7 +508,7 @@ subsequent OTA updates without running the last step above using the debugger.
 
 The following steps walk you through OTA job creation and monitoring the OTA process.
 
-1. In the navigation pane of the AWS IoT console, choose **Manage**, and then choose **Jobs**.
+1. In the navigation pane of the AWS IoT console, choose Manage, ***then Remote Actions***, and then choose Jobs.
 
 1. Choose **Create a job**.
 
@@ -495,7 +531,7 @@ The following steps walk you through OTA job creation and monitoring the OTA pro
 
 1. In **Create a code signing profile:**
      1. Type in a name for this profile.
-     1. For the **Device hardware platform**, select: "Windows Simulator".
+     1. For the **Device hardware platform**, select: "Windows Simulator". (This is the generic template that do not tight to any specific hardware platform and allow customize in the subsequent steps).
      1. Under **Code signing certificate**, choose "Select", then choose the
           certificate that you created with AWS CLI earlier.
      1. Under "Path name of code signing certificate on device", enter "sss:00223344".
@@ -605,7 +641,7 @@ The following steps walk you through OTA job creation and monitoring the OTA pro
           ```
 
 1. Once the job is created successfully, the demo should start downloading the firmware chunks.
-     The process can be monitored using logs from the console. Note: make sure the device is
+     The process can be monitored using logs from the serial terminal console. Note: make sure the device is
      running with the older version of the application image.
 
 1. Once all the firmware image chunks are downloaded and the signature is validated, the demo
@@ -630,12 +666,12 @@ The following steps walk you through OTA job creation and monitoring the OTA pro
      ![Image](https://user-images.githubusercontent.com/45887168/161142364-e4ed3234-2b0c-465e-9426-eaa8f3e39cfc.png)
 
 
-## 7 Running the Shadow Demo
+## 7 Run the Shadow Demo
 
 1. From the MCUXpressoIDE workspace where the aws_iot_shadow project was imported, do the following:
     1. Set `appmainPROVISIONING_MODE` in `app_main.c` to 0.
     2. Set `appmainINCLUDE_OTA_UPDATE_TASK` in `app_main.c` to 1.
-    3. If you update the shadow firmware into device via OTA, pump version up in `ota_update.c`.
+    3. If you update the shadow firmware into device via OTA, pump version up in `include\ota_config.h`.
 1. Build and sign the binary image. See section 4.3 "Create a Signed Application Image".
 1. Update this new firmware using OTA. See section 6 "Perform Firmware Over-The-Air Updates with AWS IoT".
     1. Or you can run from the debugger. See section 4.1 "Running an Application Project from the Debugger".
@@ -675,12 +711,12 @@ Device Shadow metadata
 ```
 
 
-## 8 Running the Defender Demo
+## 8 Run the Defender Demo
 
 1. From the MCUXpressoIDE workspace where aws_iot_defender project was imported:
     1. Set `appmainPROVISIONING_MODE` in `app_main.c` to 0.
     2. Set `appmainINCLUDE_OTA_UPDATE_TASK` in `app_main.c` to 1.
-    3. If you update the shadow firmware on the device via OTA, increment the version in `ota_update.c`.
+    3. If you update the shadow firmware on the device via OTA, increment the version in `include\ota_config.h`.
 2. Build and sign the binary image. See section 4.3 "Create a Signed Application Image".
 3. Update this new firmware using OTA. See section 6 "Perform Firmware Over-The-Air Updates with AWS IoT".
     1. Or you can run from the debugger. See section 4.1 "Running an Application Project from the Debugger".
