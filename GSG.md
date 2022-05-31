@@ -2,36 +2,46 @@ IoT Reference Integration:
 on the NXP i.MX RT1060 MCU and EdgeLock® SE050 Secure Element
 ========
 
-This Getting Starated Guide (GSG) walks you through steps to run the demo. For more details on the features of the demo, see the [NXP Featured IoT Reference Integration](https://www.freertos.org/NXP-RT1060-SE050/) page on FreeRTOS.org.
+This Getting Started Guide (GSG) walks you through steps to run the demo. For more details on the features of the demo, see the [NXP Featured IoT Reference Integration](https://www.freertos.org/NXP-RT1060-SE050/) page on FreeRTOS.org.
 
-This project and the GSG are tested using specific MXCUXpresso IDE/SDK version as listed in [1.2 Software Requirements](#12-software-requirements) section. You can use later versions. For reporting issues with the project, please use [FreeRTOS forum](https://forums.freertos.org/) or [FreeRTOS contact](https://freertos.org/RTOS-contact-and-support.html).
+This project and the GSG are tested using specific MCUXpresso IDE/SDK version as listed in [1.2 Software Requirements](#12-software-requirements) section. You can use later versions. For reporting issues with the project, please use [FreeRTOS forum](https://forums.freertos.org/) or [FreeRTOS contact](https://freertos.org/RTOS-contact-and-support.html).
 
 ## Contents
-*[1 Prerequisites](#1-prerequisites)\
-[1.1 Hardware Requirements](#11-hardware-requirements)\
-[1.2 Software Requirements](#12-software-requirements)\
-[2 Hardware and Software Setup](#2-hardware-and-software-setup)\
-[2.1 Setting up Device](#21-setting-up-device)\
-[2.2 Importing and Building Projects](#22-importing-and-building-projects)\
-[2.3 Running an Application Project from the Debugger](#23-running-an-application-project-from-the-debugger)\
-[3 Prepare and Run the Bootloader](#3-prepare-and-run-the-bootloader)\
-[3.1 Creating Signing Keys for the Bootloader](#31-creating-signing-keys-for-the-bootloader)\
-[3.2 Building and Running the Bootloader](#32-building-and-running-the-bootloader)\
-[3.3 Preparing an Executable Image Sent to the Device via OTA](#33-preparing-an-executable-image-sent-to-the-device-via-ota)\
-[4 Provision Device and Setup AWS Account](#4-provision-device-and-setup-aws-account)\
-[4.1 Provisioning the Device](#41-provisioning-the-device)\
-[4.2 Preparing AWS Account](#42-preparing-aws-account)\
-[5 Run the MQTT Publish Subscribe Demo](#5-run-the-mqtt-publish-subscribe-demo)\
-[5.1 Demo Introduction](#51-demo-introduction)\
-[5.2 Running the Publish Subscribe Demo](#52-running-the-publish-subscribe-demo)\
-[6 Perform Firmware Over-The-Air Updates with AWS IoT](#6-perform-firmware-over-the-air-updates-with-aws-iot)\
-[6.1 Setting up Prerequisites for OTA Cloud Resources](#61-setting-up-prerequisites-for-ota-cloud-resources)\
-[6.2 Creating an Application Code Signing Certificate](#62-creating-an-application-code-signing-certificate)\
-[6.3 Provisioning the Application Code Signing Key to the Device](#63-provisioning-the-application-code-signing-key-to-the-device)\
-[6.4 Creating and Running an OTA Update (AWS IoT console)](#64-creating-and-running-an-ota-update-aws-iot-console)\
-[7 Run the Shadow Demo](#7-run-the-shadow-demo)\
-[8 Run the Defender Demo](#8-run-the-defender-demo)\
-[9 Troubleshooting Guide](#9-troubleshooting-guide)*
+
+The following sequence describes a workflow suitable for a development environment.
+Many of these steps are automated in production environments.
+
+[1 Prerequisites](#1-prerequisites)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[1.1 Hardware Requirements](#11-hardware-requirements)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[1.2 Software Requirements](#12-software-requirements)<br>
+
+[2 Hardware and Software Setup](#2-hardware-and-software-setup)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[2.1 Setting up Device](#21-setting-up-device)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[2.2 Importing and Building Projects](#22-importing-and-building-projects)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[2.3 Running an Application Project from the Debugger](#23-running-an-application-project-from-the-debugger)<br>
+
+[3 Prepare and Run the Bootloader](#3-prepare-and-run-the-bootloader)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[3.1 Creating Signing Keys for the Bootloader](#31-creating-signing-keys-for-the-bootloader)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[3.2 Building and Running the Bootloader](#32-building-and-running-the-bootloader)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[3.3 Preparing an Executable Image Sent to the Device via OTA](#33-preparing-an-executable-image-sent-to-the-device-via-ota)<br>
+
+[4 Provision Device and Setup AWS Account](#4-provision-device-and-setup-aws-account)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1 Provisioning the Device](#41-provisioning-the-device)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[4.2 Preparing AWS Account](#42-preparing-aws-account)<br>
+
+[5 Run the MQTT Publish Subscribe Demo](#5-run-the-mqtt-publish-subscribe-demo)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[5.1 Demo Introduction](#51-demo-introduction)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[5.2 Running the Publish Subscribe Demo](#52-running-the-publish-subscribe-demo)<br>
+
+[6 Perform Firmware Over-The-Air Updates with AWS IoT](#6-perform-firmware-over-the-air-updates-with-aws-iot)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[6.1 Setting up Prerequisites for OTA Cloud Resources](#61-setting-up-prerequisites-for-ota-cloud-resources)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[6.2 Creating an Application Code Signing Certificate](#62-creating-an-application-code-signing-certificate)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[6.3 Provisioning the Application Code Signing Key to the Device](#63-provisioning-the-application-code-signing-key-to-the-device)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[6.4 Creating and Running an OTA Update (AWS IoT console)](#64-creating-and-running-an-ota-update-aws-iot-console)<br>
+
+[7 Run the Shadow Demo](#7-run-the-shadow-demo)<br>
+[8 Run the Defender Demo](#8-run-the-defender-demo)<br>
+[9 Troubleshooting Guide](#9-troubleshooting-guide)
 
 ## 1 Prerequisites
 
@@ -373,7 +383,7 @@ Follow the steps below to set up an AWS account and provision the device:
 ### 5.1 Demo Introduction
 
 This example demonstrates multiple MQTT publish/subscribe tasks running concurrently with an
-Over-The-Air firmware update background task. It uses the coreMQTT agent libary to manage
+Over-The-Air firmware update background task. It uses the coreMQTT agent library to manage
 thread safety for the MQTT connection. Each publish/subscribe task runs in a loop to publish
 a message to the AWS IoT MQTT broker on a topic, and receive the same message back by
 subscribing to the same topic. Topics are constructed per device and per task for this demo. You
