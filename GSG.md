@@ -61,7 +61,7 @@ Many of these steps are automated in production environments.
 * MCUXpresso IDE version 11.4.x or later to build and debug demo projects. To download, visit the
      [MCUXpresso IDE page](https://www.nxp.com/design/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE).
      (A user account is required to download.)
-* SDK version 2.10 for MIMXRT1060-EVKB to get the board configuration for the MCU i.MX RT1060. This project and the GSG were tested using SDK v2.10. You can use later version. 
+* SDK version 2.10 for MIMXRT1060-EVKB to get the board configuration for the MCU i.MX RT1060. This project and the GSG were tested using SDK v2.10. You can use later version.
     To download, visit the
     [MCUXpresso Software Development Kit (SDK) page](https://www.nxp.com/design/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-software-development-kit-sdk:MCUXpresso-SDK).
     (A user account is required to download and download with the default option selected.)
@@ -233,11 +233,11 @@ in MAC or Linux machines.
 
 1. Now you can go ahead and flash the application image to be booted. Refer to the next section,
      "Running Application projects", for details.
-     
+
 ### 3.3 Preparing an Executable Image Sent to the Device via OTA
 
 For a succesful OTA, follow the below steps to prepare the executable image:
-1. The version number of the image sent via OTA must be higher than that already running on the device, so temporarily update the executable image's version number.\ 
+1. The version number of the image sent via OTA must be higher than that already running on the device, so temporarily update the executable image's version number.\
 2. Build the executable image.\
 3. Sign the executable image with the key used by the bootloader to validate the image.\
 4. Reset the executable image's version number so it is lower than the version number in the executable image signed in the previous step.\
@@ -314,8 +314,8 @@ Follow the steps below to set up an AWS account and provision the device:
      For more detailed instructions, see [Register a client certificate signed by an unregistered CA (console)](https://docs.aws.amazon.com/iot/latest/developerguide/manual-cert-registration.html#manual-cert-registration-console-noca).
 
      ![Image](https://user-images.githubusercontent.com/45887168/161153139-dae3151c-48f3-4d42-a47a-8f839777b425.png)
-     
-### 4.2 Preparing AWS Account     
+
+### 4.2 Preparing AWS Account
 
 1. To get the AWS IoT MQTT broker endpoint for your account, go to the AWS IoT console and in the left navigation pane
      choose `Settings`. Copy the endpoint listed under the "Device data endpoint".
@@ -409,19 +409,19 @@ to the desired value. Follow these steps to run the demo:
 
      ![Image](https://user-images.githubusercontent.com/45887168/161142351-a0cf91a3-153c-4ed6-93a4-924ec257b44b.png)
 
-1. On the IoT console, select "Test" then select "MQTT test client". In the "Subscription topic"
+2. On the IoT console, select "Test" then select "MQTT test client". In the "Subscription topic"
      section, type "#", select "Subscribe to topic", and confirm that the MQTT messages from the
      device are received.
 
-1. To publish a message to the device, go to the "Publish to a topic" section, type
+3. To publish a message to the device, go to the "Publish to a topic" section, type
      "/pubsub_demo/<thing_name>/task<task number>" enter a message in the message
      payload section, then select "Publish to a topic".
 
-1. On the serial console, confirm that the device receives the message.
+4. On the serial console, confirm that the device receives the message.
      ![Image](https://user-images.githubusercontent.com/45887168/161103606-9ae8b9ec-f07d-4ff2-ac56-ab4e37284cb9.png)
-    
-*Notes: 
-1. Running the MQTT pub/sub demo will incur messaging cost.\ 
+
+*Notes:
+1. Running the MQTT pub/sub demo will incur messaging cost.\
 2. Stopping from debugger will not stop the demo from running on the device and publishing messages.
 
 ## 6 Perform Firmware Over-The-Air Updates with AWS IoT
