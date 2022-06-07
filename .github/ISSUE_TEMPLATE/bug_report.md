@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve IoT Reference Integration on NXP. This
-  should only be used for confirmed bugs. If you suspect something it is best to
-  first discuss it on the FreeRTOS forums linked below.
+about: Create a report to help us improve IoT Reference Integration on NXP. Please
+       use this for confirmed bugs. If you suspect something it is best to first
+       discuss it on the FreeRTOS forums linked below.
 title: "[BUG]"
 labels: bug
 assignees: ''
