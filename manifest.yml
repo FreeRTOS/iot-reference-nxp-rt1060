@@ -10,25 +10,25 @@ dependencies:
       url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
       path: "/Middleware/FreeRTOS/kernel"
   - name: "coreJSON"
-    version: "V3.0.0"
+    version: "v3.0.2"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreJSON.git"
       path: "/Middleware/FreeRTOS/coreJSON"
   - name: "coreMQTT"
-    version: "v1.1.0"
+    version: "v1.1.2"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT.git"
       path: "/Middleware/FreeRTOS/coreMQTT"
   - name: "corePKCS11"
-    version: "v3.0.0"
+    version: "v3.1.0"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/corePKCS11.git"
       path: "/Middleware/FreeRTOS/corePKCS11"
   - name: "backoffAlgorithm"
-    version: "v1.0.0"
+    version: "v1.1.0"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/backoffAlgorithm"
@@ -40,7 +40,7 @@ dependencies:
       url: "https://github.com/FreeRTOS/coreMQTT-Agent.git"
       path: "/Middleware/FreeRTOS/coreMQTT-Agent"
   - name: "device-defender"
-    version: "v1.1.0"
+    version: "a12bbaf13920e83a4252b1cf992e1d6a5b0c9939"
     repository:
       type: "git"
       url: "https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git"
@@ -52,7 +52,7 @@ dependencies:
       url: "https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git"
       path: "/Middleware/AWS/ota"
   - name: "device-shadow"
-    version: "v1.0.2"
+    version: "v1.2.0"
     repository:
       type: "git"
       url: "https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git"
@@ -64,13 +64,13 @@ dependencies:
       url: "https://github.com/NXPmicro/mcux-sdk.git"
       path: "/core"
   - name: "lwip"
-    version: "2.1.2"
+    version: "STABLE-2_1_2_RELEASE"
     repository:
       type: "git"
       url: "https://github.com/lwip-tcpip/lwip.git"
       path: "/Middleware/lwip"
   - name: "mbedtls"
-    version: "2.26.0"
+    version: "v2.26.0"
     repository:
       type: "git"
       url: "https://github.com/Mbed-TLS/mbedtls.git"
@@ -82,7 +82,7 @@ dependencies:
       url: "https://github.com/mcu-tools/mcuboot.git"
       path: "/Middleware/mcuboot"
   - name: "tinycbor"
-    version: "0.6.0"
+    version: "v0.6.0"
     repository:
       type: "git"
       url: "https://github.com/intel/tinycbor.git"
@@ -94,7 +94,7 @@ dependencies:
       url: "https://github.com/ThrowTheSwitch/Unity.git"
       path: "/Middleware/unity"
   - name: "FreeRTOS-Libraries-Integration-Tests"
-    version: "v1.0.0"
+    version: "7b531a24eb3d1f5e9fdd23ca0f3c57d7f24c875f"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests"
