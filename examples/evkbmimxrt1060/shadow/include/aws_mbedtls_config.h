@@ -330,8 +330,8 @@ extern void * mbedtls_platform_calloc( size_t nmemb,
                                        size_t size );
 extern void mbedtls_platform_free( void * ptr );
 #define MBEDTLS_PLATFORM_MEMORY
-#define MBEDTLS_PLATFORM_STD_CALLOC    mbedtls_platform_calloc
-#define MBEDTLS_PLATFORM_STD_FREE      mbedtls_platform_free
+#define MBEDTLS_PLATFORM_STD_CALLOC      mbedtls_platform_calloc
+#define MBEDTLS_PLATFORM_STD_FREE        mbedtls_platform_free
 
 /* Reduce RAM usage.*/
 #define MBEDTLS_ECP_FIXED_POINT_OPTIM    0             /* To reduce peak memory usage */
