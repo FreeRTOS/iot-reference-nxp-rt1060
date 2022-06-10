@@ -334,7 +334,6 @@ extern void mbedtls_platform_free( void * ptr );
 #define MBEDTLS_PLATFORM_STD_FREE      mbedtls_platform_free
 
 /* Reduce RAM usage.*/
-/* More info: https://tls.mbed.org/kb/how-to/reduce-mbedtls-memory-and-storage-footprint */
 #define MBEDTLS_ECP_FIXED_POINT_OPTIM    0             /* To reduce peak memory usage */
 #define MBEDTLS_AES_ROM_TABLES
 #define MBEDTLS_SSL_MAX_CONTENT_LEN      ( 1024 * 10 ) /* Reduce SSL frame buffer. */
@@ -2544,10 +2543,6 @@ extern void mbedtls_platform_free( void * ptr );
  * and Windows. For other platforms, you'll want to disable it, and write your
  * own networking callbacks to be passed to \c mbedtls_ssl_set_bio().
  *
- * \note See also our Knowledge Base article about porting to a new
- * environment:
- * https://tls.mbed.org/kb/how-to/how-do-i-port-mbed-tls-to-a-new-environment-OS
- *
  * Module:  library/net_sockets.c
  *
  * This module provides networking routines.
@@ -2909,8 +2904,7 @@ extern void mbedtls_platform_free( void * ptr );
  * By default mbed TLS assumes it is used in a non-threaded environment or that
  * contexts are not shared between threads. If you do intend to use contexts
  * between threads, you will need to enable this layer to prevent race
- * conditions. See also our Knowledge Base article about threading:
- * https://tls.mbed.org/kb/development/thread-safety-and-multi-threading
+ * conditions.
  *
  * Module:  library/threading.c
  *
@@ -2935,10 +2929,6 @@ extern void mbedtls_platform_free( void * ptr );
  * \c mbedtls_ssl_set_timer_cb() for DTLS, or leave it enabled and provide
  * your own implementation of the whole module by setting
  * \c MBEDTLS_TIMING_ALT in the current file.
- *
- * \note See also our Knowledge Base article about porting to a new
- * environment:
- * https://tls.mbed.org/kb/how-to/how-do-i-port-mbed-tls-to-a-new-environment-OS
  *
  * Module:  library/timing.c
  * Caller:  library/havege.c
