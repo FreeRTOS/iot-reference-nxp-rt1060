@@ -758,3 +758,81 @@ Besides the Defender metrics graph on the console, you can also use the MQTT Cli
      > * The device encounters a niche error condition, such as receiving duplicate blocks, or the OTA buffer is
        not available to handle these error conditions. In these instances, you can retry OTA job from the console.
 
+## 10 Run AWS IoT Device Tester
+
+The reference integration can be tested using AWS IoT Device Tester (IDT). IDT is a downloadable tool that can be used to exercise a device integration with FreeRTOS to validate functionality and compatibility with Amazon IoT cloud. Passing the test suite provided by IDT are also required to qualify a device for the [Amazon Partner Device Catalogue](https://devices.amazonaws.com/).
+
+IDT runs a suite of tests that include testing the device's transport interface layer implementation, PKCS11 functionality, and OTA capabilities. In IDT test cases, the IDT binary will make a copy of the reference implementation source code, update header files in the `examples/evkbmimxrt1060/test` project, then compile the project and flash the resulting image to your board. Finally, IDT will read serial output from the board and communicate with the AWS IoT cloud to ensure that test cases are passing.
+
+### Download AWS IoT Device Tester
+
+The latest version of IDT can be downloaded from the [public documentation page](https://docs.aws.amazon.com/freertos/latest/userguide/dev-test-versions-afr.html). This reference implementation only supports test suites of version 2.0 or later.
+
+### Configure AWS IoT Device Tester
+
+After downloading and unzipping IDT onto your file system, you should a file structure that includes the following directories:
+
+* The `bin` directory holds the devicetester binary, which is the entry point used to run IDT
+* The `results` directory holds logs that are generated every time you run IDT.
+* The `configs` directory holds configuration values that are needed to set up IDT
+
+Before we can run IDT, we have to update the files in `configs`. In this reference implementation, we have pre-defined configs available in the `idt_configs` directory. Copy these templates over into IDT, and the rest of this section will walk through the remaining values that need to be filled in.
+
+First, copy one of each file from `idt_configs` (based on host OS) in this reference repository to the `configs` directory inside the newly downloaded IDT project. This should provide you with the following files in `device_tester/configs` directory:
+
+```
+configs/dummyPublicKeyAsciiHex.txt
+configs/flash.sh
+configs/config.json
+configs/userdata.json
+configs/device.json
+configs/build.sh
+```
+
+Next, we need to update some configuration values in these files.
+
+* In `build.sh`, update IDE_PATH
+* In `flash.sh`, update IDE_PATH, MCUX_FLASH_DIR0, and MCUX_IDE_BIN
+
+(NOTE: you can also create your own build and flash scripts by copying the commands provided by MCUXpresso IDE when you do a GUI build and GUI flash)
+
+* In `config.json`, update the `profile` and `awsRegion` fields
+* In `device.json`, update `serialPort` to the serial port of your board as from [section 2.1](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#21-setting-up-device). Update `publicKeyAsciiHexFilePath` to the absolute path to `dummyPublicKeyAsciiHex.txt`. Update `publicDeviceCertificateArn` to the ARN of the certificate uploaded when [provisioning the device](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#41-provisioning-the-device).
+* In `userdata.json`, update `sourcePath` to the absolute path to the root of this reference implementation repository. Update `signerCertificate` to TODO. Update `untrustedSignerCertificate` to TODO. 
+* In `userdata.json`, update `signerCertificate` with the ARN of the [application code signing certificate you created.](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate)
+* Run all the steps to create a [second code signing certificate](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate) but do NOT provision the key onto your board. Copy the ARN for this certificate in `userdata.json` for the field `untrustedSignerCertificate`.
+
+### Running AWS IoT Device Tester
+
+With all the configuration out of the way, we can run IDT either from an individual test group or test case, or the entire qualification suite.
+
+To list the available test groups, run:
+
+```
+./devicetester_mac_x86-64 list-groups
+```
+
+To run any one test group, run e.g.:
+
+```
+./devicetester_mac_x86-64 run-suite -g FullTransportInterfacePlainText
+```
+
+To run the entire qualification suite, run:
+
+```
+./devicetester_mac_x86-64 run-suite
+```
+
+For more information, `./devicetester_mac_x86-64 help` will show all available commands.
+
+When you run IDT, a `results/uuid` directory is generated that will contain all the logs and other information associated with your test run. This allows you to debug any failures. 
+
+* TODO: Get those XML files with flash info correctly (manually do a build flash)
+
+
+Setting up LTS test cases:
+
+1. set up userdata.json configs
+2. Set up public key and config for it (should i figure out how to do this for real?)
+3. Get those XML files in the debug folder (TODO: can i just commit this to the repo???)
