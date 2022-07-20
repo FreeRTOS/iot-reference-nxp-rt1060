@@ -112,8 +112,10 @@
 
 /**
  * @brief The maximum number of retries for network operation with server.
+ * The configuration is set to retry forever. MQTT agent will retry in an infinite loop until
+ * its connected to broker.
  */
-#define RETRY_MAX_ATTEMPTS                           ( 20U )
+#define RETRY_MAX_ATTEMPTS                           ( BACKOFF_ALGORITHM_RETRY_FOREVER )
 
 /**
  * @brief The maximum back-off delay (in milliseconds) for retrying failed operation
