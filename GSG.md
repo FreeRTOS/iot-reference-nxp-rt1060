@@ -782,23 +782,23 @@ First, copy one of each file from `idt_configs` (based on host OS) in this refer
 
 ```
 configs/dummyPublicKeyAsciiHex.txt
-configs/flash.sh
+configs/flash.bat or flash.sh
 configs/config.json
 configs/userdata.json
 configs/device.json
-configs/build.sh
+configs/build.bat or build.sh
 ```
 
 Next, we need to update some configuration values in these files.
 
-* In `build.sh`, update IDE_PATH
-* In `flash.sh`, update IDE_PATH, MCUX_FLASH_DIR0, and MCUX_IDE_BIN
+* In `build.bat` / `build.sh`, update IDE_PATH
+* In `flash.bat` / `flash.sh`, update IDE_PATH, MCUX_FLASH_DIR0, and MCUX_IDE_BIN
 
-(NOTE: you can also create your own build and flash scripts by copying the commands provided by MCUXpresso IDE when you do a GUI build and GUI flash)
+A few notes on the provided build and flash scripts: First, if you run into issues with the provided scripts, you can copy commands provided by the MCUXpresso IDE to create your own build and flash scripts. Second, these scripts only work if your `test` and `bootloader` project have been built once using the MCUXpresso GUI (this creates a required files `MIMXRT1062xxxxA.xml` and `MIMXRT1062xxxxA_part.xml` at `iot-reference-nxp-rt1060/projects/evkmimxrt1060/$PROJECT/Debug`)
 
 * In `config.json`, update the `profile` and `awsRegion` fields
 * In `device.json`, update `serialPort` to the serial port of your board as from [section 2.1](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#21-setting-up-device). Update `publicKeyAsciiHexFilePath` to the absolute path to `dummyPublicKeyAsciiHex.txt`. Update `publicDeviceCertificateArn` to the ARN of the certificate uploaded when [provisioning the device](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#41-provisioning-the-device).
-* In `userdata.json`, update `sourcePath` to the absolute path to the root of this reference implementation repository. Update `signerCertificate` to TODO. Update `untrustedSignerCertificate` to TODO. 
+* In `userdata.json`, update `sourcePath` to the absolute path to the root of this reference implementation repository.
 * In `userdata.json`, update `signerCertificate` with the ARN of the [application code signing certificate you created.](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate)
 * Run all the steps to create a [second code signing certificate](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate) but do NOT provision the key onto your board. Copy the ARN for this certificate in `userdata.json` for the field `untrustedSignerCertificate`.
 
@@ -809,30 +809,21 @@ With all the configuration out of the way, we can run IDT either from an individ
 To list the available test groups, run:
 
 ```
-./devicetester_mac_x86-64 list-groups
+.\devicetester_win_x86-64.exe list-groups
 ```
 
 To run any one test group, run e.g.:
 
 ```
-./devicetester_mac_x86-64 run-suite -g FullTransportInterfacePlainText
+.\devicetester_win_x86-64.exe run-suite -g FullCloudIoT
 ```
 
 To run the entire qualification suite, run:
 
 ```
-./devicetester_mac_x86-64 run-suite
+.\devicetester_win_x86-64.exe run-suite
 ```
 
-For more information, `./devicetester_mac_x86-64 help` will show all available commands.
+For more information, `.\devicetester_win_x86-64.exe help` will show all available commands.
 
 When you run IDT, a `results/uuid` directory is generated that will contain all the logs and other information associated with your test run. This allows you to debug any failures. 
-
-* TODO: Get those XML files with flash info correctly (manually do a build flash)
-
-
-Setting up LTS test cases:
-
-1. set up userdata.json configs
-2. Set up public key and config for it (should i figure out how to do this for real?)
-3. Get those XML files in the debug folder (TODO: can i just commit this to the repo???)
