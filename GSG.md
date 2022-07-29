@@ -826,4 +826,4 @@ To run the entire qualification suite, run:
 
 For more information, `.\devicetester_win_x86-64.exe help` will show all available commands.
 
-When you run IDT, a `results/uuid` directory is generated that will contain all the logs and other information associated with your test run. This allows you to debug any failures. 
+When you run IDT, a `results/uuid` directory is generated that will contain all the logs and other information associated with your test run. This allows you to debug any failures.
