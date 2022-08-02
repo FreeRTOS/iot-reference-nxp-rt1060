@@ -180,23 +180,6 @@
  */
 #define mqttexampleEVENT_BITS_ALL    ( ( EventBits_t ) ( ( 1ULL << MQTT_AGENT_NUM_STATES ) - 1U ) )
 
-
-/**
- * @brief ALPN (Application-Layer Protocol Negotiation) protocol name for AWS IoT MQTT.
- *
- * This will be used if democonfigMQTT_BROKER_PORT is configured as 443 for the AWS IoT MQTT broker.
- * Please see more details about the ALPN protocol for AWS IoT MQTT endpoint
- * in the link below.
- * https://aws.amazon.com/blogs/iot/mqtt-with-tls-client-authentication-on-port-443-why-it-is-useful-and-how-it-works/
- */
-#define AWS_IOT_ALPN_MQTT_CA_AUTH        "x-amzn-mqtt-ca"
-
-/**
- * @brief This is the ALPN (Application-Layer Protocol Negotiation) string
- * required by AWS IoT for password-based authentication using TCP port 443.
- */
-#define AWS_IOT_ALPN_MQTT_CUSTOM_AUTH    "mqtt"
-
 /*-----------------------------------------------------------*/
 
 /**
@@ -523,24 +506,51 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
 
 static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 {
-    BaseType_t xConnected = pdFAIL;
+    BaseType_t xConnected = pdPASS;
 
     TlsTransportStatus_t xNetworkStatus = TLS_TRANSPORT_CONNECT_FAILURE;
     NetworkCredentials_t xNetworkCredentials = { 0 };
 
-#ifdef democonfigUSE_AWS_IOT_CORE_BROKER
+#if defined( democonfigUSE_AWS_IOT_CORE_BROKER )
+    static const char * ppcAlpnProtocols[ 2 ] = { NULL, NULL };
 
-    /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
-     * the first entry will contain the actual ALPN protocol string while the
-     * second entry must remain NULL. */
-#ifdef democonfigCLIENT_USERNAME
-    static const char * ppcAlpnProtocols[] = { AWS_IOT_ALPN_MQTT_CUSTOM_AUTH, NULL };
-#else
-    static const char * ppcAlpnProtocols[] = { AWS_IOT_ALPN_MQTT_CA_AUTH, NULL };
-#endif
+    /*
+     * When connecting AWS IoT Core via mqtt on port 443, an alpn is required.
+     * For more information, refer to the AWS IoT Core documentation at:
+     * https://docs.aws.amazon.com/iot/latest/developerguide/protocols.html
+     */
+    if( ulBrokerPort == 443U )
+    {
+#if defined( democonfigCLIENT_USERNAME )
+        /* Custom / username authentication requires the "mqtt" alpn. */
+        ppcAlpnProtocols[ 0 ] = "mqtt";
+        ppcAlpnProtocols[ 1 ] = NULL;
+#else /* defined( democonfigCLIENT_USERNAME ) */
+        /* Certificate authentication on port 443 requires the "x-amzn-mqtt-ca" alpn. */
+        ppcAlpnProtocols[ 0 ] = "x-amzn-mqtt-ca";
+        ppcAlpnProtocols[ 1 ] = NULL;
+#endif /* !defined( democonfigCLIENT_USERNAME ) */
 
-    xNetworkCredentials.pAlpnProtos = ppcAlpnProtocols;
-#endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
+        xNetworkCredentials.pAlpnProtos = ppcAlpnProtocols;
+    }
+    else if( ulBrokerPort == 8883U )
+    {
+#if defined( democonfigCLIENT_USERNAME )
+        xConnected = pdFAIL;
+        LogError( ( "Connections to AWS IoT Core with custom authentication"
+                    "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
+#endif /* democonfigCLIENT_USERNAME */
+
+        xNetworkCredentials.pAlpnProtos = NULL;
+    }
+    else
+    {
+        LogError( ( "MQTT connections to AWS IoT Core are only allowed on ports 443 and 8883." ) );
+        xNetworkCredentials.pAlpnProtos = NULL;
+    }
+#else /* defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
+    xNetworkCredentials.pAlpnProtos = NULL;
+#endif /* !defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
 
     /* Set the credentials for establishing a TLS connection. */
     xNetworkCredentials.pRootCa = ( unsigned char * ) democonfigROOT_CA_PEM;
@@ -550,28 +560,31 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 
     xNetworkCredentials.disableSni = democonfigDISABLE_SNI;
 
-
-    /* Establish a TCP connection with the MQTT broker. This example connects to
-     * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
-     * democonfigMQTT_BROKER_PORT at the top of this file. */
-    LogInfo( ( "Creating a TLS connection to %s:%u.",
-               pcBrokerEndpoint,
-               ulBrokerPort ) );
-    xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
-                                           pcBrokerEndpoint,
-                                           ulBrokerPort,
-                                           &xNetworkCredentials,
-                                           mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
-                                           mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
-
-    if( xNetworkStatus == TLS_TRANSPORT_SUCCESS )
+    if( xConnected == pdPASS )
     {
-        xConnected = pdPASS;
-    }
-    else
-    {
-        LogError( ( "Failed to create a TLS connection to broker, error = %d.", xNetworkStatus ) );
-        xConnected = pdFAIL;
+        /* Establish a TCP connection with the MQTT broker. This example connects to
+         * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
+         * democonfigMQTT_BROKER_PORT at the top of this file. */
+        LogInfo( ( "Creating a TLS connection to %s:%u.",
+                   pcBrokerEndpoint,
+                   ulBrokerPort ) );
+
+        xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
+                                               pcBrokerEndpoint,
+                                               ulBrokerPort,
+                                               &xNetworkCredentials,
+                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
+                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+
+        if( xNetworkStatus == TLS_TRANSPORT_SUCCESS )
+        {
+            xConnected = pdPASS;
+        }
+        else
+        {
+            LogError( ( "Failed to create a TLS connection to broker, error = %d.", xNetworkStatus ) );
+            xConnected = pdFAIL;
+        }
     }
 
     return xConnected;
