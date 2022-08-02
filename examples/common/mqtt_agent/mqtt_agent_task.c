@@ -512,41 +512,51 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     NetworkCredentials_t xNetworkCredentials = { 0 };
 
 #if defined( democonfigUSE_AWS_IOT_CORE_BROKER )
-    static const char * ppcAlpnProtocols[ 2 ] = { NULL, NULL };
+#if defined( democonfigCLIENT_USERNAME )
 
     /*
-     * When connecting AWS IoT Core via mqtt on port 443, an alpn is required.
-     * For more information, refer to the AWS IoT Core documentation at:
+     * When democonfigCLIENT_USERNAME is defined, use the "mqtt" alpn to connect
+     * to AWS IoT Core with Custom Authentication on port 443.
+     *
+     * Custom Authentication uses the contents of the username and password
+     * fields of the MQTT CONNECT packet to authenticate the client.
+     *
+     * For more information, refer to the documentation at:
+     * https://docs.aws.amazon.com/iot/latest/developerguide/custom-authentication.html
+     */
+    static const char * ppcAlpnProtocols[] = { "mqtt", NULL };
+
+    if( ulBrokerPort != 443U )
+    {
+        xConnected = pdFAIL;
+        LogError( ( "Connections to AWS IoT Core with custom authentication"
+                    "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
+    }
+#else /* if defined( democonfigCLIENT_USERNAME ) */
+
+    /*
+     * Otherwise, use the "x-amzn-mqtt-ca" alpn to connect to AWS IoT Core using
+     * x509 Certificate Authentication.
+     */
+    static const char * ppcAlpnProtocols[] = { "x-amzn-mqtt-ca", NULL };
+#endif /* defined( democonfigCLIENT_USERNAME ) */
+
+    /*
+     * An ALPN identifier is only required when connecting to AWS IoT core on port 443.
      * https://docs.aws.amazon.com/iot/latest/developerguide/protocols.html
      */
     if( ulBrokerPort == 443U )
     {
-#if defined( democonfigCLIENT_USERNAME )
-        /* Custom / username authentication requires the "mqtt" alpn. */
-        ppcAlpnProtocols[ 0 ] = "mqtt";
-        ppcAlpnProtocols[ 1 ] = NULL;
-#else /* defined( democonfigCLIENT_USERNAME ) */
-        /* Certificate authentication on port 443 requires the "x-amzn-mqtt-ca" alpn. */
-        ppcAlpnProtocols[ 0 ] = "x-amzn-mqtt-ca";
-        ppcAlpnProtocols[ 1 ] = NULL;
-#endif /* !defined( democonfigCLIENT_USERNAME ) */
-
         xNetworkCredentials.pAlpnProtos = ppcAlpnProtocols;
     }
     else if( ulBrokerPort == 8883U )
     {
-#if defined( democonfigCLIENT_USERNAME )
-        xConnected = pdFAIL;
-        LogError( ( "Connections to AWS IoT Core with custom authentication"
-                    "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
-#endif /* democonfigCLIENT_USERNAME */
-
         xNetworkCredentials.pAlpnProtos = NULL;
     }
     else
     {
-        LogError( ( "MQTT connections to AWS IoT Core are only allowed on ports 443 and 8883." ) );
         xNetworkCredentials.pAlpnProtos = NULL;
+        LogError( ( "MQTT connections to AWS IoT Core are only allowed on ports 443 and 8883." ) );
     }
 #else /* defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
     xNetworkCredentials.pAlpnProtos = NULL;
