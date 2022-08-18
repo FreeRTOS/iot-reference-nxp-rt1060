@@ -27,7 +27,7 @@
 	url = https://github.com/amazon-freertos/pkcs11.git
 [submodule "Middleware/AWS/ota"]
 	path = Middleware/AWS/ota
-	url = https://github.com/aws/ota-for-aws-iot-embedded-sdk
+	url = https://github.com/ActoryOu/ota-for-aws-iot-embedded-sdk
 [submodule "Middleware/tinycbor"]
 	path = Middleware/tinycbor
 	url = https://github.com/intel/tinycbor.git
