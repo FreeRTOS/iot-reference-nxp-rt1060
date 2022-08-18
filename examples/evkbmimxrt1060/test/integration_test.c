@@ -265,7 +265,7 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
     configASSERT( pTestParam != NULL );
 
     /* Initialization of timestamp for MQTT. */
-    ulGlobalEntryTimeMs = Clock_GetTimeMs();
+    ulGlobalEntryTimeMs = MqttTestGetTimeMs();
     
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_Send;
