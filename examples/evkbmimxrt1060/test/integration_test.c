@@ -129,14 +129,14 @@ int FRTest_GenerateRandInt()
 
         if( TRNG_GetDefaultConfig(&trngConfig) != kStatus_Success )
         {
-            PRINTF( "TRNG_GetDefaultConfig fail." );
+            PRINTF( "TRNG_GetDefaultConfig fail.\n" );
             return (0);
         }
 
         /* Initialize TRNG */
         if( TRNG_Init(TRNG, &trngConfig) != kStatus_Success )
         {
-            PRINTF( "TRNG_Init fail." );
+            PRINTF( "TRNG_Init fail.\n" );
             return (0);
         }
 
@@ -145,11 +145,7 @@ int FRTest_GenerateRandInt()
     
     if( TRNG_GetRandomData(TRNG, &ret, sizeof(ret)) != kStatus_Success )
     {
-        PRINTF( "TRNG_GetRandomData fail." );
-    }
-    else
-    {
-    	PRINTF( "Return random INT %d.", ret );
+        PRINTF( "TRNG_GetRandomData fail.\n" );
     }
 
     return ret;
@@ -283,6 +279,7 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
     pTestParam->pNetworkConnect = prvTransportNetworkConnect;
     pTestParam->pNetworkDisconnect = prvTransportNetworkDisconnect;
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
+    pTestParam->pGetTimeMs = MqttTestGetTimeMs;
 }
 #endif /* TRANSPORT_INTERFACE_TEST_ENABLED == 1 */
 /*-----------------------------------------------------------*/
