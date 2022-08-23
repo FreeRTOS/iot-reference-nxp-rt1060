@@ -112,8 +112,10 @@
 
 /**
  * @brief The maximum number of retries for network operation with server.
+ * The configuration is set to retry forever. MQTT agent will retry in an infinite loop until
+ * its connected to broker.
  */
-#define RETRY_MAX_ATTEMPTS                           ( 20U )
+#define RETRY_MAX_ATTEMPTS                           ( BACKOFF_ALGORITHM_RETRY_FOREVER )
 
 /**
  * @brief The maximum back-off delay (in milliseconds) for retrying failed operation
@@ -193,7 +195,6 @@ typedef struct TopicFilterSubscription
 } TopicFilterSubscription_t;
 
 /*-----------------------------------------------------------*/
-
 
 /**
  * @brief Initializes an MQTT context, including transport interface and
@@ -453,28 +454,31 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
      * be moved inside the agent. */
     xConnectInfo.keepAliveSeconds = mqttexampleKEEP_ALIVE_INTERVAL_SECONDS;
 
-    /* Append metrics when connecting to the AWS IoT Core broker. */
-#ifdef democonfigUSE_AWS_IOT_CORE_BROKER
-#ifdef democonfigCLIENT_USERNAME
-    xConnectInfo.pUserName = CLIENT_USERNAME_WITH_METRICS;
-    xConnectInfo.userNameLength = ( uint16_t ) strlen( CLIENT_USERNAME_WITH_METRICS );
+#if defined( democonfigUSE_AWS_IOT_CORE_BROKER ) && defined( democonfigCLIENT_USERNAME )
+    /* Append metrics string when connecting to AWS IoT Core with custom auth */
+    xConnectInfo.pUserName = democonfigCLIENT_USERNAME AWS_IOT_METRICS_STRING;
+    xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME AWS_IOT_METRICS_STRING );
+
+    /* Use the provided password as-is */
     xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
     xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
-#else
+#elif defined( democonfigUSE_AWS_IOT_CORE_BROKER )
+    /* If no username is needed, only send the metrics string */
     xConnectInfo.pUserName = AWS_IOT_METRICS_STRING;
-    xConnectInfo.userNameLength = AWS_IOT_METRICS_STRING_LENGTH;
+    xConnectInfo.userNameLength = ( uint16_t ) strlen( AWS_IOT_METRICS_STRING );
+
     /* Password for authentication is not used. */
     xConnectInfo.pPassword = NULL;
     xConnectInfo.passwordLength = 0U;
-#endif
-#else /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
-#ifdef democonfigCLIENT_USERNAME
+#elif defined( democonfigCLIENT_USERNAME )
+    /* If not connecting to AWS IoT Core, send the username without modification. */
     xConnectInfo.pUserName = democonfigCLIENT_USERNAME;
     xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME );
+
+    /* Add the password as provided */
     xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
     xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
-#endif /* ifdef democonfigCLIENT_USERNAME */
-#endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
+#endif /* defined( democonfigCLIENT_USERNAME ) */
 
     LogInfo( ( "Creating an MQTT connection to the broker." ) );
 
@@ -504,26 +508,62 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
 
 static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 {
-    BaseType_t xConnected = pdFAIL;
+    BaseType_t xConnected = pdPASS;
 
     TlsTransportStatus_t xNetworkStatus = TLS_TRANSPORT_CONNECT_FAILURE;
     NetworkCredentials_t xNetworkCredentials = { 0 };
 
-#ifdef democonfigUSE_AWS_IOT_CORE_BROKER
+#if defined( democonfigUSE_AWS_IOT_CORE_BROKER )
+#if defined( democonfigCLIENT_USERNAME )
 
-    /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
-     * the first entry will contain the actual ALPN protocol string while the
-     * second entry must remain NULL. */
-    const char * pcAlpnProtocols[] = { NULL, NULL };
+    /*
+     * When democonfigCLIENT_USERNAME is defined, use the "mqtt" alpn to connect
+     * to AWS IoT Core with Custom Authentication on port 443.
+     *
+     * Custom Authentication uses the contents of the username and password
+     * fields of the MQTT CONNECT packet to authenticate the client.
+     *
+     * For more information, refer to the documentation at:
+     * https://docs.aws.amazon.com/iot/latest/developerguide/custom-authentication.html
+     */
+    static const char * ppcAlpnProtocols[] = { "mqtt", NULL };
 
-    /* The ALPN string changes depending on whether username/password authentication is used. */
-#ifdef democonfigCLIENT_USERNAME
-    pcAlpnProtocols[ 0 ] = AWS_IOT_CUSTOM_AUTH_ALPN;
-#else
-    pcAlpnProtocols[ 0 ] = AWS_IOT_MQTT_ALPN;
-#endif
-    xNetworkCredentials.pAlpnProtos = pcAlpnProtocols;
-#endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
+    if( ulBrokerPort != 443U )
+    {
+        xConnected = pdFAIL;
+        LogError( ( "Connections to AWS IoT Core with custom authentication"
+                    "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
+    }
+#else /* if defined( democonfigCLIENT_USERNAME ) */
+
+    /*
+     * Otherwise, use the "x-amzn-mqtt-ca" alpn to connect to AWS IoT Core using
+     * x509 Certificate Authentication.
+     */
+    static const char * ppcAlpnProtocols[] = { "x-amzn-mqtt-ca", NULL };
+#endif /* defined( democonfigCLIENT_USERNAME ) */
+
+    /*
+     * An ALPN identifier is only required when connecting to AWS IoT core on port 443.
+     * https://docs.aws.amazon.com/iot/latest/developerguide/protocols.html
+     */
+    if( ulBrokerPort == 443U )
+    {
+        xNetworkCredentials.pAlpnProtos = ppcAlpnProtocols;
+    }
+    else if( ulBrokerPort == 8883U )
+    {
+        xNetworkCredentials.pAlpnProtos = NULL;
+    }
+    else
+    {
+        xNetworkCredentials.pAlpnProtos = NULL;
+        xConnected = pdFAIL;
+        LogError( ( "MQTT connections to AWS IoT Core are only allowed on ports 443 and 8883." ) );
+    }
+#else /* defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
+    xNetworkCredentials.pAlpnProtos = NULL;
+#endif /* !defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
 
     /* Set the credentials for establishing a TLS connection. */
     xNetworkCredentials.pRootCa = ( unsigned char * ) democonfigROOT_CA_PEM;
@@ -533,28 +573,31 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 
     xNetworkCredentials.disableSni = democonfigDISABLE_SNI;
 
-
-    /* Establish a TCP connection with the MQTT broker. This example connects to
-     * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
-     * democonfigMQTT_BROKER_PORT at the top of this file. */
-    LogInfo( ( "Creating a TLS connection to %s:%u.",
-               pcBrokerEndpoint,
-               ulBrokerPort ) );
-    xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
-                                           pcBrokerEndpoint,
-                                           ulBrokerPort,
-                                           &xNetworkCredentials,
-                                           mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
-                                           mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
-
-    if( xNetworkStatus == TLS_TRANSPORT_SUCCESS )
+    if( xConnected == pdPASS )
     {
-        xConnected = pdPASS;
-    }
-    else
-    {
-        LogError( ( "Failed to create a TLS connection to broker, error = %d.", xNetworkStatus ) );
-        xConnected = pdFAIL;
+        /* Establish a TCP connection with the MQTT broker. This example connects to
+         * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
+         * democonfigMQTT_BROKER_PORT at the top of this file. */
+        LogInfo( ( "Creating a TLS connection to %s:%u.",
+                   pcBrokerEndpoint,
+                   ulBrokerPort ) );
+
+        xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
+                                               pcBrokerEndpoint,
+                                               ulBrokerPort,
+                                               &xNetworkCredentials,
+                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
+                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+
+        if( xNetworkStatus == TLS_TRANSPORT_SUCCESS )
+        {
+            xConnected = pdPASS;
+        }
+        else
+        {
+            LogError( ( "Failed to create a TLS connection to broker, error = %d.", xNetworkStatus ) );
+            xConnected = pdFAIL;
+        }
     }
 
     return xConnected;
