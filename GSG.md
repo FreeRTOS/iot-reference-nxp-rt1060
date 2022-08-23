@@ -41,7 +41,11 @@ Many of these steps are automated in production environments.
 
 [7 Run the Shadow Demo](#7-run-the-shadow-demo)<br>
 [8 Run the Defender Demo](#8-run-the-defender-demo)<br>
-[9 Troubleshooting Guide](#9-troubleshooting-guide)
+[9 Troubleshooting Guide](#9-troubleshooting-guide)<br>
+[10 Run AWS IoT Device Tester](#10-run-aws-iot-device-tester)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.1 Download AWS IoT Device Tester](#101-download-aws-iot-device-tester)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.2 Configure AWS IoT Device Tester](#102-configure-aws-iot-device-tester)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.3 Running AWS IoT Device Tester](#103-running-aws-iot-device-tester)<br>
 
 ## 1 Prerequisites
 
@@ -764,11 +768,11 @@ The reference integration can be tested using [AWS IoT Device Tester for FreeRTO
 
 IDT runs a suite of tests that include testing the device's transport interface layer implementation, PKCS11 functionality, and OTA capabilities. In IDT test cases, the IDT binary will make a copy of the source code, update the header files in the `examples/evkbmimxrt1060/test` project, then compile the project and flash the resulting image to your board. Finally, IDT will read serial output from the board and communicate with the AWS IoT cloud to ensure that test cases are passing.
 
-### Download AWS IoT Device Tester
+### 10.1 Download AWS IoT Device Tester
 
 The latest version of IDT can be downloaded from the [public documentation page](https://docs.aws.amazon.com/freertos/latest/userguide/dev-test-versions-afr.html). This reference implementation only supports test suites of version 2.0 or later.
 
-### Configure AWS IoT Device Tester
+### 10.2 Configure AWS IoT Device Tester
 
 After downloading and unzipping IDT onto your file system, you should extract a file structure that includes the following directories:
 
@@ -802,7 +806,7 @@ A few notes on the provided build and flash scripts: First, if you run into issu
 * In `userdata.json`, update `signerCertificate` with the ARN of the [application code signing certificate you created.](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate)
 * Run all the steps to create a [second code signing certificate](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate) but do NOT provision the key onto your board. Copy the ARN for this certificate in `userdata.json` for the field `untrustedSignerCertificate`.
 
-### Running AWS IoT Device Tester
+### 10.3 Running AWS IoT Device Tester
 
 With all the configuration out of the way, we can run IDT either from an individual test group or test case, or the entire qualification suite.
 
