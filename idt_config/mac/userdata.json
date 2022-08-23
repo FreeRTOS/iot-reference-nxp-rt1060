@@ -15,11 +15,7 @@
     "version": "1.0.0",
     "command": [
       "{{config.idtRootPath}}/configs/flash.sh {{testData.sourcePath}}"
-    ],
-    "buildImageInfo": {
-      "testsImageName": "aws_iot_qual_test_signed.bin",
-      "demosImageName": "aws_iot_qual_test_signed.bin"
-    }
+    ]
   },
   "testStartDelayms": 5000,
   "echoServerCertificateConfiguration": {
