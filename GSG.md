@@ -818,12 +818,12 @@ To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC s
   - Build and flash
   - In TeraTerm or putty, `pki set pub_key sss:00223346`
   - Copy and paste below content to the serial port
-  ```
+    ```
     -----BEGIN PUBLIC KEY-----
     MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyza/tGLVbVxhL41iYtC8D6tGEvAH
     u498gNtqDtPsKaoR3t5xQx+6zdWiCi32fgFT2vkeVAmX3pf/Gl8nIP48Zg==
     -----END PUBLIC KEY-----
-  ```
+    ```
   - Should print “OK”
 - FullPKCS11_PreProvisioned_ECC
   - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATIOn_TEST_SUITE to 0 in app_main.c
