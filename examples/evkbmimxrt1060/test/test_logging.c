@@ -82,6 +82,6 @@ void TEST_SubmitResult( const char * pcResult )
     /* We want to print test result no matter configPRINTF is defined or not */
     PRINTF( pcResult );
 
-    /* Wait for 0.1 seconds to let print task empty its buffer. */
-    vTaskDelay( pdMS_TO_TICKS( 100UL ) );
+    /* Wait for 1 seconds to let print task empty its buffer. */
+    vTaskDelay( pdMS_TO_TICKS( 1000UL ) );
 }
