@@ -838,6 +838,8 @@ To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC s
   - Paste the content of pubkey.pem to TeraTerm or putty
   - Should print “OK”
 
+*Note: If you fail at setting public key, try sss:00223343 and remember to change the config.*
+
 ### 10.4 Running AWS IoT Device Tester
 
 With all the configuration out of the way, we can run IDT either from an individual test group or test case, or the entire qualification suite.
