@@ -83,7 +83,7 @@
 #include "using_mbedtls.h"
 
 /* Keystore APIs to fetch configuration data. */
-#include "kvStore.h"
+#include "kvstore.h"
 
 /* Includes MQTT Agent Task management APIs. */
 #include "mqtt_agent_task.h"

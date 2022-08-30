@@ -51,7 +51,7 @@
 
 #include "ksdk_mbedtls.h"
 
-#include "nxlog_App.h"
+#include "nxLog_App.h"
 #include "mflash_drv.h"
 
 #include "ex_sss_boot.h"
@@ -70,7 +70,7 @@
 /* MAC address configuration. */
 #define configMAC_ADDR                     \
     {                                      \
-        0x02, 0x12, 0x13, 0x10, 0x15, 0x25 \
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x41 \
     }
 
 /* Address of PHY interface. */

@@ -51,7 +51,7 @@
 
 #include "ksdk_mbedtls.h"
 
-#include "nxlog_App.h"
+#include "nxLog_App.h"
 #include "mflash_drv.h"
 
 #include "ex_sss_boot.h"
