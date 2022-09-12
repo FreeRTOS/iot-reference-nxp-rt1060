@@ -319,3 +319,8 @@ void prvQualificationTestTask( void * pvParameters )
     RunQualificationTest();
     vTaskDelete( NULL );
 }
+
+int RunOtaE2eDemo( void )
+{
+	//do nothing.
+}
