@@ -43,9 +43,6 @@
   "pkcs11LabelConfiguration":{
     "pkcs11LabelPreProvisionedECDevicePrivateKeyForTLS": "\"sss:F0000000\"",
     "pkcs11LabelPreProvisionedECDevicePublicKeyForTLS": "\"sss:00223345\"",
-    "pkcs11LabelPreProvisionedECDeviceCertificateForTLS": "\"sss:F0000001\"",
-    "pkcs11LabelCodeVerifyKey": "\"sss:00223344\"",
-    "pkcs11LabelJITPCertificate": "\"sss:20181004\"",
-    "pkcs11LabelRootCertificate": "\"sss:20181002\""
+    "pkcs11LabelPreProvisionedECDeviceCertificateForTLS": "\"sss:F0000001\""
   }
 }
