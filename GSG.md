@@ -786,7 +786,6 @@ Before we can run IDT, we have to update the files in `configs`. In this referen
 First, copy one of each file from `idt_configs` (based on host OS) in this reference repository to the `configs` directory inside the newly downloaded IDT project. This should provide you with the following files in `device_tester/configs` directory:
 
 ```
-configs/dummyPublicKeyAsciiHex.txt
 configs/flash.bat or flash.sh
 configs/config.json
 configs/userdata.json
@@ -802,7 +801,7 @@ Next, we need to update some configuration values in these files.
 A few notes on the provided build and flash scripts: First, if you run into issues with the provided scripts, you can copy commands provided by the MCUXpresso IDE during a GUI build and flash to create your own build and flash scripts. Second, these scripts only work if your `test` and `bootloader` project have been built once using the MCUXpresso GUI (this creates a required files `MIMXRT1062xxxxA.xml` and `MIMXRT1062xxxxA_part.xml` at `iot-reference-nxp-rt1060/projects/evkmimxrt1060/$PROJECT/Debug`)
 
 * In `config.json`, update the `profile` and `awsRegion` fields
-* In `device.json`, update `serialPort` to the serial port of your board as from [section 2.1](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#21-setting-up-device). Update `publicKeyAsciiHexFilePath` to the absolute path to `dummyPublicKeyAsciiHex.txt`. Update `publicDeviceCertificateArn` to the ARN of the certificate uploaded when [provisioning the device](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#41-provisioning-the-device).
+* In `device.json`, update `serialPort` to the serial port of your board as from [section 2.1](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#21-setting-up-device). Update `publicDeviceCertificateArn` to the ARN of the certificate uploaded when [provisioning the device](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#41-provisioning-the-device).
 * In `userdata.json`, update `sourcePath` to the absolute path to the root of this reference implementation repository.
 * In `userdata.json`, update `signerCertificate` with the ARN of the [application code signing certificate you created.](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate)
 * Run all the steps to create a [second code signing certificate](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate) but do NOT provision the key onto your board. Copy the ARN for this certificate in `userdata.json` for the field `untrustedSignerCertificate`.
@@ -826,7 +825,7 @@ To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC s
     ```
   - Should print “OK”
 - FullPKCS11_PreProvisioned_ECC
-  - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATIOn_TEST_SUITE to 0 in app_main.c
+  - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATION_TEST_SUITE to 0 in app_main.c
   - Build and flash 
   - Get the cert at the label in Teraterm
     ```
