@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 SOURCE_PATH=$1
-IDE_PATH=<PATH TO IDE e.g. /Applications/MCUXpressoIDE_x.y.z>
+IDE_PATH=<PATH TO IDE e.g. /usr/local/MCUXpressoIDE_x.y.z>
 MCUX_WORKSPACE_LOC=$SOURCE_PATH
 MCUX_FLASH_DIR0=<Path to IDE flash e.g. $IDE_PATH/ide/plugins/com.nxp.mcuxpresso.tools.bin.macosx_x.y.z/binaries/Flash>
 MCUX_FLASH_DIR1=$SOURCE_PATH/.mcuxpressoide_packages_support/MIMXRT1062xxxxA_support/Flash
