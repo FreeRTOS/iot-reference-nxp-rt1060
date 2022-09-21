@@ -826,7 +826,7 @@ To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC s
   - Should print “OK”
 - FullPKCS11_PreProvisioned_ECC
   - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATION_TEST_SUITE to 0 in app_main.c
-  - Build and flash 
+  - Build and flash
   - Get the cert at the label in Teraterm
     ```
     pki get cert sss:F0000001
