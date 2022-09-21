@@ -126,24 +126,23 @@ int FRTest_GenerateRandInt()
 
     if( first )
     {
-
-        if( TRNG_GetDefaultConfig(&trngConfig) != kStatus_Success )
+        if( TRNG_GetDefaultConfig( &trngConfig ) != kStatus_Success )
         {
             PRINTF( "TRNG_GetDefaultConfig fail.\n" );
-            return (0);
+            return( 0 );
         }
 
         /* Initialize TRNG */
-        if( TRNG_Init(TRNG, &trngConfig) != kStatus_Success )
+        if( TRNG_Init( TRNG, &trngConfig ) != kStatus_Success )
         {
             PRINTF( "TRNG_Init fail.\n" );
-            return (0);
+            return( 0 );
         }
 
         first = false;
     }
-    
-    if( TRNG_GetRandomData(TRNG, &ret, sizeof(ret)) != kStatus_Success )
+
+    if( TRNG_GetRandomData( TRNG, &ret, sizeof( ret ) ) != kStatus_Success )
     {
         PRINTF( "TRNG_GetRandomData fail.\n" );
     }
@@ -262,7 +261,7 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
 
     /* Initialization of timestamp for MQTT. */
     ulGlobalEntryTimeMs = MqttTestGetTimeMs();
-    
+
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_Send;
     xTransport.recv = TLS_FreeRTOS_Recv;

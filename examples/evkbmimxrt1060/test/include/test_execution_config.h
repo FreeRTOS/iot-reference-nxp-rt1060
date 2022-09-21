@@ -40,7 +40,7 @@
  *
  * #define MQTT_TEST_ENABLED                 (0)
  */
-#define MQTT_TEST_ENABLED                 ( 0 )
+#define MQTT_TEST_ENABLED              ( 0 )
 
 /**
  * @brief Configuration to enable the transport interface test.

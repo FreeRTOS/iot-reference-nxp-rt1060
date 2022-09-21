@@ -57,7 +57,7 @@
  *
  * #define IOT_THING_NAME  "PLACE_HOLDER"
  */
-#define IOT_THING_NAME  "PLACE_HOLDER"
+#define IOT_THING_NAME          "PLACE_HOLDER"
 
 /**
  * @brief The MQTT client identifier used in MQTT test.  Each client identifier
@@ -67,13 +67,13 @@
  * #define MQTT_TEST_CLIENT_IDENTIFIER				"insert here."
  */
 
- /**
+/**
  * @brief Network buffer size specified in bytes. Must be large enough to hold the maximum
  * anticipated MQTT payload.
  *
  * #define MQTT_TEST_NETWORK_BUFFER_SIZE			( 5000 )
  */
-#define MQTT_TEST_NETWORK_BUFFER_SIZE			( 5000 )
+#define MQTT_TEST_NETWORK_BUFFER_SIZE    ( 5000 )
 
 /**
  * @brief Endpoint of the echo server to connect to in transport interface test.

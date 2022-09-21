@@ -110,11 +110,11 @@ int RunOtaE2eDemo( void )
     if( xResult == pdPASS )
     {
         xResult = xTaskCreate( vOTAUpdateTask,
-                                "OTA",
-                                appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-                                NULL,
-                                appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
-                                NULL );
+                               "OTA",
+                               appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                               NULL,
+                               appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                               NULL );
     }
 
     return ( xResult == pdPASS ) ? 0 : -1;
