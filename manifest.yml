@@ -94,7 +94,7 @@ dependencies:
       url: "https://github.com/ThrowTheSwitch/Unity.git"
       path: "/Middleware/unity"
   - name: "FreeRTOS-Libraries-Integration-Tests"
-    version: "7b531a24eb3d1f5e9fdd23ca0f3c57d7f24c875f"
+    version: "e3d9edc51449155c6909bdddb31a2e3d8a3ddfc4"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests"

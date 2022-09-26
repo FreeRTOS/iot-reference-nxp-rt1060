@@ -53,6 +53,21 @@
 #define MQTT_SERVER_PORT        ( 8883 )
 
 /**
+ * @brief The client identifier for MQTT test.
+ *
+ * #define MQTT_TEST_CLIENT_IDENTIFIER    "PLACE_HOLDER"
+ */
+#define MQTT_TEST_CLIENT_IDENTIFIER    "PLACE_HOLDER"
+
+/**
+ * @brief Network buffer size specified in bytes. Must be large enough to hold the maximum
+ * anticipated MQTT payload.
+ *
+ * #define MQTT_TEST_NETWORK_BUFFER_SIZE			( 5000 )
+ */
+#define MQTT_TEST_NETWORK_BUFFER_SIZE    ( 5000 )
+
+/**
  * @brief Endpoint of the echo server to connect to in transport interface test.
  *
  * #define ECHO_SERVER_ENDPOINT   "PLACE_HOLDER"

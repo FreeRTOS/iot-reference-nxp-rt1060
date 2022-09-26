@@ -47,7 +47,7 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 1 )
+#define appmainPROVISIONING_MODE                  ( 0 )
 
 /**
  * @brief Subscribe Publish demo tasks configuration.

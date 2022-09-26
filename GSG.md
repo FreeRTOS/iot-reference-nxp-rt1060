@@ -41,7 +41,12 @@ Many of these steps are automated in production environments.
 
 [7 Run the Shadow Demo](#7-run-the-shadow-demo)<br>
 [8 Run the Defender Demo](#8-run-the-defender-demo)<br>
-[9 Troubleshooting Guide](#9-troubleshooting-guide)
+[9 Troubleshooting Guide](#9-troubleshooting-guide)<br>
+[10 Run AWS IoT Device Tester](#10-run-aws-iot-device-tester)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.1 Download AWS IoT Device Tester](#101-download-aws-iot-device-tester)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.2 Configure AWS IoT Device Tester](#102-configure-aws-iot-device-tester)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.3 Configure Divice](#103-configure-device)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[10.4 Running AWS IoT Device Tester](#104-running-aws-iot-device-tester)<br>
 
 ## 1 Prerequisites
 
@@ -764,11 +769,11 @@ The reference integration can be tested using [AWS IoT Device Tester for FreeRTO
 
 IDT runs a suite of tests that include testing the device's transport interface layer implementation, PKCS11 functionality, and OTA capabilities. In IDT test cases, the IDT binary will make a copy of the source code, update the header files in the `examples/evkbmimxrt1060/test` project, then compile the project and flash the resulting image to your board. Finally, IDT will read serial output from the board and communicate with the AWS IoT cloud to ensure that test cases are passing.
 
-### Download AWS IoT Device Tester
+### 10.1 Download AWS IoT Device Tester
 
 The latest version of IDT can be downloaded from the [public documentation page](https://docs.aws.amazon.com/freertos/latest/userguide/dev-test-versions-afr.html). This reference implementation only supports test suites of version 2.0 or later.
 
-### Configure AWS IoT Device Tester
+### 10.2 Configure AWS IoT Device Tester
 
 After downloading and unzipping IDT onto your file system, you should extract a file structure that includes the following directories:
 
@@ -802,7 +807,40 @@ A few notes on the provided build and flash scripts: First, if you run into issu
 * In `userdata.json`, update `signerCertificate` with the ARN of the [application code signing certificate you created.](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate)
 * Run all the steps to create a [second code signing certificate](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate) but do NOT provision the key onto your board. Copy the ARN for this certificate in `userdata.json` for the field `untrustedSignerCertificate`.
 
-### Running AWS IoT Device Tester
+### 10.3 Configure Device
+
+To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC successfully, we need to set our public keys manually once.
+
+- OTADataplaneMQTT
+  - Follow [6.2 Creating an Application Code Signing Certificate](#62-creating-an-application-code-signing-certificate) to set code signing certificate.
+- OTACore
+  - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATIOn_TEST_SUITE to 0 in app_main.c
+  - Build and flash
+  - In TeraTerm or putty, `pki set pub_key sss:00223346`
+  - Copy and paste below content to the serial port
+    ```
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyza/tGLVbVxhL41iYtC8D6tGEvAH
+    u498gNtqDtPsKaoR3t5xQx+6zdWiCi32fgFT2vkeVAmX3pf/Gl8nIP48Zg==
+    -----END PUBLIC KEY-----
+    ```
+  - Should print “OK”
+- FullPKCS11_PreProvisioned_ECC
+  - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATION_TEST_SUITE to 0 in app_main.c
+  - Build and flash
+  - Get the cert at the label in Teraterm
+    ```
+    pki get cert sss:F0000001
+    ```
+  - Paste that cert into a file cert.pem
+  - Run command `openssl x509 -pubkey -noout -in cert.pem > pubkey.pem`
+  - In TeraTerm or putty, `pki set pub_key sss:00223345`
+  - Paste the content of pubkey.pem to TeraTerm or putty
+  - Should print “OK”
+
+*Note: If you fail at setting public key, try sss:00223343 and remember to change the config.*
+
+### 10.4 Running AWS IoT Device Tester
 
 With all the configuration out of the way, we can run IDT either from an individual test group or test case, or the entire qualification suite.
 
