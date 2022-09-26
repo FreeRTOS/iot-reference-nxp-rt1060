@@ -43,21 +43,21 @@
  *
  * #define MQTT_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define MQTT_SERVER_ENDPOINT    "PLACE_HOLDER"
+#define MQTT_SERVER_ENDPOINT             "PLACE_HOLDER"
 
 /**
  * @brief Port of the MQTT broker to connect to in mqtt test.
  *
  * #define MQTT_SERVER_PORT       (8883)
  */
-#define MQTT_SERVER_PORT        ( 8883 )
+#define MQTT_SERVER_PORT                 ( 8883 )
 
 /**
  * @brief The client identifier for MQTT test.
  *
  * #define MQTT_TEST_CLIENT_IDENTIFIER    "PLACE_HOLDER"
  */
-#define MQTT_TEST_CLIENT_IDENTIFIER    "PLACE_HOLDER"
+#define MQTT_TEST_CLIENT_IDENTIFIER      "PLACE_HOLDER"
 
 /**
  * @brief Network buffer size specified in bytes. Must be large enough to hold the maximum
