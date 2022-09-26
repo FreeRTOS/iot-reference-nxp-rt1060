@@ -817,6 +817,7 @@ topiclen
 topicname
 topicnamelength
 tpm
+trng
 tx
 txd
 txt
