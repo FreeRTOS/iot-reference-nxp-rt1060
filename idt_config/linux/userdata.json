@@ -2,7 +2,7 @@
   "sourcePath": "<path to project root, e.g. /Users/foobar/iot-reference-nxp-rt1060>",
   "freeRTOSTestParamConfigPath": "{{testData.sourcePath}}/examples/evkbmimxrt1060/test/include/test_param_config.h",
   "freeRTOSTestExecutionConfigPath": "{{testData.sourcePath}}/examples/evkbmimxrt1060/test/include/test_execution_config.h",
-  "freeRTOSVersion": "202209.00-LTS",
+  "freeRTOSVersion": "202210.00-LTS",
   "buildTool": {
     "name": "nxp-build",
     "version": "1.0.0",
