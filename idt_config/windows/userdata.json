@@ -27,7 +27,7 @@
   },
   "otaConfiguration": {
   "otaPALCertificatePath": "sss:00223346",
-  "otaE2EFirmwareFilePath":"{{testData.sourcePath}}/projects/evkmimxrt1060/test/Debug/aws_iot_qual_test_signed_OTA.bin",
+  "otaE2EFirmwarePath":"{{testData.sourcePath}}/projects/evkmimxrt1060/test/Debug/aws_iot_qual_test_signed_OTA.bin",
   "deviceFirmwarePath":"NA",
     "codeSigningConfiguration": {
       "signingMethod": "AWS",

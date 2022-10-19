@@ -53,13 +53,6 @@
 #define MQTT_SERVER_PORT        ( 8883 )
 
 /**
- * @brief The IoT Thing name for the device for OTA test and MQTT test.
- *
- * #define IOT_THING_NAME  "PLACE_HOLDER"
- */
-#define IOT_THING_NAME          "PLACE_HOLDER"
-
-/**
  * @brief The MQTT client identifier used in MQTT test.  Each client identifier
  * must be unique; so edit as required to ensure that no two clients connecting to
  * the same broker use the same client identifier.
@@ -167,6 +160,13 @@
 #define OTA_PAL_USE_FILE_SYSTEM                          0
 
 /**
+ * @brief The IoT Thing name for the device for OTA test and MQTT test.
+ *
+ * #define IOT_THING_NAME  "PLACE_HOLDER"
+ */
+#define IOT_THING_NAME          "PLACE_HOLDER"
+
+/**
  * @brief 1 if using PKCS #11 to access the code sign certificate from NVM.
  */
 #define OTA_PAL_READ_CERTIFICATE_FROM_NVM_WITH_PKCS11    0
@@ -176,5 +176,8 @@
 #define OTA_APP_VERSION_MINOR                            9
 
 #define OTA_APP_VERSION_BUILD                            1
+
+#define OUTGOING_PUBLISH_RECORD_COUNT                    ( 10 )
+#define INCOMING_PUBLISH_RECORD_COUNT                    ( 10 )
 
 #endif /* TEST_PARAM_CONFIG_H */

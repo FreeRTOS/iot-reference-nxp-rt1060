@@ -70,6 +70,9 @@ static NetworkContext_t xSecondNetworkContext = { 0 };
  */
 static uint32_t ulGlobalEntryTimeMs;
 
+/* Function declaration. */
+uint32_t MqttTestGetTimeMs( void );
+
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
                                                           void * pvNetworkCredentials )
@@ -232,6 +235,12 @@ void * FRTest_MemoryAlloc( size_t size )
 void FRTest_MemoryFree( void * ptr )
 {
     return vPortFree( ptr );
+}
+/*-----------------------------------------------------------*/
+
+uint32_t FRTest_GetTimeMs()
+{
+    return MqttTestGetTimeMs();
 }
 /*-----------------------------------------------------------*/
 
