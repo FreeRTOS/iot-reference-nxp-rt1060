@@ -81,7 +81,6 @@
  * #define ECHO_SERVER_PORT       (9000)
  */
 
-
 /**
  * @brief Root certificate of the echo server.
  *
@@ -164,7 +163,7 @@
  *
  * #define IOT_THING_NAME  "PLACE_HOLDER"
  */
-#define IOT_THING_NAME          "PLACE_HOLDER"
+#define IOT_THING_NAME                                   "PLACE_HOLDER"
 
 /**
  * @brief 1 if using PKCS #11 to access the code sign certificate from NVM.

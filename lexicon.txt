@@ -84,6 +84,7 @@ calloc
 cas
 casper
 cbc
+cbmc
 cbor
 ccm
 ccm
