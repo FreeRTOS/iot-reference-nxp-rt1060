@@ -865,4 +865,4 @@ For more information, `.\devicetester_win_x86-64.exe help` will show all availab
 
 When you run IDT, a `results/uuid` directory is generated that will contain all the logs and other information associated with your test run. This allows you to debug any failures.
 
-*Note: Please run qualification test without provision mode (set appmainPROVISIONING_MODE to 0 in [app_main.c](./examples/evkbmimxrt1060/test/app_main.c))*.
+*Note: Please run qualification test without provision mode (set appmainPROVISIONING_MODE to 0 in [app_main.c](./examples/evkbmimxrt1060/test/app_main.c)).*
