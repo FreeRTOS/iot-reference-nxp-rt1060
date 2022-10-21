@@ -841,7 +841,7 @@ To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC s
 
 ### 10.4 Running AWS IoT Device Tester
 
-With all the configuration out of the way, we can run IDT either from an individual test group or test case, or the entire qualification suite.
+With configuration complete, IDT can be run for an individual test group, a test case, or the entire qualification suite.
 
 To list the available test groups, run:
 
