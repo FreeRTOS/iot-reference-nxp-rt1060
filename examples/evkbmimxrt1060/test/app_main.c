@@ -94,6 +94,32 @@ int RunDeviceAdvisorDemo( void )
     return ( xResult == pdPASS ) ? 0 : -1;
 }
 
+int RunOtaE2eDemo( void )
+{
+    BaseType_t xResult = pdFAIL;
+
+    if( xGetMQTTAgentState() < MQTT_AGENT_STATE_INITIALIZED )
+    {
+        xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+    }
+    else
+    {
+        xResult = pdPASS;
+    }
+
+    if( xResult == pdPASS )
+    {
+        xResult = xTaskCreate( vOTAUpdateTask,
+                               "OTA",
+                               appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
+                               NULL,
+                               appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
+                               NULL );
+    }
+
+    return ( xResult == pdPASS ) ? 0 : -1;
+}
+
 int app_main( void )
 {
     BaseType_t xResult = pdFAIL;
@@ -118,25 +144,6 @@ int app_main( void )
         }
     }
 #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
-
-#if ( OTA_E2E_TEST_ENABLED == 1 )
-    {
-        if( xResult == pdPASS )
-        {
-            xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-        }
-
-        if( xResult == pdPASS )
-        {
-            xResult = xTaskCreate( vOTAUpdateTask,
-                                   "OTA",
-                                   appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-                                   NULL,
-                                   appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
-                                   NULL );
-        }
-    }
-#endif /* if ( OTA_E2E_TEST_ENABLED == 1 ) */
 
     {
         if( xResult == pdPASS )

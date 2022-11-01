@@ -2,7 +2,7 @@
   "sourcePath": "<path to project root, e.g. C:/Users/foobar/iot-reference-nxp-rt1060>",
   "freeRTOSTestParamConfigPath": "{{testData.sourcePath}}/examples/evkbmimxrt1060/test/include/test_param_config.h",
   "freeRTOSTestExecutionConfigPath": "{{testData.sourcePath}}/examples/evkbmimxrt1060/test/include/test_execution_config.h",
-  "freeRTOSVersion": "202012.04-LTS",
+  "freeRTOSVersion": "202210.00-LTS",
   "buildTool": {
     "name": "nxp-build",
     "version": "1.0.0",
@@ -26,13 +26,9 @@
     "serverPort": 9000
   },
   "otaConfiguration": {
-    "otaPALCertificateFile": "sss:00223346",
-    "otaPALFirmwareFileName": "dummy.bin",
-    "otaPALUseFileSystem": "No",
-    "otaE2EDemoFilePath": "{{userData.sourcePath}}/examples/evkbmimxrt1060/test",
-    "otaE2EDemoConfigFilePath": "{{testData.sourcePath}}/examples/evkbmimxrt1060/test/include/test_param_config.h",
-    "otaE2EFirmwareFilePath":"{{testData.sourcePath}}/projects/evkmimxrt1060/test/Debug/aws_iot_qual_test_signed_OTA.bin",
-    "otaE2EDeviceFirmwareFileName":"NA",
+  "otaPALCertificatePath": "sss:00223346",
+  "otaE2EFirmwarePath":"{{testData.sourcePath}}/projects/evkmimxrt1060/test/Debug/aws_iot_qual_test_signed_OTA.bin",
+  "deviceFirmwarePath":"NA",
     "codeSigningConfiguration": {
       "signingMethod": "AWS",
       "signerHashingAlgorithm": "SHA256",
@@ -47,9 +43,6 @@
   "pkcs11LabelConfiguration":{
     "pkcs11LabelPreProvisionedECDevicePrivateKeyForTLS": "\"sss:F0000000\"",
     "pkcs11LabelPreProvisionedECDevicePublicKeyForTLS": "\"sss:00223345\"",
-    "pkcs11LabelPreProvisionedECDeviceCertificateForTLS": "\"sss:F0000001\"",
-    "pkcs11LabelCodeVerifyKey": "\"sss:00223344\"",
-    "pkcs11LabelJITPCertificate": "\"sss:20181004\"",
-    "pkcs11LabelRootCertificate": "\"sss:20181002\""
+    "pkcs11LabelPreProvisionedECDeviceCertificateForTLS": "\"sss:F0000001\""
   }
 }

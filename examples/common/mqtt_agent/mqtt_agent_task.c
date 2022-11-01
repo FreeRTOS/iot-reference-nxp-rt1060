@@ -83,7 +83,7 @@
 #include "using_mbedtls.h"
 
 /* Keystore APIs to fetch configuration data. */
-#include "kvStore.h"
+#include "kvstore.h"
 
 /* Includes MQTT Agent Task management APIs. */
 #include "mqtt_agent_task.h"
@@ -373,7 +373,7 @@ static char * pcDeviceCertID = NULL;
 
 static MQTTStatus_t prvMQTTInit( void )
 {
-    TransportInterface_t xTransport;
+    TransportInterface_t xTransport = { 0 };
     MQTTStatus_t xReturn;
     MQTTFixedBuffer_t xFixedBuffer = { .pBuffer = xNetworkBuffer, .size = MQTT_AGENT_NETWORK_BUFFER_SIZE };
     static uint8_t staticQueueStorageArea[ MQTT_AGENT_COMMAND_QUEUE_LENGTH * sizeof( MQTTAgentCommand_t * ) ];

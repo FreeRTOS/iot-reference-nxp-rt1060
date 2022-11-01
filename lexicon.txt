@@ -84,6 +84,7 @@ calloc
 cas
 casper
 cbc
+cbmc
 cbor
 ccm
 ccm
@@ -817,6 +818,7 @@ topiclen
 topicname
 topicnamelength
 tpm
+trng
 tx
 txd
 txt
