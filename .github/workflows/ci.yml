@@ -46,7 +46,7 @@ jobs:
         with:
           path: ./
           include-file-types: .c,.h,.md,.dox
-          exclude-dirs: NXP
+          exclude-dirs: NXP,core,device-defender,device-shadow,ota,backoffAlgorithm,coreJSON,coreMQTT,coreMQTT-Agent,corePKCS11,kernel,pkcs11,tests,lwip,mbedtls,mcuboot,tinycbor,unity
 
   formatting:
     runs-on: ubuntu-latest
