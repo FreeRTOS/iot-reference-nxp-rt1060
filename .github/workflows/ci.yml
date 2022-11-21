@@ -42,7 +42,7 @@ jobs:
       - name: Clone This Repo
         uses: actions/checkout@v2
       - name: Run link verifier
-        uses: ActoryOu/CI-CD-Github-Actions/link-verifier@fix-link-verify
+        uses: FreeRTOS/CI-CD-Github-Actions/link-verifier@main
         with:
           path: ./
           include-file-types: .c,.h,.md,.dox
