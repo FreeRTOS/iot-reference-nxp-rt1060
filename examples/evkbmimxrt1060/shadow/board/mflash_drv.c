@@ -340,6 +340,7 @@ static int32_t mflash_drv_page_program_internal( uint32_t page_addr,
     __asm( "cpsid i" );
 
     status_t status;
+
     status = flexspi_nor_flash_page_program( MFLASH_FLEXSPI, page_addr, data, MFLASH_PAGE_SIZE );
 
     /* Do software reset. */
@@ -384,6 +385,7 @@ static int32_t mflash_drv_read_internal( uint32_t addr,
     __asm( "cpsid i" );
 
     status_t status;
+
     status = flexspi_nor_read_data( MFLASH_FLEXSPI, addr, buffer, len );
 
     /* Do software reset. */
