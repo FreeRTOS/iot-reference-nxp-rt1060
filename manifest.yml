@@ -1,10 +1,10 @@
 name : "NXP i.MXRT1060 and EdgeLock® SE050 Reference Integration"
-version: "v202203.00"
+version: "v202210.01"
 description: |-
   "Reference IoT integration project using NXP i.MX RT1060 with EdgeLock® SE050 secure element and FreeRTOS LTS libraries"
 dependencies:
   - name: "FreeRTOS-Kernel"
-    version: "V10.5.0"
+    version: "V10.5.01"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
@@ -16,7 +16,7 @@ dependencies:
       url: "https://github.com/FreeRTOS/coreJSON.git"
       path: "/Middleware/FreeRTOS/coreJSON"
   - name: "coreMQTT"
-    version: "v2.1.0"
+    version: "v2.1.1"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT.git"
@@ -94,7 +94,7 @@ dependencies:
       url: "https://github.com/ThrowTheSwitch/Unity.git"
       path: "/Middleware/unity"
   - name: "FreeRTOS-Libraries-Integration-Tests"
-    version: "202210.00"
+    version: "202210.01"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests"
