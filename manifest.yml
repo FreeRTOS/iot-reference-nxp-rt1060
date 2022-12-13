@@ -4,7 +4,7 @@ description: |-
   "Reference IoT integration project using NXP i.MX RT1060 with EdgeLock® SE050 secure element and FreeRTOS LTS libraries"
 dependencies:
   - name: "FreeRTOS-Kernel"
-    version: "V10.5.01"
+    version: "V10.5.1"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
