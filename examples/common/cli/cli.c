@@ -23,10 +23,11 @@
  *
  * 1 tab == 4 spaces!
  */
-#include <string.h>
 
+/* FreeRTOS Includes */
 #include "FreeRTOS.h"
 #include "task.h"
+
 #include "FreeRTOS_CLI_Console.h"
 #include "FreeRTOS_CLI.h"
 #include "kvstore.h"
@@ -34,6 +35,10 @@
 #include "mbedtls/base64.h"
 #include "mbedtls/x509_crt.h"
 #include "mbedtls/pem.h"
+
+/* C Library Includes*/
+#include <string.h> /* memset, strncmp, strncpy */
+#include <stdio.h>  /* snprintf */
 
 /**
  * @brief Maximum length of the buffer used to send a command output to console.
