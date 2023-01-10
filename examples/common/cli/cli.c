@@ -267,7 +267,7 @@ static int prvWriteCertPemToConsole( const unsigned char * int_ca_cert_der,
     const char end[] = "-----END CERTIFICATE-----\r\n";
 
 #define CERT_PER_LINE    64
-    static char cCertPem[ 4096 ] = { 0 };
+    static unsigned char cCertPem[ 4096 ] = { 0 };
     size_t offset = 0U, certLength = 0U;
 
     ret = mbedtls_pem_write_buffer( start,
@@ -289,7 +289,7 @@ static int prvWriteCertPemToConsole( const unsigned char * int_ca_cert_der,
             }
             else
             {
-                uartConsoleIO.write( &cCertPem[ offset ], 1U );
+                uartConsoleIO.write( ( const char * ) &cCertPem[ offset ], 1U );
             }
         }
     }
@@ -559,7 +559,7 @@ static BaseType_t prvPKICommandHandler( char * pcWriteBuffer,
 
                     if( pkcs11Status != CKR_OK )
                     {
-                        snprintf( pcWriteBuffer, xWriteBufferLen, "PKCS11 ERR %x", pkcs11Status );
+                        snprintf( pcWriteBuffer, xWriteBufferLen, "PKCS11 ERR %lx", pkcs11Status );
                     }
                     else
                     {
@@ -585,11 +585,11 @@ static BaseType_t prvPKICommandHandler( char * pcWriteBuffer,
             {
                 if( strncmp( pObjectType, "pub_key", objectTypeLength ) == 0 )
                 {
-                    pkcs11Status = prvReadAndProvisionPublicKey( pObjectLabel, labelLength );
+                    pkcs11Status = prvReadAndProvisionPublicKey( ( uint8_t * ) pObjectLabel, labelLength );
 
                     if( pkcs11Status != CKR_OK )
                     {
-                        snprintf( pcWriteBuffer, xWriteBufferLen, "PKCS11 ERR %x", pkcs11Status );
+                        snprintf( pcWriteBuffer, xWriteBufferLen, "PKCS11 ERR %lx", pkcs11Status );
                     }
                     else
                     {

@@ -32,6 +32,9 @@
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 
+/* C Library includes. */
+#include <string.h> /* memset */
+
 /*-----------------------------------------------------------*/
 
 /**
