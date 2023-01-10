@@ -124,9 +124,6 @@
 #define FLEXSPI_4PAD                   2
 #define FLEXSPI_8PAD                   3
 
-#define FLEXSPI_LUT_SEQ( cmd0, pad0, op0, cmd1, pad1, op1 )                                                                     \
-    ( FLEXSPI_LUT_OPERAND0( op0 ) | FLEXSPI_LUT_NUM_PADS0( pad0 ) | FLEXSPI_LUT_OPCODE0( cmd0 ) | FLEXSPI_LUT_OPERAND1( op1 ) | \
-      FLEXSPI_LUT_NUM_PADS1( pad1 ) | FLEXSPI_LUT_OPCODE1( cmd1 ) )
 
 /*!@brief Definitions for FlexSPI Serial Clock Frequency */
 typedef enum _FlexSpiSerialClockFreq
