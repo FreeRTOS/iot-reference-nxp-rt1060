@@ -76,7 +76,7 @@
 #define FLASH_CONFIG_PAGESIZE      512
 #define FLASH_CONFIG_SECTORSIZE    256u * 1024u
 
-#endif // defined ISSI_AT25SFxxxA
+#endif /* defined ISSI_AT25SFxxxA */
 
 /* Lookup table related definitions */
 #define CMD_INDEX_READ                 0

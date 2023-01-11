@@ -80,4 +80,3 @@ void mbedtls_platform_free( void * ptr )
 {
     vPortFree( ptr );
 }
-
