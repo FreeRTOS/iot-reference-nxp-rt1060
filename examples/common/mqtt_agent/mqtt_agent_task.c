@@ -164,7 +164,7 @@
  * @brief The MQTT agent manages the MQTT contexts.  This set the handle to the
  * context used by this demo.
  */
-#define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 ) ''
+#define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 )
 
 /**
  * @brief Event Bit corresponding to an MQTT agent state.
