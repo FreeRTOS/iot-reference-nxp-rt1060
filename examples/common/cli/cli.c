@@ -37,8 +37,8 @@
 #include "mbedtls/pem.h"
 
 /* C Library Includes*/
-#include <string.h> /* memset, strncmp, strncpy */
-#include <stdio.h>  /* snprintf */
+#include <string.h>
+#include <stdio.h>
 
 /**
  * @brief Maximum length of the buffer used to send a command output to console.

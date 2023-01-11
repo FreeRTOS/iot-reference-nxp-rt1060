@@ -186,8 +186,8 @@ static int privateKeySigningCallback( void * pvContext,
                                       unsigned char * pucSig,
                                       size_t * pxSigLen,
                                       int ( * piRng )( void *,
-                                                           unsigned char *,
-                                                           size_t ),
+                                                       unsigned char *,
+                                                       size_t ),
                                       void * pvRng );
 
 /**
