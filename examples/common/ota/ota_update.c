@@ -768,7 +768,8 @@ static BaseType_t prvMatchClientIdentifierInTopic( const char * pTopic,
                                                    size_t clientIdentifierLength )
 {
     BaseType_t isMatch = pdFALSE;
-    size_t idx, matchIdx = 0;
+    size_t idx;
+    size_t matchIdx = 0;
 
     for( idx = OTA_TOPIC_CLIENT_IDENTIFIER_START_IDX; idx < topicNameLength; idx++ )
     {
@@ -940,14 +941,16 @@ static OtaMqttStatus_t prvMQTTPublish( const char * const pacTopic,
     OtaMqttStatus_t otaRet = OtaMqttSuccess;
     BaseType_t result;
     MQTTStatus_t mqttStatus = MQTTBadParameter;
-    MQTTPublishInfo_t publishInfo = { 0 };
+    MQTTPublishInfo_t publishInfo = { MQTTQoS0 };
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
     uint32_t ulNotifiedValue;
 
+    configASSERT( qos <= MQTTQoS2 );
+
     publishInfo.pTopicName = pacTopic;
     publishInfo.topicNameLength = topicLen;
-    publishInfo.qos = qos;
+    publishInfo.qos = ( MQTTQoS_t ) qos;
     publishInfo.pPayload = pMsg;
     publishInfo.payloadLength = msgSize;
 
@@ -1011,7 +1014,7 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
     MQTTStatus_t mqttStatus;
     uint32_t ulNotifiedValue;
     MQTTAgentSubscribeArgs_t xSubscribeArgs = { 0 };
-    MQTTSubscribeInfo_t xSubscribeInfo = { 0 };
+    MQTTSubscribeInfo_t xSubscribeInfo = { MQTTQoS0 };
     BaseType_t result;
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
@@ -1019,10 +1022,11 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
 
     configASSERT( pTopicFilter != NULL );
     configASSERT( topicFilterLength > 0 );
+    configASSERT( ucQoS <= MQTTQoS2 );
 
     xSubscribeInfo.pTopicFilter = pTopicFilter;
     xSubscribeInfo.topicFilterLength = topicFilterLength;
-    xSubscribeInfo.qos = ucQoS;
+    xSubscribeInfo.qos = ( MQTTQoS_t ) ucQoS;
     xSubscribeArgs.pSubscribeInfo = &xSubscribeInfo;
     xSubscribeArgs.numSubscriptions = 1;
 
