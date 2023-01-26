@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?debugstack-directory version="1.0"?>
+<directory xmlns:xi="http://www.w3.org/2001/XInclude">
+   <xi:include href="file:/C:/Users/kstribrn/workspace/forks/iot-reference-nxp-rt1060/.mcuxpressoide_packages_support/MIMXRT1062xxxxA_support/MIMXRT1060_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/kstribrn/workspace/forks/iot-reference-nxp-rt1060/.mcuxpressoide_packages_support/MIMXRT1062xxxxA_support/MIMXRT1060_dir_part.xml"/>
+</directory>
