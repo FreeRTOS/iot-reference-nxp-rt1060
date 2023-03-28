@@ -59,6 +59,8 @@
 #include "mflash_file.h"
 #include "kvstore.h"
 
+#include "demo_restricted_task.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -316,6 +318,8 @@ int main( void )
             /* Empty while. */
         }
     }
+
+    printRegions();
 
     vTaskStartScheduler();
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chips chipVendor="NXP"
+       family="LPC546xx"
+       vendorURL="http://www.nxp.com"
+       chipURL="http://www.nxp.com/lpc">
+   <chip name="LPC54608J512"
+         displayName="LPC54608J512"
+         xml_file="LPC54608_internal.xml"
+         chipURL="http://www.nxp.com/lpc"/>
+</chips>

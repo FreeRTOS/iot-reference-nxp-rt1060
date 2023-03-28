@@ -1,0 +1,10 @@
+"Task Aware Debugger for GDB" version 11.7.0 (202212092054)
+(c) 2016-2022 NXP Semiconductors, Inc.
+==================================
+15:52:42.520 INFO: [ZephyrRTOS] .config file could not be read [C:\Users\kanherea\Desktop\Incremental_changes\SESIP_MPU\projects\evkmimxrt1060\sesip\Debug\.config (The system cannot find the file specified)]
+15:52:42.520 INFO: [TadModel] DSF session ID 14 has started.
+15:53:01.151 INFO: [TadState] TAD state changed: DEBUG_STARTED -> DEBUG_INIT_0 (RESUMED, USER_REQUEST)
+15:53:01.208 INFO: [TadState] TAD state changed: DEBUG_INIT_0 -> DEBUG_INIT_1 (SUSPENDED, SIGNAL)
+15:53:02.163 INFO: [TadState] TAD state changed: DEBUG_INIT_1 -> DEBUG_SUSPENDED (RESUMED, USER_REQUEST)
+15:59:08.190 INFO: [TadState] TAD state changed: DEBUG_SUSPENDED -> DEBUG_SUSPENDED (SUSPENDED, SIGNAL)
+15:59:10.347 INFO: [TadModel] DSF session ID 14 has ended.

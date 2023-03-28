@@ -49,6 +49,10 @@ extern void vLoggingPrintf( const char * pcFormat,
 #endif
 
 
+#define configALLOW_UNPRIVILEGED_CRITICAL_SECTIONS   0
+#define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY  1
+#define configTOTAL_MPU_REGIONS                      16
+
 #define configSUPPORT_STATIC_ALLOCATION              1
 
 #define configUSE_PREEMPTION                         1
@@ -60,7 +64,7 @@ extern void vLoggingPrintf( const char * pcFormat,
 #define configTICK_RATE_HZ                           ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES                         ( 9 )
 #define configMINIMAL_STACK_SIZE                     ( ( uint16_t ) 90 )
-#define configTOTAL_HEAP_SIZE                        ( ( size_t ) ( 160 * 1024 ) )    /* 160 Kbytes. */
+#define configTOTAL_HEAP_SIZE                        ( ( size_t ) ( 100 * 1024 ) )    /* 100 Kbytes. */
 #define configMAX_TASK_NAME_LEN                      ( 16 )
 #define configUSE_TRACE_FACILITY                     1
 #define configUSE_16_BIT_TICKS                       0

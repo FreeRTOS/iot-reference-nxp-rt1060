@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE infoList
+  SYSTEM "crt_infolist.dtd">
+<infoList vendor="NXP">
+   <info name="LPC54608J512" chip="LPC54608J512">
+      <chip>
+         <name>LPC54608J512</name>
+         <family>LPC546xx</family>
+         <vendor>NXP</vendor>
+         <memory id="Flash"
+                 type="Flash"
+                 size="512"
+                 is_ro="true"
+                 can_program="true"/>
+         <memory id="RAM" type="RAM" size="192"/>
+         <memoryInstance id="PROGRAM_FLASH"
+                         derived_from="Flash"
+                         location="0x00000000"
+                         size="0x00080000"
+                         driver="LPC5460x_512K.cfx"/>
+         <memoryInstance id="SRAM_UPPER"
+                         derived_from="RAM"
+                         location="0x20000000"
+                         size="0x00028000"/>
+         <memoryInstance id="SRAMX"
+                         derived_from="RAM"
+                         location="0x04000000"
+                         size="0x00008000"/>
+         <memoryInstance id="USB_RAM"
+                         derived_from="RAM"
+                         location="0x40100000"
+                         size="0x00002000"/>
+      </chip>
+      <processor>
+         <name gcc_name="cortex-m4">Cortex-M4</name>
+         <family>Cortex-M</family>
+      </processor>
+   </info>
+</infoList>
