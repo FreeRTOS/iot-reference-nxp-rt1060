@@ -32,6 +32,9 @@
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 
+/* C Library includes. */
+#include <string.h> /* memset */
+
 /*-----------------------------------------------------------*/
 
 /**
@@ -77,4 +80,3 @@ void mbedtls_platform_free( void * ptr )
 {
     vPortFree( ptr );
 }
-

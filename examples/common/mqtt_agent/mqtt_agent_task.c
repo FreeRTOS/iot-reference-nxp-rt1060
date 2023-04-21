@@ -164,7 +164,7 @@
  * @brief The MQTT agent manages the MQTT contexts.  This set the handle to the
  * context used by this demo.
  */
-#define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 ) ''
+#define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 )
 
 /**
  * @brief Event Bit corresponding to an MQTT agent state.
@@ -620,7 +620,7 @@ static MQTTStatus_t prvHandleResubscribe( void )
 
     /* These variables need to stay in scope until command completes. */
     static MQTTAgentSubscribeArgs_t xSubArgs = { 0 };
-    static MQTTSubscribeInfo_t xSubInfo[ MQTT_AGENT_MAX_SUBSCRIPTIONS ] = { 0 };
+    static MQTTSubscribeInfo_t xSubInfo[ MQTT_AGENT_MAX_SUBSCRIPTIONS ] = { MQTTQoS0 };
     static MQTTAgentCommandInfo_t xCommandParams = { 0 };
 
     /* Loop through each subscription in the subscription list and add a subscribe
@@ -716,7 +716,8 @@ static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
                                         MQTTPublishInfo_t * pxPublishInfo )
 {
     bool xPublishHandled = false;
-    char cOriginalChar, * pcLocation;
+    char cOriginalChar;
+    char * pcLocation;
 
     ( void ) packetId;
 
@@ -993,7 +994,8 @@ static uint32_t prvGetTimeMs( void )
 static bool prvMatchTopicFilterSubscriptions( MQTTPublishInfo_t * pxPublishInfo )
 {
     uint32_t ulIndex = 0;
-    bool isMatched = false, publishHandled = false;
+    bool isMatched = false;
+    bool publishHandled = false;
 
     xSemaphoreTake( xSubscriptionsMutex, portMAX_DELAY );
     {
@@ -1082,7 +1084,8 @@ MQTTAgentState_t xGetMQTTAgentState( void )
 BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xState,
                                    TickType_t xTicksToWait )
 {
-    EventBits_t xBitsSet, xBitsToWaitFor;
+    EventBits_t xBitsSet;
+    EventBits_t xBitsToWaitFor;
     BaseType_t xResult = pdFAIL;
 
     if( xState != MQTT_AGENT_STATE_NONE )
@@ -1108,7 +1111,8 @@ BaseType_t xAddMQTTTopicFilterCallback( const char * pcTopicFilter,
                                         BaseType_t xManageResubscription )
 {
     BaseType_t xResult = pdFAIL;
-    uint32_t ulIndex = 0U, ulAvailableIndex = MQTT_AGENT_MAX_SUBSCRIPTIONS;
+    uint32_t ulIndex = 0U;
+    uint32_t ulAvailableIndex = MQTT_AGENT_MAX_SUBSCRIPTIONS;
 
     xSemaphoreTake( xSubscriptionsMutex, portMAX_DELAY );
     {

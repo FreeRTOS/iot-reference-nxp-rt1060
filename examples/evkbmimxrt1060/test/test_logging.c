@@ -21,6 +21,7 @@
  * http://www.FreeRTOS.org
  * http://aws.amazon.com/freertos
  */
+#include "test_logging.h"
 
 #include <stdint.h>
 #include "FreeRTOS.h"
@@ -54,7 +55,7 @@ void TEST_CacheResult( char cResult )
 }
 /*-----------------------------------------------------------*/
 
-void TEST_SubmitResultBuffer()
+void TEST_SubmitResultBuffer( void )
 {
     if( 0 != xBufferSize )
     {
@@ -65,13 +66,13 @@ void TEST_SubmitResultBuffer()
 }
 /*-----------------------------------------------------------*/
 
-void TEST_NotifyTestStart()
+void TEST_NotifyTestStart( void )
 {
     TEST_SubmitResult( "---------STARTING TESTS---------\n" );
 }
 /*-----------------------------------------------------------*/
 
-void TEST_NotifyTestFinished()
+void TEST_NotifyTestFinished( void )
 {
     TEST_SubmitResult( "-------ALL TESTS FINISHED-------\n" );
 }

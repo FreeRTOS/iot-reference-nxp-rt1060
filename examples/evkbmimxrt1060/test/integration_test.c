@@ -50,11 +50,6 @@
  */
 #define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 750 )
 
-static NetworkCredentials_t xNetworkCredentials = { 0 };
-static TransportInterface_t xTransport = { 0 };
-static NetworkContext_t xNetworkContext = { 0 };
-static NetworkContext_t xSecondNetworkContext = { 0 };
-
 /**
  * @brief Global entry time into the application to use as a reference timestamp
  * in the #prvGetTimeMs function. #prvGetTimeMs will always return the difference
@@ -65,6 +60,13 @@ static uint32_t ulGlobalEntryTimeMs;
 
 /* Function declaration. */
 uint32_t MqttTestGetTimeMs( void );
+
+/* suppress unused warnings when building without tests */
+#if ( MQTT_TEST_ENABLED == 1 ) || ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 )
+static NetworkCredentials_t xNetworkCredentials = { 0 };
+static TransportInterface_t xTransport = { 0 };
+static NetworkContext_t xNetworkContext = { 0 };
+static NetworkContext_t xSecondNetworkContext = { 0 };
 
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
@@ -88,6 +90,7 @@ static void prvTransportNetworkDisconnect( void * pNetworkContext )
 {
     TLS_FreeRTOS_Disconnect( pNetworkContext );
 }
+#endif /* if ( MQTT_TEST_ENABLED == 1 ) || ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 ) */
 
 typedef struct TaskParam
 {
@@ -112,6 +115,7 @@ static void ThreadWrapper( void * pParam )
 
     vTaskDelete( NULL );
 }
+
 /*-----------------------------------------------------------*/
 
 int FRTest_GenerateRandInt()
@@ -282,7 +286,7 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
     pTestParam->pGetTimeMs = MqttTestGetTimeMs;
 }
-#endif /* TRANSPORT_INTERFACE_TEST_ENABLED == 1 */
+#endif /* if ( MQTT_TEST_ENABLED == 1 ) */
 /*-----------------------------------------------------------*/
 
 #if ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 )

@@ -1,6 +1,8 @@
 #ifndef _UNITY_CONFIG_H
 #define _UNITY_CONFIG_H
 
+#include "test_logging.h"
+
 #define UNITY_OUTPUT_CHAR( a )     TEST_CacheResult( a )
 #define UNITY_OUTPUT_FLUSH()       TEST_SubmitResultBuffer()
 #define UNITY_OUTPUT_START()       TEST_NotifyTestStart()

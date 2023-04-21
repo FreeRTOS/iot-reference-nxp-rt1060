@@ -76,7 +76,7 @@
 #define FLASH_CONFIG_PAGESIZE      512
 #define FLASH_CONFIG_SECTORSIZE    256u * 1024u
 
-#endif // defined ISSI_AT25SFxxxA
+#endif /* defined ISSI_AT25SFxxxA */
 
 /* Lookup table related definitions */
 #define CMD_INDEX_READ                 0
@@ -124,9 +124,6 @@
 #define FLEXSPI_4PAD                   2
 #define FLEXSPI_8PAD                   3
 
-#define FLEXSPI_LUT_SEQ( cmd0, pad0, op0, cmd1, pad1, op1 )                                                                     \
-    ( FLEXSPI_LUT_OPERAND0( op0 ) | FLEXSPI_LUT_NUM_PADS0( pad0 ) | FLEXSPI_LUT_OPCODE0( cmd0 ) | FLEXSPI_LUT_OPERAND1( op1 ) | \
-      FLEXSPI_LUT_NUM_PADS1( pad1 ) | FLEXSPI_LUT_OPCODE1( cmd1 ) )
 
 /*!@brief Definitions for FlexSPI Serial Clock Frequency */
 typedef enum _FlexSpiSerialClockFreq
