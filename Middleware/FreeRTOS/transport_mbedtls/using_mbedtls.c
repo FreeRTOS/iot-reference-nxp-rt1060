@@ -33,19 +33,18 @@
 /* Standard includes. */
 #include <string.h>
 
-#include "lwip/netdb.h"
-
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 
 #include "core_pkcs11_config.h"
-
 
 /* PKCS #11 includes. */
 #include "core_pkcs11.h"
 
 /* TLS transport header. */
 #include "using_mbedtls.h"
+
+#include "tcp_sockets_wrapper.h"
 
 #include "pkcs11.h"
 #include "core_pki_utils.h"
@@ -179,16 +178,16 @@ static CK_RV initializeClientKeys( SSLContext_t * pxCtx,
  *
  * @return Zero on success.
  */
-static int32_t privateKeySigningCallback( void * pvContext,
-                                          mbedtls_md_type_t xMdAlg,
-                                          const unsigned char * pucHash,
-                                          size_t xHashLen,
-                                          unsigned char * pucSig,
-                                          size_t * pxSigLen,
-                                          int32_t ( * piRng )( void *,
-                                                               unsigned char *,
-                                                               size_t ),
-                                          void * pvRng );
+static int privateKeySigningCallback( void * pvContext,
+                                      mbedtls_md_type_t xMdAlg,
+                                      const unsigned char * pucHash,
+                                      size_t xHashLen,
+                                      unsigned char * pucSig,
+                                      size_t * pxSigLen,
+                                      int ( * piRng )( void *,
+                                                       unsigned char *,
+                                                       size_t ),
+                                      void * pvRng );
 
 /**
  * @brief Setup TLS by initializing contexts and setting configurations.
@@ -204,14 +203,8 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
                                       const char * pHostName,
                                       const NetworkCredentials_t * pNetworkCredentials );
 
-static int lwip_socket_connect( const char * pHostName,
-                                uint16_t port,
-                                uint32_t receiveTimeoutMs,
-                                uint32_t sendTimeoutMs,
-                                Socket_t * pSocket );
-
 /**
- * @brief Sends data over LWIP sockets.
+ * @brief Sends data over +TCP sockets.
  *
  * @param[in] ctx The network context containing the socket handle.
  * @param[in] buf Buffer containing the bytes to send.
@@ -219,13 +212,13 @@ static int lwip_socket_connect( const char * pHostName,
  *
  * @return Number of bytes sent on success; else a negative value.
  */
-int mbedtls_bio_lwip_send( void * ctx,
-                           const unsigned char * buf,
-                           size_t len );
+int xMbedTLSBioTCPSocketsWrapperSend( void * ctx,
+                                      const unsigned char * buf,
+                                      size_t len );
 
 
 /**
- * @brief Receives data from LWIP socket.
+ * @brief Receives data from +TCP socket.
  *
  * @param[in] ctx The network context containing the socket handle.
  * @param[out] buf Buffer to receive bytes into.
@@ -233,9 +226,9 @@ int mbedtls_bio_lwip_send( void * ctx,
  *
  * @return Number of bytes received if successful; Negative value on error.
  */
-int mbedtls_bio_lwip_recv( void * ctx,
-                           unsigned char * buf,
-                           size_t len );
+int xMbedTLSBioTCPSocketsWrapperRecv( void * ctx,
+                                      unsigned char * buf,
+                                      size_t len );
 /*-----------------------------------------------------------*/
 
 static void sslContextInit( SSLContext_t * pSslContext )
@@ -480,19 +473,19 @@ static CK_RV initializeClientKeys( SSLContext_t * pxCtx,
 
 /*-----------------------------------------------------------*/
 
-static int32_t privateKeySigningCallback( void * pvContext,
-                                          mbedtls_md_type_t xMdAlg,
-                                          const unsigned char * pucHash,
-                                          size_t xHashLen,
-                                          unsigned char * pucSig,
-                                          size_t * pxSigLen,
-                                          int32_t ( * piRng )( void *,
-                                                               unsigned char *,
-                                                               size_t ),
-                                          void * pvRng )
+static int privateKeySigningCallback( void * pvContext,
+                                      mbedtls_md_type_t xMdAlg,
+                                      const unsigned char * pucHash,
+                                      size_t xHashLen,
+                                      unsigned char * pucSig,
+                                      size_t * pxSigLen,
+                                      int ( * piRng )( void *,
+                                                       unsigned char *,
+                                                       size_t ),
+                                      void * pvRng )
 {
     CK_RV xResult = CKR_OK;
-    int32_t lFinalResult = 0;
+    int iFinalResult = 0;
     SSLContext_t * pxTLSContext = ( SSLContext_t * ) pvContext;
     CK_MECHANISM xMech = { 0 };
     CK_BYTE xToBeSigned[ 256 ];
@@ -568,9 +561,10 @@ static int32_t privateKeySigningCallback( void * pvContext,
     if( xResult != CKR_OK )
     {
         LogError( ( "Failed to sign message using PKCS #11 with error code %02X.", xResult ) );
+        iFinalResult = -1;
     }
 
-    return lFinalResult;
+    return iFinalResult;
 }
 
 
@@ -750,8 +744,8 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
             /* coverity[misra_c_2012_rule_11_2_violation] */
             mbedtls_ssl_set_bio( &( pNetworkContext->sslContext.context ),
                                  ( void * ) pNetworkContext->tcpSocket,
-                                 mbedtls_bio_lwip_send,
-                                 mbedtls_bio_lwip_recv,
+								 xMbedTLSBioTCPSocketsWrapperSend,
+								 xMbedTLSBioTCPSocketsWrapperRecv,
                                  NULL );
         }
     }
@@ -828,128 +822,83 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
     return returnStatus;
 }
 
-/*-----------------------------------------------------------*/
-
-static int lwip_socket_connect( const char * pHostName,
-                                uint16_t port,
-                                uint32_t receiveTimeoutMs,
-                                uint32_t sendTimeoutMs,
-                                Socket_t * pSocket )
+int xMbedTLSBioTCPSocketsWrapperSend( void * ctx,
+                                      const unsigned char * buf,
+                                      size_t len )
 {
-    int socketStatus = 0;
-    struct sockaddr_in serverAddr = { 0 };
-    struct hostent * pDnsEntry = NULL;
-    int socket = -1;
+    int32_t xReturnStatus;
 
-    socketStatus = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+    configASSERT( ctx != NULL );
+    configASSERT( buf != NULL );
 
-    if( socketStatus >= 0 )
+    xReturnStatus = TCP_Sockets_Send( ( Socket_t ) ctx, buf, len );
+
+    switch( xReturnStatus )
     {
-        socket = socketStatus;
-        socketStatus = 0;
-    }
-    else
-    {
-        LogError( ( "Failed to create TCP socket with error %d.", socketStatus ) );
-    }
+        /* Socket was closed or just got closed. */
+        case TCP_SOCKETS_ERRNO_ENOTCONN:
+        /* Not enough memory for the socket to create either an Rx or Tx stream. */
+        case TCP_SOCKETS_ERRNO_ENOMEM:
+        /* Socket is not valid, is not a TCP socket, or is not bound. */
+        case TCP_SOCKETS_ERRNO_EINVAL:
+        /* Socket received a signal, causing the read operation to be aborted. */
+        case TCP_SOCKETS_ERRNO_EINTR:
+            xReturnStatus = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+            break;
 
-    if( socketStatus == 0 )
-    {
-        pDnsEntry = gethostbyname( pHostName );
+        /* A timeout occurred before any data could be sent. */
+        case TCP_SOCKETS_ERRNO_ENOSPC:
+            xReturnStatus = MBEDTLS_ERR_SSL_TIMEOUT;
+            break;
 
-        if( pDnsEntry != NULL )
-        {
-            serverAddr.sin_family = AF_INET;
-            serverAddr.sin_port = htons( port );
-            memcpy( ( char * ) &serverAddr.sin_addr, ( char * ) ( pDnsEntry->h_addr_list[ 0 ] ), pDnsEntry->h_length );
-
-            socketStatus = connect( socket, ( struct sockaddr * ) ( &serverAddr ), sizeof( serverAddr ) );
-
-            if( socketStatus < 0 )
-            {
-                LogError( ( "Failed to establish TCP connection to %s, with error %d.", pHostName, socketStatus ) );
-            }
-        }
-        else
-        {
-            LogError( ( "Failed to resolve IP address for host %s", pHostName ) );
-            socketStatus = -1;
-        }
+        default:
+            break;
     }
 
-    if( socketStatus == 0 )
-    {
-        socketStatus = setsockopt( socket, SOL_SOCKET, SO_RCVTIMEO, &receiveTimeoutMs, sizeof( receiveTimeoutMs ) );
-    }
-
-    if( socketStatus == 0 )
-    {
-        socketStatus = setsockopt( socket, SOL_SOCKET, SO_SNDTIMEO, &sendTimeoutMs, sizeof( sendTimeoutMs ) );
-    }
-
-    if( socketStatus == 0 )
-    {
-        ( *pSocket ) = socket;
-    }
-    else
-    {
-        if( socket >= 0 )
-        {
-            closesocket( socket );
-        }
-    }
-
-    return socketStatus;
+    return ( int ) xReturnStatus;
 }
 
-/*-----------------------------------------------------------*/
-int mbedtls_bio_lwip_send( void * ctx,
-                           const unsigned char * buf,
-                           size_t len )
+/**
+ * @brief Receives data from TCP socket.
+ *
+ * @param[in] ctx The network context containing the socket handle.
+ * @param[out] buf Buffer to receive bytes into.
+ * @param[in] len Number of bytes to receive from the network.
+ *
+ * @return Number of bytes received if successful; Negative value on error.
+ */
+int xMbedTLSBioTCPSocketsWrapperRecv( void * ctx,
+                                      unsigned char * buf,
+                                      size_t len )
 {
-    int sendStatus = 0;
+    int32_t xReturnStatus;
 
+    configASSERT( ctx != NULL );
     configASSERT( buf != NULL );
-    sendStatus = send( ( Socket_t ) ctx, buf, len, 0 );
 
-    return sendStatus;
-}
+    xReturnStatus = TCP_Sockets_Recv( ( Socket_t ) ctx, buf, len );
 
-/*-----------------------------------------------------------*/
-
-int mbedtls_bio_lwip_recv( void * ctx,
-                           unsigned char * buf,
-                           size_t len )
-{
-    int recvStatus = 0;
-
-    configASSERT( buf != NULL );
-    recvStatus = recv( ( Socket_t ) ctx, buf, len, 0 );
-
-    if( -1 == recvStatus )
+    switch( xReturnStatus )
     {
-        /*
-         * 1. EWOULDBLOCK if the socket is NON-blocking, but there is no data
-         *    when recv is called.
-         * 2. EAGAIN if the socket is blocking and have waited long enough but
-         *    packet is not received.
-         */
-        if( ( errno == EWOULDBLOCK ) || ( errno == EAGAIN ) )
-        {
-            recvStatus = MBEDTLS_ERR_SSL_WANT_READ; /* timeout or would block */
-        }
-        else
-        {
-            recvStatus = -errno;
-        }
+        /* No data could be sent because the socket was or just got closed. */
+        case TCP_SOCKETS_ERRNO_ENOTCONN:
+        /* No data could be sent because there was insufficient memory. */
+        case TCP_SOCKETS_ERRNO_ENOMEM:
+        /* No data could be sent because xSocket was not a valid TCP socket. */
+        case TCP_SOCKETS_ERRNO_EINVAL:
+            xReturnStatus = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+            break;
+
+        /* A timeout occurred before any data could be received. */
+        case 0:
+            xReturnStatus = MBEDTLS_ERR_SSL_WANT_READ;
+            break;
+
+        default:
+            break;
     }
 
-    if( ( 0 == recvStatus ) && ( errno == ENOTCONN ) )
-    {
-        recvStatus = -ENOTCONN;
-    }
-
-    return recvStatus;
+    return ( int ) xReturnStatus;
 }
 
 /*-----------------------------------------------------------*/
@@ -961,7 +910,8 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
                                            uint32_t sendTimeoutMs )
 {
     TlsTransportStatus_t returnStatus = TLS_TRANSPORT_SUCCESS;
-    int opt;
+    BaseType_t socketStatus;
+    BaseType_t isSocketConnected;
 
     if( ( pNetworkContext == NULL ) ||
         ( pHostName == NULL ) ||
@@ -987,13 +937,18 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
     /* Establish a TCP connection with the server. */
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
-        if( lwip_socket_connect( pHostName, port, receiveTimeoutMs, sendTimeoutMs, &pNetworkContext->tcpSocket ) < 0 )
+    	socketStatus = TCP_Sockets_Connect( &( pNetworkContext->tcpSocket ),
+    	                                            pHostName,
+    	                                            port,
+    	                                            receiveTimeoutMs,
+    	                                            sendTimeoutMs );
+        if( socketStatus < 0 )
         {
             returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
         }
         else
         {
-            /* Empty else for MISRA 15.7 compliance. */
+        	isSocketConnected = pdTRUE;
         }
     }
 
@@ -1003,22 +958,13 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
         returnStatus = tlsSetup( pNetworkContext, pHostName, pNetworkCredentials );
     }
 
-    if( returnStatus == TLS_TRANSPORT_SUCCESS )
-    {
-        opt = 1;
-
-        if( lwip_ioctl( pNetworkContext->tcpSocket, FIONBIO, &opt ) != 0 )
-        {
-            returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
-        }
-    }
-
     /* Clean up on failure. */
     if( returnStatus != TLS_TRANSPORT_SUCCESS )
     {
-        if( ( pNetworkContext != NULL ) && ( pNetworkContext->tcpSocket >= 0 ) )
+        if( ( pNetworkContext != NULL ) && ( isSocketConnected == pdTRUE ) )
         {
-            ( void ) closesocket( pNetworkContext->tcpSocket );
+            TCP_Sockets_Disconnect( pNetworkContext->tcpSocket );
+            pNetworkContext->tcpSocket = NULL;
         }
     }
     else
@@ -1067,7 +1013,7 @@ void TLS_FreeRTOS_Disconnect( NetworkContext_t * pNetworkContext )
         }
 
         /* Close connection */
-        closesocket( pNetworkContext->tcpSocket );
+        TCP_Sockets_Disconnect( pNetworkContext->tcpSocket );
 
         /* Free mbed TLS contexts. */
         sslContextFree( &( pNetworkContext->sslContext ) );

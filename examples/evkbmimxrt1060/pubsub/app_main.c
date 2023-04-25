@@ -47,7 +47,7 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 1 )
+#define appmainPROVISIONING_MODE                  ( 0 )
 
 /**
  * @brief Subscribe Publish demo tasks configuration.
@@ -135,12 +135,14 @@ int app_main( void )
         }
 #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
 
+#if 0
         if( xResult == pdPASS )
         {
             xResult = xStartSimplePubSubTasks( appmainMQTT_NUM_PUBSUB_TASKS,
                                                appmainMQTT_PUBSUB_TASK_STACK_SIZE,
                                                appmainMQTT_PUBSUB_TASK_PRIORITY );
         }
+#endif
     }
 #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 

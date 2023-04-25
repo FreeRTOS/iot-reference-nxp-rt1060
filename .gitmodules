@@ -49,3 +49,6 @@
 [submodule "Middleware/FreeRTOS/tests"]
 	path = Middleware/FreeRTOS/tests
 	url = https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests.git
+[submodule "Middleware/FreeRTOS/FreeRTOS-Plus-TCP"]
+	path = Middleware/FreeRTOS/FreeRTOS-Plus-TCP
+	url = https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git

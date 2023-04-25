@@ -96,6 +96,7 @@
  */
 #define LOG_INFO     3
 
+
 /**
  * @brief Detailed and excessive debug information.
  *

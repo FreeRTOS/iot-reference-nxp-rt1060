@@ -141,7 +141,6 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/bootloader/include/flash_map_backend&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/bootloader/include/os&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/bootloader/include/sysflash&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/bootloader/keys&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/cache/armv7-m7&quot;"/>
 								</option>

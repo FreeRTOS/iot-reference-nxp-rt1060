@@ -510,6 +510,8 @@ CK_RV prvReadAndProvisionPublicKey( uint8_t * pucPublicKeyLabel,
 
                 ulLineStart = ulReadOffset;
             }
+
+            uartConsoleIO.write( "\r\n", 2U );
         }
         else if( ( byteRead >= 0 ) && ( byteRead <= 255 ) )
         {
