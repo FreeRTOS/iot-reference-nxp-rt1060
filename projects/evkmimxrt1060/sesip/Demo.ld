@@ -66,7 +66,7 @@ MEMORY
 
 /* Privilegd fuctions are stored are stored in FLash (VMA/LMA) and XIP. */
 __privileged_functions_region_size__  = 64K;
-__privileged_data_region_size__       = 120K;
+__privileged_data_region_size__       = 120K;  /* Try reducing it to 64k. But we need all functionality - check. */
 
 /* Symbols needed by the MPU setup code. */
 __FLASH_segment_start__ = ORIGIN( BOARD_FLASH );
@@ -83,13 +83,12 @@ SECTIONS
     .privileged_functions : ALIGN(4)
     {
         FILL(0xff)
-        __vectors_start__ = .;
-        __FLASH_segment_start__ = __vectors_start__;
+        __vectors_start__ = ABSOLUTE(.);
         __privileged_functions_start__ = __vectors_start__;
         
         /* Add in the list of all ISR vectors. */
         KEEP(*(.isr_vector))
-        /* Global Section Table */
+        /* Global Section Table. Align it to a 4 byte boundary. */
         . = ALIGN(4) ;
         __section_table_start = .;
         __data_section_table = .;
@@ -118,6 +117,7 @@ SECTIONS
         LONG(LOADADDR(.data_RAM5));
         LONG(    ADDR(.data_RAM5));
         LONG(  SIZEOF(.data_RAM5));
+
         __data_section_table_end = .;
         __bss_section_table = .;
         LONG(    ADDR(.bss));

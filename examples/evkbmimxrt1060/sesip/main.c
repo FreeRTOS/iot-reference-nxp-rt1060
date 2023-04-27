@@ -87,6 +87,7 @@
 /* ENET clock frequency. */
 #define EXAMPLE_CLOCK_FREQ     CLOCK_GetFreq( kCLOCK_IpgClk )
 
+#define hello_task_PRIORITY    ( configMAX_PRIORITIES - 1 )
 
 /*******************************************************************************
  * Prototypes
@@ -282,7 +283,7 @@ int main( void )
     gpio_pin_config_t gpio_config = { kGPIO_DigitalOutput, 0, kGPIO_NoIntmode };
 
     /* Init board hardware. */
-    BOARD_ConfigMPU();
+    //BOARD_ConfigMPU();
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
@@ -319,8 +320,6 @@ int main( void )
         }
     }
 
-    printRegions();
-
     vTaskStartScheduler();
 
     /* Should not reach here. */
@@ -331,6 +330,7 @@ int main( void )
 
 void vApplicationDaemonTaskStartupHook( void )
 {
+#if 1
     /* Initialize file system. */
     if( mflash_init( dir_template, false ) != kStatus_Success )
     {
@@ -365,6 +365,12 @@ void vApplicationDaemonTaskStartupHook( void )
             __asm( "NOP" );
         }
     }
+
+#else
+    xCreateRestrictedTasks( hello_task_PRIORITY );
+
+    printRegions();
+#endif
 }
 
 /**

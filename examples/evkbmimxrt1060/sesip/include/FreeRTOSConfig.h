@@ -50,7 +50,7 @@ extern void vLoggingPrintf( const char * pcFormat,
 
 
 #define configALLOW_UNPRIVILEGED_CRITICAL_SECTIONS   0
-#define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY  1
+#define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY  0
 #define configTOTAL_MPU_REGIONS                      16
 
 #define configSUPPORT_STATIC_ALLOCATION              1

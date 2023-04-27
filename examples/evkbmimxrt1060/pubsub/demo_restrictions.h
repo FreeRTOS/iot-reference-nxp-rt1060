@@ -25,33 +25,20 @@
  * 1 tab == 4 spaces!
  */
 
- /**
-  * @brief File shows a sample implementation of memory fault handler.
-  */
+/**
+ * @brief Header file contains APIs to demonstrate MPU functionalities.
+ */
 
-  /**
-   * @brief Memory fault handler invoked by the MPU unit for illegal access to a previleged memory.
-   * This overrides the default platform MemManage_Handler and calls the demo defined hard fault
-   * handler in user/demo_restrictions.c file.
-   */
-void MemManage_Handler(void) __attribute__((naked));
-/*-----------------------------------------------------------*/
-#include "FreeRTOS.h"
-extern void vHandleMemoryFault( uint32_t * pulFaultStackAddress );
+#ifndef USER_DEMO_RESTRICTIONS_H_
+#define USER_DEMO_RESTRICTIONS_H_
 
-void MemManage_Handler(void)
-{
-    __asm volatile
-    (
-        " tst lr, #4										\n"
-        " ite eq											\n"
-        " mrseq r0, msp										\n"
-        " mrsne r0, psp										\n"
-        " ldr r1, .handler_address_const					\n"
-        " bx r1												\n"
-        "													\n"
-    	" .ALIGN 4                                          \n"
-        " .handler_address_const: .word vHandleMemoryFault	\n"
-        );
-}
-/*-----------------------------------------------------------*/
+/**
+ * @brief Demo function to create restricted tasks given priority.
+ * Function creates a read-only task and read-write task to demonstrate the MPU
+ * functionalities with FreeRTOS tasks.
+ *
+ * @param[in] xPriority Priority of the restricted tasks.
+ */
+void xCreateRestrictedTasks( BaseType_t xPriority );
+
+#endif /* USER_DEMO_RESTRICTIONS_H_ */
