@@ -71,20 +71,12 @@
  * @brief Macro to override printf funtion to run it in privileged mode.
  * NXP PRINTF code resides somewhere in RAM that could be provided as accessible region, but it's simpler to
  * just run it as privileged */
-
-// portRAISE_PRIVILEGE
-//
 #define MPU_PRINTF( ... )                                      \
     {                                                          \
         portRAISE_PRIVILEGE();                                 \
         PRINTF( __VA_ARGS__ );                                 \
         portRESET_PRIVILEGE();                                 \
     }
-
-/*
- * vPortResetPrivilege( xRunningPrivileged );
- *
- * */
 
 /* For readability. Read about Hardfault Entry in ARMv7 docs for more details */
 typedef struct
@@ -180,6 +172,10 @@ static StackType_t xROAccessTaskStack[ RESTRICTED_TASK_STACK_SIZE ] __attribute_
 
 /* ------------------------------------------------------------------------------- */
 
+/**
+ * @brief This function prints the regions defined in the linker
+ * script.
+ */
 void printRegions( void )
 {
     uint32_t * tmp = NULL;
@@ -202,6 +198,13 @@ void printRegions( void )
     PRINTF( "\r\n" );
 }
 
+/**
+ * @brief A task with read-write access to the variable
+ * ucSharedMemory.
+ *
+ * @param[in] pvParameters Parameter being passed to the
+ * task. It is not used.
+ */
 static void prvRWAccessTask( void * pvParameters )
 {
     /* Unused parameters. */
@@ -218,6 +221,14 @@ static void prvRWAccessTask( void * pvParameters )
     }
 }
 
+/**
+ * @brief A task without write access to the variable
+ * ucSharedMemory. Still this task tried to write to it
+ * triggering a memory fault.
+ *
+ * @param[in] pvParameters Parameter being passed to the
+ * task. It is not used.
+ */
 static void prvROAccessTask( void * pvParameters )
 {
     uint8_t ucVal;
@@ -260,9 +271,18 @@ static void prvROAccessTask( void * pvParameters )
     }
 }
 
+/**
+ * @brief Create a read only and read write tasks. The read-write
+ * task has the privilege to write to a given common variable while
+ * the read-only task doesn't have the privilege to write to the
+ * variable and still tries to access it creating a memory fault.
+ *
+ * @param[in] xPriority The priority at which the RO and RW tasks
+ * are to be created.
+ */
 void xCreateRestrictedTasks( BaseType_t xPriority )
 {
-    /* Create restricted tasks */
+    /* Create restricted tasks. */
     TaskParameters_t xRWAccessTaskParameters =
     {
         .pvTaskCode     = prvRWAccessTask,

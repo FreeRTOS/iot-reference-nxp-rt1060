@@ -39,6 +39,11 @@ void MemManage_Handler(void) __attribute__((naked));
 #include "FreeRTOS.h"
 extern void vHandleMemoryFault( uint32_t * pulFaultStackAddress );
 
+/**
+ * @brief Handler for memory faults.
+ * The handler jumps to vHandleMemoryFault function to actually
+ * handle the fault.
+ */
 void MemManage_Handler(void)
 {
     __asm volatile

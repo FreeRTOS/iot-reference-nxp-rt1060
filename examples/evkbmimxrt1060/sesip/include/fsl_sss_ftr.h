@@ -128,7 +128,7 @@
  */
 
 /** Use mbedTLS as host crypto */
-#define SSS_HAVE_HOSTCRYPTO_MBEDTLS       1
+#define SSS_HAVE_HOSTCRYPTO_MBEDTLS       0
 
 /** Use mbed-crypto as host crypto
  * Required for ARM-PSA / TF-M */

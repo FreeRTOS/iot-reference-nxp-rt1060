@@ -36,223 +36,26 @@
 #include "clock_config.h"
 #include "board.h"
 
-#include "fsl_phy.h"
-/* lwIP Includes */
-#include "lwip/tcpip.h"
-#include "lwip/dhcp.h"
-#include "lwip/prot/dhcp.h"
-#include "netif/ethernet.h"
-#include "enet_ethernetif.h"
-#include "lwip/netifapi.h"
-#include "fsl_phyksz8081.h"
-#include "fsl_enet_mdio.h"
 #include "fsl_gpio.h"
 #include "fsl_iomuxc.h"
-
-#include "ksdk_mbedtls.h"
 
 #include "nxLog_App.h"
 #include "mflash_drv.h"
 
-#include "ex_sss_boot.h"
+//#include "ex_sss_boot.h"
 
 #include "mflash_file.h"
-#include "kvstore.h"
 
 #include "demo_restricted_task.h"
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#ifndef EXAMPLE_NETIF_INIT_FN
-/*! @brief Network interface initialization function. */
-#define EXAMPLE_NETIF_INIT_FN    ethernetif0_init
-#endif /* EXAMPLE_NETIF_INIT_FN */
-
-/* MAC address configuration. */
-#define configMAC_ADDR                     \
-    {                                      \
-        0x00, 0x11, 0x22, 0x33, 0x44, 0x41 \
-    }
-
-/* Address of PHY interface. */
-#define EXAMPLE_PHY_ADDRESS    BOARD_ENET0_PHY_ADDRESS
-
-/* MDIO operations. */
-#define EXAMPLE_MDIO_OPS       enet_ops
-
-/* PHY operations. */
-#define EXAMPLE_PHY_OPS        phyksz8081_ops
-
-/* ENET clock frequency. */
-#define EXAMPLE_CLOCK_FREQ     CLOCK_GetFreq( kCLOCK_IpgClk )
-
 #define hello_task_PRIORITY    ( configMAX_PRIORITIES - 1 )
-
-/*******************************************************************************
- * Prototypes
- ******************************************************************************/
-void Board_InitNetwork( void );
-
-static const char * prvGetDHCPStateStr( dhcp_state_enum_t state );
-
-
-int app_main( void );
-
-/*******************************************************************************
- * Variables
- ******************************************************************************/
-static mdio_handle_t mdioHandle = { .ops = &EXAMPLE_MDIO_OPS };
-static phy_handle_t phyHandle = { .phyAddr = EXAMPLE_PHY_ADDRESS, .mdioHandle = &mdioHandle, .ops = &EXAMPLE_PHY_OPS };
-
-struct netif ethernet_netif;
-
-/*******************************************************************************
- * Secure element contexts
- ******************************************************************************/
-static ex_sss_boot_ctx_t gex_sss_demo_boot_ctx;
-ex_sss_boot_ctx_t * pex_sss_demo_boot_ctx = &gex_sss_demo_boot_ctx;
-
-static ex_sss_cloud_ctx_t gex_sss_demo_tls_ctx;
-ex_sss_cloud_ctx_t * pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
-
-const char * g_port_name = NULL;
-
-static mflash_file_t dir_template[] =
-{
-    {
-        .path = KVSTORE_FILE_PATH,
-        .max_size = ( MFLASH_SECTOR_SIZE * 2U )
-    },
-    {}
-};
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
-static const char * prvGetDHCPStateStr( dhcp_state_enum_t state )
-{
-    const char * pcStateStr = "UNKNOWN";
-
-    switch( state )
-    {
-        case DHCP_STATE_OFF:
-            pcStateStr = "OFF";
-            break;
-
-        case DHCP_STATE_INIT:
-            pcStateStr = "INIT";
-            break;
-
-        case DHCP_STATE_REBOOTING:
-            pcStateStr = "REBOOTING";
-            break;
-
-        case DHCP_STATE_REBINDING:
-            pcStateStr = "REBINDING";
-            break;
-
-        case DHCP_STATE_RENEWING:
-            pcStateStr = "RENEWING";
-            break;
-
-        case DHCP_STATE_SELECTING:
-            pcStateStr = "SELECTING";
-            break;
-
-        case DHCP_STATE_INFORMING:
-            pcStateStr = "INFORMING";
-            break;
-
-        case DHCP_STATE_CHECKING:
-            pcStateStr = "CHECKING";
-            break;
-
-        case DHCP_STATE_PERMANENT:
-            pcStateStr = "PERMANENT";
-            break;
-
-        case DHCP_STATE_BOUND:
-            pcStateStr = "BOUND";
-            break;
-
-        case DHCP_STATE_RELEASING:
-            pcStateStr = "RELEASING";
-            break;
-
-        case DHCP_STATE_BACKING_OFF:
-            pcStateStr = "BACKING_OFF";
-            break;
-
-        default:
-            break;
-    }
-
-    return pcStateStr;
-}
-
-void Board_InitNetwork( void )
-{
-    ip4_addr_t netif_ipaddr, netif_netmask, netif_gw;
-    ethernetif_config_t enet_config =
-    {
-        .phyHandle  = &phyHandle,
-        .macAddress = configMAC_ADDR,
-    };
-    dhcp_state_enum_t prevState = DHCP_STATE_OFF;
-
-    mdioHandle.resource.csrClock_Hz = EXAMPLE_CLOCK_FREQ;
-
-    IP4_ADDR( &netif_ipaddr, 0, 0, 0, 0 );
-    IP4_ADDR( &netif_netmask, 0, 0, 0, 0 );
-    IP4_ADDR( &netif_gw, 0, 0, 0, 0 );
-
-    tcpip_init( NULL, NULL );
-
-    netifapi_netif_add( &ethernet_netif, &netif_ipaddr, &netif_netmask, &netif_gw, &enet_config, EXAMPLE_NETIF_INIT_FN,
-                        tcpip_input );
-    netifapi_netif_set_default( &ethernet_netif );
-    netifapi_netif_set_up( &ethernet_netif );
-
-    PRINTF( "Getting an IP address from DHCP ...\r\n" );
-    netifapi_dhcp_start( &ethernet_netif );
-
-    struct dhcp * dhcp;
-
-    dhcp = ( struct dhcp * ) netif_get_client_data( &ethernet_netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP );
-
-    while( dhcp->state != DHCP_STATE_BOUND )
-    {
-        if( dhcp->state != prevState )
-        {
-            PRINTF( "DHCP State: %s.\r\n", prvGetDHCPStateStr( dhcp->state ) );
-            prevState = dhcp->state;
-        }
-
-        vTaskDelay( 1000 );
-    }
-
-    PRINTF( "DHCP OK!\r\n" );
-
-    PRINTF( "IPv4 Address: %u.%u.%u.%u\r\n",
-            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 0 ],
-            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 1 ],
-            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 2 ],
-            ( ( u8_t * ) &ethernet_netif.ip_addr.addr )[ 3 ] );
-
-    PRINTF( "Subnet Mask: %u.%u.%u.%u\r\n",
-            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 0 ],
-            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 1 ],
-            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 2 ],
-            ( ( u8_t * ) &ethernet_netif.netmask.addr )[ 3 ] );
-
-    PRINTF( "Gateway: %u.%u.%u.%u\r\n",
-            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 0 ],
-            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 1 ],
-            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 2 ],
-            ( ( u8_t * ) &ethernet_netif.gw.addr )[ 3 ] );
-}
-
 void BOARD_InitModuleClock( void )
 {
     const clock_enet_pll_config_t config = { .enableClkOutput = true, .enableClkOutput25M = false, .loopDivider = 1 };
@@ -281,11 +84,8 @@ void delay( void )
 int main( void )
 {
     gpio_pin_config_t gpio_config = { kGPIO_DigitalOutput, 0, kGPIO_NoIntmode };
-    int a = 0;
-    a++;
 
     /* Init board hardware. */
-    //BOARD_ConfigMPU();
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
@@ -301,16 +101,6 @@ int main( void )
     GPIO_WritePinOutput( GPIO1, 9, 0 );
     delay();
     GPIO_WritePinOutput( GPIO1, 9, 1 );
-
-    if( CRYPTO_InitHardware() != 0 )
-    {
-        PRINTF( ( "\r\nFailed to initialize MBEDTLS crypto.\r\n" ) );
-
-        while( 1 )
-        {
-            /* Empty while. */
-        }
-    }
 
     if( mflash_drv_init() != 0 )
     {
@@ -330,49 +120,19 @@ int main( void )
     }
 }
 
+/**
+ * @brief Hook which gets called on startup of the system.
+ *
+ * This function will in turn create two restricted tasks
+ * and print out the memory regions in the configured system.
+ */
 void vApplicationDaemonTaskStartupHook( void )
 {
-#if 0
-    /* Initialize file system. */
-    if( mflash_init( dir_template, false ) != kStatus_Success )
-    {
-        PRINTF( "\r\nFailed to initialize file system.\r\n" );
-
-        for( ; ; )
-        {
-            __asm( "NOP" );
-        }
-    }
-
-    /* Initialize network. */
-    Board_InitNetwork();
-
-    /* Initialize Logging locks */
-    if( nLog_Init() != 0 )
-    {
-        PRINTF( "\r\nLogging initialization failed.\r\n" );
-
-        for( ; ; )
-        {
-            __asm( "NOP" );
-        }
-    }
-
-    if( app_main() != pdPASS )
-    {
-        PRINTF( "\r\nApp main initialization failed.\r\n" );
-
-        for( ; ; )
-        {
-            __asm( "NOP" );
-        }
-    }
-
-#else
+	/* Create read-only and a read-write task. */
     xCreateRestrictedTasks( hello_task_PRIORITY );
 
+    /* Print the memory regions once. */
     printRegions();
-#endif
 }
 
 /**

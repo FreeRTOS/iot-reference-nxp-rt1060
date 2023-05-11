@@ -30,8 +30,6 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-#include "kvstore.h"
-#include "mqtt_agent_task.h"
 
 /**
  * @brief Flag which enables OTA update task in background along with other demo tasks.

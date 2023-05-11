@@ -37,7 +37,6 @@
 									<listOptionValue builtIn="false" value="FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE"/>
 									<listOptionValue builtIn="false" value="FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1"/>
 									<listOptionValue builtIn="false" value="USE_RTOS=1"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;aws_mbedtls_config.h&quot;'"/>
 									<listOptionValue builtIn="false" value="LWIP_DISABLE_PBUF_POOL_SIZE_SANITY_CHECKS=1"/>
 									<listOptionValue builtIn="false" value="MFLASH_FILE_BASEADDR=7340032"/>
 									<listOptionValue builtIn="false" value="SDK_OS_FREE_RTOS"/>
@@ -64,7 +63,6 @@
 								<option id="com.crt.advproject.gcc.hdrlib.130374036" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" useByScannerDiscovery="false" value="com.crt.advproject.gcc.hdrlib.newlib" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.fpu.234476906" name="Floating point" superClass="com.crt.advproject.gcc.fpu" useByScannerDiscovery="true" value="com.crt.advproject.gcc.fpu.fpv5dp.hard" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.1072663552" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/common&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/devices/MIMXRT1062&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/devices/MIMXRT1062/xip&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/boards/evkbmimxrt1060/xip&quot;"/>
@@ -82,28 +80,10 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/serial_manager&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/uart&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/lists&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/phy/mdio/enet&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/phy/device/phyksz8081&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/phy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/enet&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/cache/armv7-m7&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/lwip_ethernet&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/lwip_osal/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/lwip/src/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/mbedtls/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/mbedtls_port/ksdk&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/mbedtls/library&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/dcp&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/trng&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/transport_mbedtls&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/coreMQTT/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/coreMQTT/source/interface&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/coreMQTT-Agent/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/mqtt-agent-interface/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/backoffAlgorithm/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/corePKCS11/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/corePKCS11/source/dependency/3rdparty/mbedtls_utils&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/pkcs11&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/sss/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/sss/plugin/pkcs11&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/sss/plugin/mbedtls&quot;"/>
@@ -116,26 +96,18 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/libCommon/nxScp&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/libCommon/scp&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/libCommon/smCom&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/mbedtls/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/platform/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/se05x_03_xx_xx&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/tstUtil&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/libCommon/smCom/T1oI2C&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/ota/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/ota/source/portable/os&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/tinycbor/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/coreJSON/source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/flexspi&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/components/flash/mflash&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/logging&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/mqtt_agent&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/kvstore&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/ota&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/cli&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/sesip/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/sesip/task&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/sesip/board&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\kanherea\Desktop\Incremental_changes\SESIP_MPU\examples\evkbmimxrt1060\pubsub&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/common&quot;"/>
 								</option>
 								<option id="com.crt.advproject.c.misc.dialect.694419664" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.specs.604491904" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlib" valueType="enumerated"/>
