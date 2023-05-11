@@ -281,6 +281,8 @@ void delay( void )
 int main( void )
 {
     gpio_pin_config_t gpio_config = { kGPIO_DigitalOutput, 0, kGPIO_NoIntmode };
+    int a = 0;
+    a++;
 
     /* Init board hardware. */
     //BOARD_ConfigMPU();
@@ -330,7 +332,7 @@ int main( void )
 
 void vApplicationDaemonTaskStartupHook( void )
 {
-#if 1
+#if 0
     /* Initialize file system. */
     if( mflash_init( dir_template, false ) != kStatus_Success )
     {
@@ -467,7 +469,7 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
      * function then they must be declared static - otherwise they will be allocated on
      * the stack and so not exists after this function exits. */
     static StaticTask_t xTimerTaskTCB;
-    static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+    static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ] __attribute__( ( aligned( configTIMER_TASK_STACK_DEPTH * sizeof( StackType_t ) ) ) );
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle
      * task's state will be stored. */

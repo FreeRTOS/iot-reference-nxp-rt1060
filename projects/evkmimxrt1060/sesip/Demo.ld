@@ -32,7 +32,8 @@ MEMORY
   BOARD_FLASH (rx) : ORIGIN = 0x60040400, LENGTH = 0x1ffc00 /* 2047K bytes (alias Flash) == Why not start at 0x60000000 + 0x800000. This seems in between...    */
   SRAM_DTC (rwx) : ORIGIN = 0x20000000, LENGTH = 0x20000 /* 128K bytes (alias RAM) == DTCM */
   SRAM_ITC (rwx) : ORIGIN = 0x0, LENGTH = 0x20000 /* 128K bytes (alias RAM2) == ITCM */
-  SRAM_OC (rwx) : ORIGIN = 0x20200000, LENGTH = 0xc0000 /* 768K bytes (alias RAM3) == OCRAM-FleRAM + OCRAM2. Max of 1M. */
+  SRAM_OC_512 (rwx) : ORIGIN = 0x20200000, LENGTH = 0x80000 /* 512k bytes (alias RAM3) == OCRAM-FleRAM + OCRAM2. Max of 1M. */
+  SRAM_OC_REM (rwx) : ORIGIN = 0x20280000, LENGTH = 0x40000
   BOARD_SDRAM (rwx) : ORIGIN = 0x80000000, LENGTH = 0x1e00000 /* 30M bytes (alias RAM4) == SDRAM: Can be 32MB at max. */ 
   NCACHE_REGION (rwx) : ORIGIN = 0x81e00000, LENGTH = 0x200000 /* 2M bytes (alias RAM5) == SEMC external memories (SDRAM, NOR, PSRAM, NAND and 8080) shared memory space */
 }
@@ -50,9 +51,9 @@ MEMORY
   __base_RAM2 = 0x0 ; /* RAM2 */  
   __top_SRAM_ITC = 0x0 + 0x20000 ; /* 128K bytes */  
   __top_RAM2 = 0x0 + 0x20000 ; /* 128K bytes */  
-  __base_SRAM_OC = 0x20200000  ; /* SRAM_OC */  
+  __base_SRAM_OC_512 = 0x20200000  ; /* SRAM_OC */  
   __base_RAM3 = 0x20200000 ; /* RAM3 */  
-  __top_SRAM_OC = 0x20200000 + 0xc0000 ; /* 768K bytes */  
+  __top_SRAM_OC_512 = 0x20200000 + 0x80000 ; /* 768K bytes */  
   __top_RAM3 = 0x20200000 + 0xc0000 ; /* 768K bytes */  
   __base_BOARD_SDRAM = 0x80000000  ; /* BOARD_SDRAM */  
   __base_RAM4 = 0x80000000 ; /* RAM4 */  
@@ -66,14 +67,14 @@ MEMORY
 
 /* Privilegd fuctions are stored are stored in FLash (VMA/LMA) and XIP. */
 __privileged_functions_region_size__  = 64K;
-__privileged_data_region_size__       = 120K;  /* Try reducing it to 64k. But we need all functionality - check. */
+__privileged_data_region_size__       = 128K;  /* Try reducing it to 64k. But we need all functionality - check. */
 
 /* Symbols needed by the MPU setup code. */
 __FLASH_segment_start__ = ORIGIN( BOARD_FLASH );
 __FLASH_segment_end__   = __FLASH_segment_start__ + LENGTH( BOARD_FLASH );
 
-__SRAM_segment_start__  = ORIGIN( SRAM_DTC );
-__SRAM_segment_end__    = __SRAM_segment_start__ + LENGTH( SRAM_DTC );
+__SRAM_segment_start__  = ORIGIN( SRAM_OC_512 );
+__SRAM_segment_end__    = __SRAM_segment_start__ + LENGTH( SRAM_OC_512 );
 
 ENTRY(ResetISR)
 
@@ -84,7 +85,7 @@ SECTIONS
     {
         FILL(0xff)
         __vectors_start__ = ABSOLUTE(.);
-        __privileged_functions_start__ = __vectors_start__;
+        __privileged_functions_start__ = .;
         
         /* Add in the list of all ISR vectors. */
         KEEP(*(.isr_vector))
@@ -160,8 +161,9 @@ SECTIONS
         __syscalls_flash_end__ = .;
 
         /* For XIP, some objects need to be in .data. Otherwise place all other .text here + RO data */
-        *(EXCLUDE_FILE(*mflash_drv.o *fsl_flexspi.o *ota_pal.o *flexspi_nor_flash_ops.o) .text*)       *(.rodata .rodata.* .constdata .constdata.*)
+        *(EXCLUDE_FILE(*mflash_drv.o *fsl_flexspi.o *ota_pal.o *flexspi_nor_flash_ops.o) .text*)
         KEEP(*freertos*/tasks.o(.rodata*)) /* FreeRTOS Debug Config. */
+        *(.rodata .rodata.* .constdata .constdata.*)
         . = ALIGN(4);
     } > BOARD_FLASH
     
@@ -185,7 +187,6 @@ SECTIONS
     _etext = .;
         
     /* DATA section for SRAM_ITC */
-
     .data_RAM2 : ALIGN(4)
     {
         FILL(0xff)
@@ -215,7 +216,7 @@ SECTIONS
                 . = ALIGN(4) ;
         PROVIDE(__end_data_RAM3 = .) ;
         PROVIDE(__end_data_SRAM_OC = .) ;
-     } > SRAM_OC AT>BOARD_FLASH
+     } > SRAM_OC_512 AT>BOARD_FLASH
 
     /* DATA section for BOARD_SDRAM */
 
@@ -249,7 +250,6 @@ SECTIONS
     .uninit_RESERVED (NOLOAD) : ALIGN(4)
     {
         _start_uninit_RESERVED = .;
-        __privileged_data_start__ = _start_uninit_RESERVED;
         KEEP(*(.bss.$RESERVED*))
        . = ALIGN(4) ;
         _end_uninit_RESERVED = .;
@@ -260,6 +260,7 @@ SECTIONS
     {
        FILL(0xff)
        _data = . ;
+       __privileged_data_start__ = _data;
        PROVIDE(__start_data_RAM = .) ;
        PROVIDE(__start_data_SRAM_DTC = .) ;
        
@@ -287,7 +288,7 @@ SECTIONS
        _edata = . ;
        PROVIDE(__end_data_RAM = .) ;
        PROVIDE(__end_data_SRAM_DTC = .) ;
-    } > SRAM_DTC AT>BOARD_FLASH
+    } > SRAM_OC_512 AT>BOARD_FLASH
 
     /* BSS section for SRAM_ITC */
     .bss_RAM2 : ALIGN(4)
@@ -309,7 +310,7 @@ SECTIONS
        . = ALIGN (. != 0 ? 4 : 1) ; /* avoid empty segment */
        PROVIDE(__end_bss_RAM3 = .) ;
        PROVIDE(__end_bss_SRAM_OC = .) ;
-    } > SRAM_OC AT> SRAM_OC
+    } > SRAM_OC_512 AT> SRAM_OC_512
 
     /* BSS section for BOARD_SDRAM */
     .bss_RAM4 : ALIGN(4)
@@ -345,7 +346,7 @@ SECTIONS
         PROVIDE(__end_bss_RAM = .) ;
         PROVIDE(__end_bss_SRAM_DTC = .) ;
         PROVIDE(end = .);
-    } > SRAM_DTC AT> SRAM_DTC
+    } > SRAM_OC_512 AT> SRAM_OC_512
 
     /* NOINIT section for SRAM_ITC */
     .noinit_RAM2 (NOLOAD) : ALIGN(4)
@@ -367,13 +368,13 @@ SECTIONS
        PROVIDE(__start_noinit_RAM3 = .) ;
        PROVIDE(__start_noinit_SRAM_OC = .) ;
        *(.noinit.$RAM3)
-       *(.noinit.$SRAM_OC)
+       *(.noinit.$SRAM_OC_512)
        *(.noinit.$RAM3.*)
-       *(.noinit.$SRAM_OC.*)
+       *(.noinit.$SRAM_OC_512.*)
        . = ALIGN(4) ;
        PROVIDE(__end_noinit_RAM3 = .) ;
        PROVIDE(__end_noinit_SRAM_OC = .) ;
-    } > SRAM_OC AT> SRAM_OC
+    } > SRAM_OC_512 AT> SRAM_OC_512
 
     /* NOINIT section for BOARD_SDRAM */
     .noinit_RAM4 (NOLOAD) : ALIGN(4)
@@ -416,7 +417,6 @@ SECTIONS
        PROVIDE(__end_noinit_SRAM_DTC = .) ;        
     } > SRAM_DTC AT> SRAM_DTC
 
-    /* What is this? For now, this doesn't seem to be used anywhere. */
     /* Reserve and place Heap within memory map */
     _HeapSize = 0x1000;
     .heap (NOLOAD) :  ALIGN(4)
@@ -425,23 +425,22 @@ SECTIONS
         . += _HeapSize;
         . = ALIGN(4);
         _pvHeapLimit = .;
-    } > SRAM_ITC
+    } > SRAM_OC_512
 
-     
      _StackSize = 0x1000;
      /* Reserve space in memory for Stack */
     .heap2stackfill (NOLOAD) :
     {
         . += _StackSize;
-    } > SRAM_ITC
+    } > SRAM_OC_512
 
     /* Locate actual Stack in memory map */
-    .stack ORIGIN(SRAM_DTC) + LENGTH(SRAM_DTC) - _StackSize - 0 (NOLOAD) :  ALIGN(4)
+    .stack ORIGIN(SRAM_OC_512) + LENGTH(SRAM_OC_512) - _StackSize - 0 (NOLOAD) :  ALIGN(4)
     {
         _vStackBase = .;
         . = ALIGN(4);
         _vStackTop = . + _StackSize;
-    } > SRAM_ITC
+    } > SRAM_OC_512
 
     /* Provide basic symbols giving location and size of main text
      * block, including initial values of RW data sections. Note that
