@@ -122,6 +122,8 @@ static void sslContextFree( SSLContext_t * pSslContext );
 
 /*-----------------------------------------------------------*/
 
+void * pvPortRealloc( void * pvPtr, size_t xSize );
+
 /**
  * @brief Callback that wraps PKCS#11 using secure element for random number generation.
  *
@@ -212,33 +214,39 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
  *
  * @return Number of bytes sent on success; else a negative value.
  */
-int xMbedTLSBioTCPSocketsWrapperSend( void * ctx,
-                                      const unsigned char * buf,
-                                      size_t len );
+int xwolfSSLBioTCPSocketWrapperSend( WOLFSSL * ssl,
+                                     char * buf,
+                                     int sz,
+                                     void * ctx );
 
 
 /**
  * @brief Receives data from +TCP socket.
  *
- * @param[in] ctx The network context containing the socket handle.
+ * @param[in] ssl The wolfSSL network context containing the socket handle.
  * @param[out] buf Buffer to receive bytes into.
  * @param[in] len Number of bytes to receive from the network.
+ * @param[in] ctx Not used.
  *
  * @return Number of bytes received if successful; Negative value on error.
  */
-int xMbedTLSBioTCPSocketsWrapperRecv( void * ctx,
-                                      unsigned char * buf,
-                                      size_t len );
+int xwolfSSLBioTCPSocketWrapperRecv( WOLFSSL * ssl,
+                                     char * buf,
+                                     int len,
+                                     void * ctx );
+
 /*-----------------------------------------------------------*/
 
 static void sslContextInit( SSLContext_t * pSslContext )
 {
     configASSERT( pSslContext != NULL );
 
+    /*
     mbedtls_ssl_config_init( &( pSslContext->config ) );
     mbedtls_x509_crt_init( &( pSslContext->rootCa ) );
     mbedtls_x509_crt_init( &( pSslContext->clientCert ) );
     mbedtls_ssl_init( &( pSslContext->context ) );
+    */
 
     xInitializePkcs11Session( &( pSslContext->xP11Session ) );
     C_GetFunctionList( &( pSslContext->pxP11FunctionList ) );
@@ -249,10 +257,12 @@ static void sslContextFree( SSLContext_t * pSslContext )
 {
     configASSERT( pSslContext != NULL );
 
+    /*
     mbedtls_ssl_free( &( pSslContext->context ) );
     mbedtls_x509_crt_free( &( pSslContext->rootCa ) );
     mbedtls_x509_crt_free( &( pSslContext->clientCert ) );
     mbedtls_ssl_config_free( &( pSslContext->config ) );
+    */
 
     pSslContext->pxP11FunctionList->C_CloseSession( pSslContext->xP11Session );
 }
@@ -318,19 +328,13 @@ static CK_RV readCertificateIntoContext( SSLContext_t * pSslContext,
         xResult = mbedtls_x509_crt_parse( pxCertificateContext,
                                           ( const unsigned char * ) xTemplate.pValue,
                                           xTemplate.ulValueLen );
+       // wolfSSL_CTX_use_certificate_buffer();
     }
 
     /* Free memory. */
     vPortFree( xTemplate.pValue );
 
     return xResult;
-}
-
-/*-----------------------------------------------------------*/
-
-int canDoStub( mbedtls_pk_type_t type )
-{
-    return 1;
 }
 
 /*----------------------------------------------------------*/
@@ -567,6 +571,17 @@ static int privateKeySigningCallback( void * pvContext,
     return iFinalResult;
 }
 
+/*-----------------------------------------------------------*/
+
+int EccSignCallback( WOLFSSL* ssl,
+                     const unsigned char* in, unsigned int inSz,
+                     unsigned char* out, word32* outSz,
+                     const unsigned char* keyDer, unsigned int keySz,
+                     void* ctx)
+{
+	/* TODO: Add code to actually add ECC Signing. */
+	return 0;
+}
 
 /*-----------------------------------------------------------*/
 
@@ -588,7 +603,36 @@ static int generateRandomBytes( void * pvCtx,
     return xResult;
 }
 
-/*-----------------------------------------------------------*/
+int rand_gen_seed( byte* output,
+                   word32 sz )
+{
+	/*
+	 * Note that this is just an example, the seed in production code should be
+	 * provided using a source with more entropy which should be hard to predict.
+	 */
+	static unsigned char RNGSeed = 0x23;
+	for( word32 i = 0; i < sz; i++ )
+	{
+		output[ i ] = RNGSeed++;
+	}
+
+	return 0;
+}
+
+/**
+ * Return a valid value only when the initial pointer is NULL. Otherwise,
+ * the function will behave as if there is no memory and will return NULL.
+ */
+void * pvPortRealloc( void * pvPtr, size_t xSize )
+{
+	void * pvReturn = NULL;
+	if( pvPtr == NULL )
+	{
+		pvReturn = pvPortMalloc( xSize );
+	}
+
+	return pvReturn;
+}
 
 static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
                                       const char * pHostName,
@@ -597,6 +641,7 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
     TlsTransportStatus_t returnStatus = TLS_TRANSPORT_SUCCESS;
     int32_t mbedtlsError = 0;
     CK_RV xResult = CKR_OK;
+    char buffer[ WOLFSSL_MAX_ERROR_SZ ];
 
     configASSERT( pNetworkContext != NULL );
     configASSERT( pHostName != NULL );
@@ -605,23 +650,43 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
     configASSERT( pNetworkCredentials->pClientCertLabel != NULL );
     configASSERT( pNetworkCredentials->pPrivateKeyLabel != NULL );
 
-    /* Initialize the mbed TLS context structures. */
+    /* Initialize the TLS context structures. */
     sslContextInit( &( pNetworkContext->sslContext ) );
 
-    mbedtlsError = mbedtls_ssl_config_defaults( &( pNetworkContext->sslContext.config ),
+    pNetworkContext->sslContext.wolfSSLContext = wolfSSL_CTX_new( wolfSSLv23_client_method_ex(NULL) );
+
+    pNetworkContext->sslContext.wolfssl = wolfSSL_new( pNetworkContext->sslContext.wolfSSLContext );
+
+    /* Set the socket pointer in the context. */
+    wolfSSL_SetIOReadCtx( pNetworkContext->sslContext.wolfssl, pNetworkContext->tcpSocket );
+    wolfSSL_SetIOWriteCtx( pNetworkContext->sslContext.wolfssl, pNetworkContext->tcpSocket );
+
+
+    /*mbedtlsError = mbedtls_ssl_config_defaults( &( pNetworkContext->sslContext.config ),
                                                 MBEDTLS_SSL_IS_CLIENT,
                                                 MBEDTLS_SSL_TRANSPORT_STREAM,
                                                 MBEDTLS_SSL_PRESET_DEFAULT );
+    */
 
-    if( mbedtlsError != 0 )
+    /* Set memory allocation/freeing functions */
+    wolfSSL_SetAllocators( pvPortMalloc, vPortFree, pvPortRealloc );
+    // Not required as this is present in wolfssl/wolfssl/wolfcrypt/settings.h ??
+
+    if( pNetworkContext->sslContext.wolfSSLContext != NULL )
+	{
+		wolfSSL_CTX_SetEccSignCb( pNetworkContext->sslContext.wolfSSLContext, EccSignCallback );
+
+	}
+
+    /*if( mbedtlsError != 0 )
     {
         LogError( ( "Failed to set default SSL configuration: mbedTLSError= %s : %s.",
                     mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
                     mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
 
-        /* Per mbed TLS docs, mbedtls_ssl_config_defaults only fails on memory allocation. */
+        // Per mbed TLS docs, mbedtls_ssl_config_defaults only fails on memory allocation.
         returnStatus = TLS_TRANSPORT_INSUFFICIENT_MEMORY;
-    }
+    }*/
 
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
@@ -638,32 +703,53 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
         }
 
         /* Set SSL authmode and the RNG context. */
-        mbedtls_ssl_conf_authmode( &( pNetworkContext->sslContext.config ),
+        /* mbedtls_ssl_conf_authmode( &( pNetworkContext->sslContext.config ),
                                    MBEDTLS_SSL_VERIFY_REQUIRED );
-        mbedtls_ssl_conf_rng( &( pNetworkContext->sslContext.config ),
+
+        // Done by wolfSSL by default. SSL_VERIFY_PEER is on by default in client mode.
+        wolfSSL_set_verify();
+        */
+
+        /* mbedtls_ssl_conf_rng( &( pNetworkContext->sslContext.config ),
                               generateRandomBytes,
                               &pNetworkContext->sslContext );
-        mbedtls_ssl_conf_cert_profile( &( pNetworkContext->sslContext.config ),
+          // Done in wolfSSL thru custom callback CUSTOM_RAND_GENERATE_SEED.
+         */
+
+
+        /* mbedtls_ssl_conf_cert_profile( &( pNetworkContext->sslContext.config ),
                                        &( pNetworkContext->sslContext.certProfile ) );
+        */
 
         /* Parse the server root CA certificate into the SSL context. */
-        mbedtlsError = mbedtls_x509_crt_parse( &( pNetworkContext->sslContext.rootCa ),
+        /* mbedtlsError = mbedtls_x509_crt_parse( &( pNetworkContext->sslContext.rootCa ),
                                                pNetworkCredentials->pRootCa,
-                                               pNetworkCredentials->rootCaSize );
+                                               pNetworkCredentials->rootCaSize ); */
 
-        if( mbedtlsError != 0 )
+        pNetworkContext->sslContext.wolfsslRootCAFormat = WOLFSSL_FILETYPE_PEM;
+        mbedtlsError = wolfSSL_CTX_use_certificate_buffer( pNetworkContext->sslContext.wolfSSLContext,
+                                                           pNetworkCredentials->pRootCa,
+                                                           pNetworkCredentials->rootCaSize,
+											               pNetworkContext->sslContext.wolfsslRootCAFormat );
+
+        if( mbedtlsError != SSL_SUCCESS )
         {
-            LogError( ( "Failed to parse server root CA certificate: mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                        mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
+        	wc_ErrorString( mbedtlsError, buffer );
+            LogError( ( "Failed to parse server root CA certificate: Error= %s", buffer ) );
 
             returnStatus = TLS_TRANSPORT_INVALID_CREDENTIALS;
         }
         else
         {
+            /*
             mbedtls_ssl_conf_ca_chain( &( pNetworkContext->sslContext.config ),
                                        &( pNetworkContext->sslContext.rootCa ),
                                        NULL );
+            */
+        	returnStatus = wolfSSL_CTX_load_verify_buffer( pNetworkContext->sslContext.wolfSSLContext,
+                                            pNetworkCredentials->pRootCa,
+                                            pNetworkCredentials->rootCaSize,
+                                            pNetworkContext->sslContext.wolfsslRootCAFormat );
         }
     }
 
@@ -698,6 +784,8 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
                 ( void ) mbedtls_ssl_conf_own_cert( &( pNetworkContext->sslContext.config ),
                                                     &( pNetworkContext->sslContext.clientCert ),
                                                     &( pNetworkContext->sslContext.privKey ) );
+                /* wolfSSL_use_certificate( pNetworkContext->sslContext.wolfssl,
+                	 	                 pNetworkContext->sslContext ); */
             }
         }
     }
@@ -742,11 +830,14 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
              * #mbedtls_ssl_set_bio requires the second parameter as void *.
              */
             /* coverity[misra_c_2012_rule_11_2_violation] */
-            mbedtls_ssl_set_bio( &( pNetworkContext->sslContext.context ),
+            /*mbedtls_ssl_set_bio( &( pNetworkContext->sslContext.context ),
                                  ( void * ) pNetworkContext->tcpSocket,
 								 xMbedTLSBioTCPSocketsWrapperSend,
 								 xMbedTLSBioTCPSocketsWrapperRecv,
-                                 NULL );
+                                 NULL );*/
+
+            wolfSSL_SetIORecv( pNetworkContext->sslContext.wolfSSLContext, xwolfSSLBioTCPSocketWrapperRecv );
+            wolfSSL_SetIOSend( pNetworkContext->sslContext.wolfSSLContext, xwolfSSLBioTCPSocketWrapperSend );
         }
     }
 
@@ -755,55 +846,34 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
         /* Enable SNI if requested. */
         if( pNetworkCredentials->disableSni == pdFALSE )
         {
-            mbedtlsError = mbedtls_ssl_set_hostname( &( pNetworkContext->sslContext.context ),
-                                                     pHostName );
+        	mbedtlsError = wolfSSL_CTX_UseSNI( pNetworkContext->sslContext.wolfSSLContext,
+        			            WOLFSSL_SNI_HOST_NAME,
+								pHostName,
+								strlen( pHostName ) );
 
-            if( mbedtlsError != 0 )
+            if( mbedtlsError != WOLFSSL_SUCCESS )
             {
-                LogError( ( "Failed to set server name: mbedTLSError= %s : %s.",
-                            mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                            mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
+            	wc_ErrorString( mbedtlsError, buffer );
+                LogError( ( "Failed to set server name: Error= %s",
+                            buffer ) );
 
                 returnStatus = TLS_TRANSPORT_INTERNAL_ERROR;
             }
         }
     }
 
-    /* Set Maximum Fragment Length if enabled. */
-#ifdef MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
-    if( returnStatus == TLS_TRANSPORT_SUCCESS )
-    {
-        /* Enable the max fragment extension. 4096 bytes is currently the largest fragment size permitted.
-         * See RFC 8449 https://tools.ietf.org/html/rfc8449 for more information.
-         *
-         * Smaller values can be found in "mbedtls/include/ssl.h".
-         */
-        mbedtlsError = mbedtls_ssl_conf_max_frag_len( &( pNetworkContext->sslContext.config ), MBEDTLS_SSL_MAX_FRAG_LEN_4096 );
-
-        if( mbedtlsError != 0 )
-        {
-            LogError( ( "Failed to maximum fragment length extension: mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                        mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
-            returnStatus = TLS_TRANSPORT_INTERNAL_ERROR;
-        }
-    }
-#endif /* ifdef MBEDTLS_SSL_MAX_FRAGMENT_LENGTH */
-
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
         /* Perform the TLS handshake. */
-        do
-        {
-            mbedtlsError = mbedtls_ssl_handshake( &( pNetworkContext->sslContext.context ) );
-        } while( ( mbedtlsError == MBEDTLS_ERR_SSL_WANT_READ ) ||
-                 ( mbedtlsError == MBEDTLS_ERR_SSL_WANT_WRITE ) );
+    	mbedtlsError = wolfSSL_connect( pNetworkContext->sslContext.wolfssl );
 
         if( mbedtlsError != 0 )
         {
-            LogError( ( "Failed to perform TLS handshake: mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( mbedtlsError ),
-                        mbedtlsLowLevelCodeOrDefault( mbedtlsError ) ) );
+        	mbedtlsError = wolfSSL_get_error( pNetworkContext->sslContext.wolfssl,
+                                              mbedtlsError );
+        	wolfSSL_ERR_error_string( mbedtlsError, buffer );
+            LogError( ( "Failed to perform TLS handshake: Error= %s",
+                        buffer ) );
 
             returnStatus = TLS_TRANSPORT_HANDSHAKE_FAILED;
         }
@@ -822,40 +892,41 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
     return returnStatus;
 }
 
-int xMbedTLSBioTCPSocketsWrapperSend( void * ctx,
-                                      const unsigned char * buf,
-                                      size_t len )
+int xwolfSSLBioTCPSocketWrapperSend( WOLFSSL *ssl,
+                                     char *buf,
+                                     int len,
+                                     void * ctx )
 {
     int32_t xReturnStatus;
+    Socket_t xSocket = ( Socket_t ) ctx;
 
     configASSERT( ctx != NULL );
     configASSERT( buf != NULL );
 
-    xReturnStatus = TCP_Sockets_Send( ( Socket_t ) ctx, buf, len );
+    ( void ) ssl;
 
-    switch( xReturnStatus )
-    {
-        /* Socket was closed or just got closed. */
-        case TCP_SOCKETS_ERRNO_ENOTCONN:
-        /* Not enough memory for the socket to create either an Rx or Tx stream. */
-        case TCP_SOCKETS_ERRNO_ENOMEM:
-        /* Socket is not valid, is not a TCP socket, or is not bound. */
-        case TCP_SOCKETS_ERRNO_EINVAL:
-        /* Socket received a signal, causing the read operation to be aborted. */
-        case TCP_SOCKETS_ERRNO_EINTR:
-            xReturnStatus = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
-            break;
+    xReturnStatus = TCP_Sockets_Send( xSocket, buf, len );
 
-        /* A timeout occurred before any data could be sent. */
-        case TCP_SOCKETS_ERRNO_ENOSPC:
-            xReturnStatus = MBEDTLS_ERR_SSL_TIMEOUT;
-            break;
-
-        default:
-            break;
-    }
-
-    return ( int ) xReturnStatus;
+    if( xReturnStatus <= 0 )
+	{
+		if( xReturnStatus == 0 )
+		{
+			xReturnStatus = WOLFSSL_CBIO_ERR_WANT_WRITE;
+		}
+		else if( xReturnStatus == -pdFREERTOS_ERRNO_EWOULDBLOCK )
+		{
+			xReturnStatus = WOLFSSL_CBIO_ERR_WANT_WRITE;
+		}
+		else if( xReturnStatus == -pdFREERTOS_ERRNO_ENOTCONN )
+		{
+			xReturnStatus = WOLFSSL_CBIO_ERR_CONN_CLOSE;
+		}
+		else
+		{
+			/* Do nothing. */
+		}
+	}
+	return xReturnStatus;
 }
 
 /**
@@ -867,38 +938,41 @@ int xMbedTLSBioTCPSocketsWrapperSend( void * ctx,
  *
  * @return Number of bytes received if successful; Negative value on error.
  */
-int xMbedTLSBioTCPSocketsWrapperRecv( void * ctx,
-                                      unsigned char * buf,
-                                      size_t len )
+int xwolfSSLBioTCPSocketWrapperRecv( WOLFSSL *ssl,
+                                     char *buf,
+                                     int len,
+                                     void *ctx )
 {
     int32_t xReturnStatus;
+    Socket_t xSocket = (Socket_t)ctx;
 
     configASSERT( ctx != NULL );
     configASSERT( buf != NULL );
 
-    xReturnStatus = TCP_Sockets_Recv( ( Socket_t ) ctx, buf, len );
+    ( void ) ssl;
 
-    switch( xReturnStatus )
-    {
-        /* No data could be sent because the socket was or just got closed. */
-        case TCP_SOCKETS_ERRNO_ENOTCONN:
-        /* No data could be sent because there was insufficient memory. */
-        case TCP_SOCKETS_ERRNO_ENOMEM:
-        /* No data could be sent because xSocket was not a valid TCP socket. */
-        case TCP_SOCKETS_ERRNO_EINVAL:
-            xReturnStatus = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
-            break;
+    xReturnStatus = TCP_Sockets_Recv( xSocket, buf, len );
 
-        /* A timeout occurred before any data could be received. */
-        case 0:
-            xReturnStatus = MBEDTLS_ERR_SSL_WANT_READ;
-            break;
-
-        default:
-            break;
-    }
-
-    return ( int ) xReturnStatus;
+    if( xReturnStatus <= 0 )
+	{
+		if (xReturnStatus == 0)  /* timeout */
+		{
+			xReturnStatus = WOLFSSL_CBIO_ERR_WANT_READ;
+		}
+		else if (xReturnStatus == -pdFREERTOS_ERRNO_EWOULDBLOCK)
+		{
+			xReturnStatus = WOLFSSL_CBIO_ERR_WANT_READ;
+		}
+		else if (xReturnStatus == -pdFREERTOS_ERRNO_ENOTCONN)
+		{
+			xReturnStatus = WOLFSSL_CBIO_ERR_CONN_CLOSE;
+		}
+		else
+		{
+			/* Do nothing. */
+		}
+	}
+	return xReturnStatus;
 }
 
 /*-----------------------------------------------------------*/
@@ -912,6 +986,7 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
     TlsTransportStatus_t returnStatus = TLS_TRANSPORT_SUCCESS;
     BaseType_t socketStatus;
     BaseType_t isSocketConnected;
+    static uint8_t wolfSSLInitDone = 0;
 
     if( ( pNetworkContext == NULL ) ||
         ( pHostName == NULL ) ||
@@ -937,11 +1012,12 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
     /* Establish a TCP connection with the server. */
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
-    	socketStatus = TCP_Sockets_Connect( &( pNetworkContext->tcpSocket ),
-    	                                            pHostName,
-    	                                            port,
-    	                                            receiveTimeoutMs,
-    	                                            sendTimeoutMs );
+        socketStatus = TCP_Sockets_Connect( &( pNetworkContext->tcpSocket ),
+  	                                        pHostName,
+   	                                        port,
+   	                                        receiveTimeoutMs,
+   	                                        sendTimeoutMs );
+
         if( socketStatus < 0 )
         {
             returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
@@ -955,7 +1031,22 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
     /* Initialize TLS contexts and set credentials. */
     if( returnStatus == TLS_TRANSPORT_SUCCESS )
     {
-        returnStatus = tlsSetup( pNetworkContext, pHostName, pNetworkCredentials );
+    	if( wolfSSLInitDone == 0 )
+		{
+			if( wolfSSL_Init() == SSL_SUCCESS )
+			{
+				wolfSSLInitDone = 1;
+			}
+		}
+
+    	if( wolfSSLInitDone == 1 )
+    	{
+            returnStatus = tlsSetup( pNetworkContext, pHostName, pNetworkCredentials );
+    	}
+    	else
+    	{
+    		returnStatus = -1;
+    	}
     }
 
     /* Clean up on failure. */
@@ -1026,31 +1117,30 @@ int32_t TLS_FreeRTOS_Recv( NetworkContext_t * pNetworkContext,
                            size_t bytesToRecv )
 {
     int32_t tlsStatus = MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
+    char buffer[ WOLFSSL_MAX_ERROR_SZ ];
 
     if( ( pNetworkContext != NULL ) && ( pBuffer != NULL ) && ( bytesToRecv > 0 ) )
     {
-        tlsStatus = ( int32_t ) mbedtls_ssl_read( &( pNetworkContext->sslContext.context ),
-                                                  pBuffer,
-                                                  bytesToRecv );
+        tlsStatus = ( int32_t ) wolfSSL_read( pNetworkContext->sslContext.wolfssl,
+                                              pBuffer,
+				                              bytesToRecv );
 
-        if( ( tlsStatus == MBEDTLS_ERR_SSL_TIMEOUT ) ||
-            ( tlsStatus == MBEDTLS_ERR_SSL_WANT_READ ) ||
-            ( tlsStatus == MBEDTLS_ERR_SSL_WANT_WRITE ) )
-        {
+        if( tlsStatus == 0 )
+		{
+			tlsStatus = wolfSSL_get_error( pNetworkContext->sslContext.wolfssl, tlsStatus );
+			wolfSSL_ERR_error_string( tlsStatus, buffer );
+
             LogDebug( ( "Failed to read data. However, a read can be retried on this error. "
-                        "mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( tlsStatus ),
-                        mbedtlsLowLevelCodeOrDefault( tlsStatus ) ) );
-
-            /* Mark these set of errors as a timeout. The libraries may retry read
-             * on these errors. */
-            tlsStatus = 0;
+                        "Error= %s.",
+						buffer ) );
         }
         else if( tlsStatus < 0 )
         {
-            LogError( ( "Failed to read data: mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( tlsStatus ),
-                        mbedtlsLowLevelCodeOrDefault( tlsStatus ) ) );
+        	tlsStatus = wolfSSL_get_error( pNetworkContext->sslContext.wolfssl, tlsStatus );
+			wolfSSL_ERR_error_string(tlsStatus, buffer);
+
+			LogError( ( "Failed to recv data:  Error= %s.",
+						buffer ) );
         }
         else
         {
@@ -1067,31 +1157,33 @@ int32_t TLS_FreeRTOS_Send( NetworkContext_t * pNetworkContext,
                            size_t bytesToSend )
 {
     int32_t tlsStatus = MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
+    char buffer[ WOLFSSL_MAX_ERROR_SZ ];
 
     if( ( pNetworkContext != NULL ) && ( pBuffer != NULL ) && ( bytesToSend > 0 ) )
     {
-        tlsStatus = ( int32_t ) mbedtls_ssl_write( &( pNetworkContext->sslContext.context ),
+    	tlsStatus = wolfSSL_write( pNetworkContext->sslContext.wolfssl,
+                       pBuffer,
+                       bytesToSend );
+        /*tlsStatus = ( int32_t ) mbedtls_ssl_write( &( pNetworkContext->sslContext.context ),
                                                    pBuffer,
-                                                   bytesToSend );
+                                                   bytesToSend );*/
 
-        if( ( tlsStatus == MBEDTLS_ERR_SSL_TIMEOUT ) ||
-            ( tlsStatus == MBEDTLS_ERR_SSL_WANT_READ ) ||
-            ( tlsStatus == MBEDTLS_ERR_SSL_WANT_WRITE ) )
+        if( tlsStatus == 0 )
         {
-            LogDebug( ( "Failed to send data. However, send can be retried on this error. "
-                        "mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( tlsStatus ),
-                        mbedtlsLowLevelCodeOrDefault( tlsStatus ) ) );
+        	tlsStatus = wolfSSL_get_error( pNetworkContext->sslContext.wolfssl, tlsStatus );
+        	wolfSSL_ERR_error_string(tlsStatus, buffer);
 
-            /* Mark these set of errors as a timeout. The libraries may retry send
-             * on these errors. */
-            tlsStatus = 0;
+            LogDebug( ( "Failed to send data. However, send can be retried on this error. "
+                        "Error= %s.",
+                        buffer ) );
         }
         else if( tlsStatus < 0 )
         {
-            LogError( ( "Failed to send data:  mbedTLSError= %s : %s.",
-                        mbedtlsHighLevelCodeOrDefault( tlsStatus ),
-                        mbedtlsLowLevelCodeOrDefault( tlsStatus ) ) );
+        	tlsStatus = wolfSSL_get_error( pNetworkContext->sslContext.wolfssl, tlsStatus );
+        	wolfSSL_ERR_error_string(tlsStatus, buffer);
+
+            LogError( ( "Failed to send data:  Error= %s.",
+                        buffer ) );
         }
         else
         {

@@ -52,3 +52,6 @@
 [submodule "Middleware/FreeRTOS/FreeRTOS-Plus-TCP"]
 	path = Middleware/FreeRTOS/FreeRTOS-Plus-TCP
 	url = https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git
+[submodule "Middleware/wolfssl"]
+	path = Middleware/wolfssl
+	url = https://github.com/wolfSSL/wolfssl.git
