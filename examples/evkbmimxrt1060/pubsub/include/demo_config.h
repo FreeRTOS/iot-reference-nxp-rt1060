@@ -87,7 +87,7 @@
  *
  * #define democonfigMQTT_BROKER_ENDPOINT    "...insert here..."
  */
-#define democonfigMQTT_BROKER_ENDPOINT    "a31zvyed820ljz-ats.iot.us-east-1.amazonaws.com"
+#define democonfigMQTT_BROKER_ENDPOINT    "192.168.1.2" //"aesqkxqeyrs5g-ats.iot.us-west-2.amazonaws.com"
 
 /**
  * @brief The port to use for the demo.
@@ -183,6 +183,59 @@
     "BqWTrBqYaGFy+uGh0PsceGCmQ5nFuMQCIQCcAu/xlJyzlvnrxir4tiz+OpAUFteM\n" \
     "YyRIHN8wfdVoOw==\n"                                                 \
     "-----END CERTIFICATE-----\n"
+
+
+#define democonfigCLIENT_CERT                                        \
+"-----BEGIN CERTIFICATE-----\n"                                      \
+"MIIDWTCCAkGgAwIBAgIUagogBlAFrSVCRmy/R4cTG0sKUY8wDQYJKoZIhvcNAQEL\n" \
+"BQAwTTFLMEkGA1UECwxCQW1hem9uIFdlYiBTZXJ2aWNlcyBPPUFtYXpvbi5jb20g\n" \
+"SW5jLiBMPVNlYXR0bGUgU1Q9V2FzaGluZ3RvbiBDPVVTMB4XDTIzMDQyMDAwMDkx\n" \
+"OFoXDTQ5MTIzMTIzNTk1OVowHjEcMBoGA1UEAwwTQVdTIElvVCBDZXJ0aWZpY2F0\n" \
+"ZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKuOqGqQQA9n2YiWWnuI\n" \
+"9wh+4MOVoKvQzDROPDyMCI0RE64oNbVkJorvXT7hkfTnTHDycH+HFdW23GoF3DYM\n" \
+"pC3erfZYJx8lTa8aMD54b7c/R4CKIUpul/DXHxydMsQkms2JsBrNHJe0M2Ncy7Mj\n" \
+"Ls93/3X3SZH3Y3KRsHjIfKwXykAiXO8xESpMqrR17Ds1nX9YSpaV/GVwXNMW9q4Z\n" \
+"OEabACB/9Abe/X8Cbx9NO9MVFUUBo4f0yDOozKLtySrZDA3pCut65d9AzL7nYFES\n" \
+"7Huz3XNKJmaxkbLJAt+mOBeHvAz0sgSGXq49ZD4GQv3B+M+QfB/gdf9sCPh1Shr6\n" \
+"9c8CAwEAAaNgMF4wHwYDVR0jBBgwFoAUIW/2XOdttQYIm/6ny5PMa+LkWWcwHQYD\n" \
+"VR0OBBYEFIII+RWqm/Bvwcmm19dcO2Ft8i98MAwGA1UdEwEB/wQCMAAwDgYDVR0P\n" \
+"AQH/BAQDAgeAMA0GCSqGSIb3DQEBCwUAA4IBAQA6LQZwf5aMwvW5eX2jwZ5AFXKT\n" \
+"ZgeSwsCl85aa1Kd2ypkJvBFMGWzZFsBVOQ3FOkTWzSskBon37idHhTSaWHWoVlTL\n" \
+"9HbGR1/hCLecyT8u9+gyQvMHFlJIBn8diyxCC1M+bRsIrlQvfDPmoAJtiYIHY5Ny\n" \
+"KYACwIair5/DJuFaMpvnp2OZTtrLhmC7JDMLOX/z+2CpUNh0SpvRZKTv0TDYCjI/\n" \
+"h0szC+J9CJjqkrwGo5WrPy2KKXBkpjYHM1pOOlrzan90+gBtvBwhucCM1mso2CoC\n" \
+"hqPTGfFeM8Pro/YPdpnFAmOgJVp3ADV/c6PO+YoogKRtHvw2mfjY+W1cDlP3\n"     \
+"-----END CERTIFICATE-----\n"
+
+
+#define democonfigPRIVATE_KEY                                        \
+"-----BEGIN RSA PRIVATE KEY-----\n"                                  \
+"MIIEpQIBAAKCAQEAq46oapBAD2fZiJZae4j3CH7gw5Wgq9DMNE48PIwIjRETrig1\n" \
+"tWQmiu9dPuGR9OdMcPJwf4cV1bbcagXcNgykLd6t9lgnHyVNrxowPnhvtz9HgIoh\n" \
+"Sm6X8NcfHJ0yxCSazYmwGs0cl7QzY1zLsyMuz3f/dfdJkfdjcpGweMh8rBfKQCJc\n" \
+"7zERKkyqtHXsOzWdf1hKlpX8ZXBc0xb2rhk4RpsAIH/0Bt79fwJvH0070xUVRQGj\n" \
+"h/TIM6jMou3JKtkMDekK63rl30DMvudgURLse7Pdc0omZrGRsskC36Y4F4e8DPSy\n" \
+"BIZerj1kPgZC/cH4z5B8H+B1/2wI+HVKGvr1zwIDAQABAoIBAQCehLbBoIBQu9iZ\n" \
+"CLSaqTf5taLhlgRcPhYxzoiCObI9BqZ0qdrWvK+QeRRj4fIHpSFQy/N/IsbeLpUD\n" \
+"sl6D4rJhX/zGPzYG5WUegshJMOepHuNmtjuElyP1+hBZVDdwXZJckPkUCqp80pkZ\n" \
+"GsltwPij43E9Az4LjddqKYwyTq5EJEKV1XOMOuJrsrhNaQXj5nR4NAhBWCwlWlqc\n" \
+"N3MF/fMnkNWxLDxszhLOqhzDGdRFG0hd2lakOrrJE0ni5nFvImaJltpVfUEaiNz6\n" \
+"ApOvqnbZkc7OUkjo0AkHbKF3Rms4UK2FSdGAAClGD/pwQTexLPOcWM4/ChIWTXz0\n" \
+"tqBO0xbBAoGBAOR7uysqgwI8UY2ghHQjve/zwTMpwcmLFoyO8G1Az+XTZ4cpJpPS\n" \
+"ahx4JEYyVWNRNmzGd8kNByJfFlTn1jA8+UNkZ4e3sUEkqIVi1X5T1OFC1loHTm3p\n" \
+"659JKdclHC4a/wUFJT5qLMcQZl9MQCT8H9r/i5J8Vl2WAa+XxuW+E8CnAoGBAMA3\n" \
+"3TyvXPJoksdx/aoF3N2XmBqqf2w0gRQhx+DHF1TT8Wq4MvvBW1RmgbcqzASLnJ5X\n" \
+"8EITou1CRnY3cloNH92UbiJOhilnx0YLoYrtXyjqd8gKur0oimqCa/Je1kIzVvVE\n" \
+"jcLv0qUz6RxhcuL2rEJVJkyDFn56kF2p2jfmhN6ZAoGBAJfKh68GwCB1GC0B7d0G\n" \
+"fcHy63BlFmQh7ioVMC809qkVyFqoAQQFrw8Y1eh4ufeQVZrwQ1YjPJEeIMTpfIdx\n" \
+"ipu2EX29kJnZk8eBwJn7cZrxf1wyLG2jETEyNwTCl7UdpDyejX6opPTetVQsYRTx\n" \
+"Fuy0BvKbffkQljAkojOxEohTAoGABcrpMOX8ABYkrjwCL/iDQm5KGCuhMWqXpTqr\n" \
+"Ylu9mUHV2ah5aNrX3MBGEnYIte5bJu5xgBxFYa8InpFnMc2Jc00A0KnbIy5MdBDv\n" \
+"qlci8gG24GFqZT7uhO0vQZuYC2Cusy+Asio2B+J7mO5a3voeENWuFMoyiFc7OIdg\n" \
+"2yRoRqkCgYEAyibvs/asjQvizuq6lKareyZUjDuSm46qP3J4ZXOfikfo4hRNUg6j\n" \
+"z55hEHAxmUlAYQ2Osc7Muvgu+TkSyQjzGtFq2YYaRFKxBolgvjUkfO0pittRYp9z\n" \
+"SchJH+g761pKSO4maBLHZ2Y86Ok/DPVmR+/bWpawgmf52nVL8NSl66s=\n"         \
+"-----END RSA PRIVATE KEY-----\n"
 
 /**
  * @brief An option to disable Server Name Indication.
