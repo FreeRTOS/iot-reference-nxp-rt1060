@@ -799,7 +799,7 @@ void prvMQTTAgentTask( void * pvParameters )
 
     if( xStatus == pdPASS )
     {
-        pcBrokerEndpoint = democonfigMQTT_BROKER_ENDPOINT; //prvKVStoreGetString( KVS_CORE_MQTT_ENDPOINT ); //democonfigMQTT_BROKER_ENDPOINT; //
+        pcBrokerEndpoint = prvKVStoreGetString( KVS_CORE_MQTT_ENDPOINT ); //democonfigMQTT_BROKER_ENDPOINT; //
         LogInfo( ( "Endpoint %s\n", pcBrokerEndpoint ) );
 
         if( pcBrokerEndpoint == NULL )

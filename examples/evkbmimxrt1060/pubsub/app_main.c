@@ -48,6 +48,7 @@
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
 #define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainUPDATED_APP                        ( 0 )
 
 /**
  * @brief Subscribe Publish demo tasks configuration.
@@ -55,7 +56,7 @@
  * to a topic, publishing messages to a topic and reporting the incoming messages on subscribed topic.
  * Number of subscribe publish demo tasks to be spawned is configurable.
  */
-#define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
+#define appmainMQTT_NUM_PUBSUB_TASKS              ( 1 )
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 
@@ -97,6 +98,10 @@ int app_main( void )
 
     xResult = KVStore_init();
 
+#if appmainUPDATED_APP == 1
+    configPRINTF( ( "New app Yay!\r\n" ) );
+#endif
+
     if( xResult == pdFAIL )
     {
         configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
@@ -136,7 +141,7 @@ int app_main( void )
         }
 #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
 
-#if 0
+#if 1
         if( xResult == pdPASS )
         {
             xResult = xStartSimplePubSubTasks( appmainMQTT_NUM_PUBSUB_TASKS,

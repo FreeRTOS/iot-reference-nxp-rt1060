@@ -37,13 +37,6 @@
 /* Transport interface include. */
 #include "transport_interface.h"
 
-/* wolfSSL includes. */
-#include "config.h"
-#include "cyassl/ssl.h"
-#include "wolfssl/ssl.h"
-#include "wolfssl/wolfio.h"
-
-
 /* mbed TLS includes. */
 #include "mbedtls/ctr_drbg.h"
 #include "mbedtls/entropy.h"
@@ -71,10 +64,6 @@ typedef struct SSLContext
     mbedtls_x509_crt clientCert;          /**< @brief Client certificate context. */
     mbedtls_pk_context privKey;           /**< @brief Client private key context. */
     mbedtls_pk_info_t privKeyInfo;        /**< @brief Client private key info. */
-
-    WOLFSSL_CTX * wolfSSLContext;
-    WOLFSSL * wolfssl;
-    int wolfsslRootCAFormat;
 
     /* PKCS#11. */
     CK_FUNCTION_LIST_PTR pxP11FunctionList;
