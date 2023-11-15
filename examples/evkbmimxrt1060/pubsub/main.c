@@ -40,8 +40,6 @@
 /* FreeRTOS+TCP Includes */
 #include "FreeRTOS_IP.h"
 
-//#include "enet_ethernetif.h"
-
 #include "fsl_phyksz8081.h"
 #include "fsl_enet_mdio.h"
 #include "fsl_gpio.h"
