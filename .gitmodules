@@ -34,15 +34,6 @@
 [submodule "Middleware/mcuboot"]
 	path = Middleware/mcuboot
 	url = https://github.com/mcu-tools/mcuboot.git
-[submodule "Middleware/AWS/device-shadow"]
-	path = Middleware/AWS/device-shadow
-	url = https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git
-[submodule "Middleware/AWS/device-defender"]
-	path = Middleware/AWS/device-defender
-	url = https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git
-[submodule "Middleware/FreeRTOS/tests"]
-	path = Middleware/FreeRTOS/tests
-	url = https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests.git
 [submodule "Middleware/FreeRTOS/FreeRTOS-Plus-TCP"]
 	path = Middleware/FreeRTOS/FreeRTOS-Plus-TCP
 	url = https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git
