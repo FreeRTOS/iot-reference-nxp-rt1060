@@ -55,9 +55,9 @@
 /* i2c_status_t indicates the result of the I2C command transmission */
 typedef enum
 {
-    i2c_Okay,      /* the command has been transmitted succesfully */
+    i2c_Okay,      /* the command has been transmitted successfully */
     i2c_NoAddrAck, /* the slave does not acknowledge the address byte */
-    i2c_Failed,    /* an error or timeout occured, the command has not succesfully been transmitted */
+    i2c_Failed,    /* an error or timeout occured, the command has not successfully been transmitted */
     i2c_Sci2cException /* PCB indicates protocol exception */
 } i2c_status_t;
 

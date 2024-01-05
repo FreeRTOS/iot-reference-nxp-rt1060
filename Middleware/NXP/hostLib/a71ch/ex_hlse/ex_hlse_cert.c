@@ -741,7 +741,7 @@ static U8 exMixedCertsAndDataObj(U8 initMode, U16 nBaseSize, U16 nObj)
         result &= localScore;
     }
 
-    // Update remaining objects with the alternate reference data, and verify updated data succesfull
+    // Update remaining objects with the alternate reference data, and verify updated data successfull
     PRINTF("\r\nNow update remaining certificates and data objects...\r\n");
     for (i = 0; i < nObjCreated; i++)
     {

@@ -29,3 +29,5 @@ ignorePaths:
   - 'docs'
   - 'ThirdParty'
   - 'History.txt'
+  - 'NXP'
+  - 'evkbmimxrt1060'
