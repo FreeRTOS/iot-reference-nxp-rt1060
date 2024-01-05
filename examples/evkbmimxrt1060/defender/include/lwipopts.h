@@ -100,7 +100,7 @@ void sys_mark_tcpip_thread( void );
 #define MEMP_NUM_UDP_PCB    6
 #endif
 
-/* MEMP_NUM_TCP_PCB: the number of simulatenously active TCP
+/* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
  * connections. */
 #ifndef MEMP_NUM_TCP_PCB
 #define MEMP_NUM_TCP_PCB    10
@@ -118,7 +118,7 @@ void sys_mark_tcpip_thread( void );
 #define MEMP_NUM_TCP_SEG    22
 #endif
 
-/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
+/* MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active
  * timeouts. */
 #ifndef MEMP_NUM_SYS_TIMEOUT
 #define MEMP_NUM_SYS_TIMEOUT    10

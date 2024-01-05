@@ -104,8 +104,8 @@ BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xStateToWait,
  *
  * @param pcTopicFilter  Topic filter string for which the publish callback needs to be invoked.
  * @param usTopicFilterLength  Length of the topic filter string.
- * @param pxPublishCallback  Callback to be invoked whan a publish is received on topic filter.
- * @param pvCallbackContext Context to be paased in transparently to the user.
+ * @param pxPublishCallback  Callback to be invoked when a publish is received on topic filter.
+ * @param pvCallbackContext Context to be passed in transparently to the user.
  * @param xManageResubscription  Whether its a managed subscription. Managed subscriptions are resubscribed by
  *                               MQTT agent if the connection is lost and then reconnected.
  * @return pdTRUE if the callback was added successfully. pdFALSE otherwise.

@@ -483,7 +483,7 @@ static U16 sci2c_MasterToSlaveDataTx(void* conn_ctx, tSCI2C_Data_t * pSCI2C)
 
          i2cErr = sci2c_WriteBlock(conn_ctx, pSci2cData);
 
-         // i2c_Okay,      /* the command has been transmitted succesfully */
+         // i2c_Okay,      /* the command has been transmitted successfully */
          // i2c_NoAddrAck, /* the slave does not acknowledge the address byte */
          // i2c_Failed,
 

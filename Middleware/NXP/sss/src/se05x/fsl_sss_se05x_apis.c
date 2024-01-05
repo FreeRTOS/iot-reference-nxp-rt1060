@@ -2538,7 +2538,7 @@ static sss_status_t sss_se05x_key_store_set_ecc_key(sss_se05x_key_store_t *keySt
         switch (keyObject->curve_id) {
 #if SSS_HAVE_TPM_BN
         case kSE05x_ECCurve_TPM_ECC_BN_P256: {
-            LOG_I("Key pair should be paased without header");
+            LOG_I("Key pair should be passed without header");
             /* No header included in ED and BN curve keys */
             privateKeyIndex = 0;
             publicKeyIndex  = 32;
@@ -2671,7 +2671,7 @@ static sss_status_t sss_se05x_key_store_set_ecc_key(sss_se05x_key_store_t *keySt
         switch (keyObject->curve_id) {
 #if SSS_HAVE_TPM_BN
         case kSE05x_ECCurve_TPM_ECC_BN_P256: {
-            LOG_I("Public key should be paased without header");
+            LOG_I("Public key should be passed without header");
             publicKeyLen = keyLen;
         } break;
 #endif

@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-#define AX_UTIL_OK    0  //!< Integer return status value to indicate succesfull execution
+#define AX_UTIL_OK    0  //!< Integer return status value to indicate successfull execution
 #define AX_UTIL_ERROR 1  //!< Integer return status value to indicate execution failure
 
 /// @cond

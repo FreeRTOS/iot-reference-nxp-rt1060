@@ -203,7 +203,7 @@ static U8 exEccNoHostCrypto(U8 initMode) {
         eccPrivKeyTlsNist256_1, (U16)sizeof(eccPrivKeyTlsNist256_1));
     result &= AX_CHECK_SW(err, SW_OK, "err");
 
-    // Check whether public key (of keypair) was written succesfully.
+    // Check whether public key (of keypair) was written successfully.
     pubEccKeyScratchLen = sizeof(pubEccKeyScratch);
     expectedPubKeyLen = 65;
     keyIdx = A71CH_KEY_PAIR_0;
@@ -235,7 +235,7 @@ static U8 exEccNoHostCrypto(U8 initMode) {
     err = A71_SetEccPublicKey(keyIdx, eccPubKeyCANist256_1, (U16)sizeof(eccPubKeyCANist256_1));
     result &= AX_CHECK_SW(err, SW_OK, "err");
 
-    // Check whether public key at index 1 was written succesfully.
+    // Check whether public key at index 1 was written successfully.
     pubEccKeyScratchLen = sizeof(pubEccKeyScratch);
     expectedPubKeyLen = 65;
     keyIdx = A71CH_PUBLIC_KEY_1;
@@ -246,7 +246,7 @@ static U8 exEccNoHostCrypto(U8 initMode) {
     result &= AX_COMPARE_BYTE_ARRAY("pubEccKeyScratch", pubEccKeyScratch, pubEccKeyScratchLen,
         "eccPubKeyCANist256_1", eccPubKeyCANist256_1, sizeof(eccPubKeyCANist256_1), AX_COLON_32);
 
-    // Check whether public key at index 0 was written succesfully.
+    // Check whether public key at index 0 was written successfully.
     pubEccKeyScratchLen = sizeof(pubEccKeyScratch);
     expectedPubKeyLen = 65;
     keyIdx = A71CH_PUBLIC_KEY_0;

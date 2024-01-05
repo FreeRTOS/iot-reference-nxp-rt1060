@@ -1731,7 +1731,7 @@ U16 HOSTCRYPTO_GenerateEccKeyByName(int curveName, EC_KEY** ppKey)
 
 /**
  * Generates a key pair for NIST P-256 curve and returns the private and public key as byte arrays.
- * @return HOST_CRYPTO_OK when generation was succesful, HOST_CRYPTO_ERROR when generation failed.
+ * @return HOST_CRYPTO_OK when generation was successful, HOST_CRYPTO_ERROR when generation failed.
  */
 int HOST_ECC_GenerateKeyPair(U8 * pPublicKey, U16 * pPublicKeyLength, U8 * pPrivateKey, U16 * pPrivateKeyLength)
 {

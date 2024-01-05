@@ -241,7 +241,7 @@ in MAC or Linux machines.
 
 ### 3.3 Preparing an Executable Image Sent to the Device via OTA
 
-For a succesful OTA, follow the below steps to prepare the executable image:
+For a successful OTA, follow the below steps to prepare the executable image:
 1. The version number of the image sent via OTA must be higher than that already running on the device, so temporarily update the executable image's version number.\
 2. Build the executable image.\
 3. Sign the executable image with the key used by the bootloader to validate the image.\
@@ -468,19 +468,19 @@ perform OTA updates.
 1. Create an ECDSA code-signing private key.
      ```
      openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -pkeyopt \
-         ec_param_enc:named_curve -outform PEM -out ecdsasigner.key
+         ec_param_enc:named_curve -outform PEM -out ecdsa_signer.key
      ```
 
 1. Create an ECDSA code-signing certificate.
      ```
      openssl req -new -x509 -config cert_config.txt -extensions my_exts -nodes \
-         -days 365 -key ecdsasigner.key -out ecdsasigner.crt
+         -days 365 -key ecdsa_signer.key -out ecdsa_signer.crt
      ```
 
 1. Import the code-signing certificate, private key, and certificate chain into the AWS
      Certificate Manager.
      ```
-     aws acm import-certificate --certificate fileb://ecdsasigner.crt --private-key fileb://ecdsasigner.key
+     aws acm import-certificate --certificate file://ecdsa_signer.crt --private-key file://ecdsa_signer.key
      ```
 
 1. Confirm the ARN for your certificate. You need this ARN when you create an OTA update job.
@@ -490,13 +490,13 @@ perform OTA updates.
 
 1. Get the ECDSA public key from the code signing credentials generated in 6.2:
      ```
-     openssl ec -in ecdsasigner.key -pubout -outform PEM -out ecdsasigner-pub-key.pem
+     openssl ec -in ecdsa_signer.key -pubout -outform PEM -out ecdsa_signer-pub-key.pem
      ```
 
-1. Confirm that the file `esdsaigner-pub-key.pem` has been created correctly.
+1. Confirm that the file `ecdsa_signer-pub-key.pem` has been created correctly.
      ![Image](https://user-images.githubusercontent.com/45887168/161103614-dd30b4a0-de7c-49d3-8567-a5054a446080.png)
 
-1. Open the target MCUExpressoIDE aws_iot_pubsub project. To switch to device provisioning mode
+1. Open the target MCUXpressoIDE aws_iot_pubsub project. To switch to device provisioning mode
      set `appmainPROVISIONING_MODE` to `1`, recompile and download the firmware to the board.
 
 1. On the terminal CLI, run the following command:

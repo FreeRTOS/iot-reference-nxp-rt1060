@@ -268,7 +268,7 @@ static U16 A71_EccSign_Local(SST_Index_t index, const U8 *pHash, U16 hashLen, U8
 * @param[in] index  Storage index of the keypair (private key) to be used.
 * @param[in] updateBytes Byte array to be written into GP storage
 * @param[in] updateBytesLen Length of the provided byte array (\p updateBytes).
-* @param[out] invocationCount Amount of times the underlying APDU has been called succesfully.
+* @param[out] invocationCount Amount of times the underlying APDU has been called successfully.
 * @retval ::SW_OK Upon successful execution
 */
 U16 A71_EccRestrictedSign(SST_Index_t index, const U8 *updateBytes, U16 updateBytesLen, U8 *invocationCount)
