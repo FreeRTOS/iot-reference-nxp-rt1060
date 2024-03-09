@@ -88,6 +88,12 @@
 /* Includes MQTT Agent Task management APIs. */
 #include "mqtt_agent_task.h"
 
+/* Includes MQTT wrapper used in the OTA demo. */
+#include "mqtt_wrapper.h"
+
+/* Include required to pass unsolicited publishes to the OTA demo. */
+#include "ota_demo.h"
+
 /**
  * @brief Dimensions the buffer used to serialize and deserialize MQTT packets.
  * @note Specified in bytes.  Must be large enough to hold the maximum
@@ -143,7 +149,8 @@
 /**
  * @brief Socket send and receive timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 750 )
+#define mqttexampleTRANSPORT_SEND_TIMEOUT_MS    ( 750 )
+#define mqttexampleTRANSPORT_RECV_TIMEOUT_MS    ( 0 )
 
 /**
  * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
@@ -180,6 +187,8 @@
  */
 #define mqttexampleEVENT_BITS_ALL    ( ( EventBits_t ) ( ( 1ULL << MQTT_AGENT_NUM_STATES ) - 1U ) )
 
+
+#define MQTT_AGENT_NOTIFY_IDX                 ( 3U )
 /*-----------------------------------------------------------*/
 
 /**
@@ -584,8 +593,8 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
                                                pcBrokerEndpoint,
                                                ulBrokerPort,
                                                &xNetworkCredentials,
-                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
-                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+                                               mqttexampleTRANSPORT_RECV_TIMEOUT_MS,
+                                               mqttexampleTRANSPORT_SEND_TIMEOUT_MS );
 
         if( xNetworkStatus == TLS_TRANSPORT_SUCCESS )
         {
@@ -729,13 +738,21 @@ static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
      * handle it as an unsolicited publish. */
     if( xPublishHandled != true )
     {
-        /* Ensure the topic string is terminated for printing.  This will over-
-         * write the message ID, which is restored afterwards. */
-        pcLocation = ( char * ) &( pxPublishInfo->pTopicName[ pxPublishInfo->topicNameLength ] );
-        cOriginalChar = *pcLocation;
-        *pcLocation = 0x00;
-        LogWarn( ( "WARN:  Received an unsolicited publish from topic %s", pxPublishInfo->pTopicName ) );
-        *pcLocation = cOriginalChar;
+    	xPublishHandled = otaDemo_handleIncomingMQTTMessage( pxPublishInfo->pTopicName,
+                                                             pxPublishInfo->topicNameLength,
+                                                             pxPublishInfo->pPayload,
+                                                             pxPublishInfo->payloadLength );
+
+    	if( xPublishHandled != true )
+    	{
+            /* Ensure the topic string is terminated for printing.  This will over-
+             * write the message ID, which is restored afterwards. */
+            pcLocation = ( char * ) &( pxPublishInfo->pTopicName[ pxPublishInfo->topicNameLength ] );
+            cOriginalChar = *pcLocation;
+            *pcLocation = 0x00;
+            LogWarn( ( "WARN:  Received an unsolicited publish from topic %s", pxPublishInfo->pTopicName ) );
+            *pcLocation = cOriginalChar;
+    	}
     }
 }
 
@@ -760,6 +777,14 @@ static char * prvKVStoreGetString( KVStoreKey_t xKey )
 
     return pcValue;
 }
+
+/*-----------------------------------------------------------*/
+
+MQTTAgentContext_t * xGetMqttAgentHandle( void )
+{
+    return &xGlobalMqttAgentContext;
+}
+
 /*-----------------------------------------------------------*/
 
 void prvMQTTAgentTask( void * pvParameters )
@@ -842,6 +867,10 @@ void prvMQTTAgentTask( void * pvParameters )
              * which could be a disconnect.  If an error occurs the MQTT context on
              * which the error happened is returned so there is an attempt to
              * clean up and reconnect. */
+
+        	/* Set the MQTT context to be used by the MQTT wrapper. */
+        	mqttWrapper_setCoreMqttContext( &( xGlobalMqttAgentContext.mqttContext ) );
+
             prvSetMQTTAgentState( MQTT_AGENT_STATE_CONNECTED );
 
             xMQTTStatus = MQTTAgent_CommandLoop( &xGlobalMqttAgentContext );
@@ -1033,6 +1062,31 @@ static void prvSetMQTTAgentState( MQTTAgentState_t xAgentState )
 
 /*-----------------------------------------------------------*/
 
+static void prvSubscribeRqCallback( MQTTAgentCommandContext_t * pxCommandContext,
+                                    MQTTAgentReturnInfo_t * pxReturnInfo )
+{
+    TaskHandle_t xTaskHandle = ( struct tskTaskControlBlock * ) pxCommandContext;
+
+    configASSERT( pxReturnInfo );
+
+    if( xTaskHandle != NULL )
+    {
+        uint32_t ulNotifyValue = ( pxReturnInfo->returnCode & 0xFFFFFF );
+
+        if( pxReturnInfo->pSubackCodes )
+        {
+            ulNotifyValue += ( pxReturnInfo->pSubackCodes[ 0 ] << 24 );
+        }
+
+        ( void ) xTaskNotifyIndexed( xTaskHandle,
+                                     MQTT_AGENT_NOTIFY_IDX,
+                                     ulNotifyValue,
+                                     eSetValueWithOverwrite );
+    }
+}
+
+/*-----------------------------------------------------------*/
+
 BaseType_t xMQTTAgentInit( configSTACK_DEPTH_TYPE uxStackSize,
                            UBaseType_t uxPriority )
 {
@@ -1176,4 +1230,61 @@ void vRemoveMQTTTopicFilterCallback( const char * pcTopicFilter,
         }
     }
     xSemaphoreGive( xSubscriptionsMutex );
+}
+
+MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
+                                      uint16_t uxTopicFilterLength,
+                                      MQTTQoS_t xRequestedQoS,
+                                      IncomingPubCallback_t pxCallback,
+                                      void * pvCallbackCtx )
+{
+	BaseType_t xMQTTCallbackAdded;
+	MQTTStatus_t xResult;
+
+	xMQTTCallbackAdded = xAddMQTTTopicFilterCallback( pcTopicFilter,
+                                                      uxTopicFilterLength,
+                                                      pxCallback,
+                                                      pvCallbackCtx,
+                                                      pdFALSE );
+
+	if( xMQTTCallbackAdded == pdTRUE )
+	{
+		MQTTSubscribeInfo_t xSubInfo = { .qos = xRequestedQoS,
+                                         .pTopicFilter = pcTopicFilter,
+                                         .topicFilterLength = uxTopicFilterLength };
+
+		MQTTAgentSubscribeArgs_t xSubArgs = { .pSubscribeInfo = &xSubInfo,
+                                              .numSubscriptions = 1 };
+
+		/* The block time can be 0 as the command loop is not running at this point. */
+		MQTTAgentCommandInfo_t xCommandParams = { .blockTimeMs = portMAX_DELAY,
+		                                          .cmdCompleteCallback = prvSubscribeRqCallback,
+		                                          .pCmdCompleteCallbackContext = ( void * ) ( xTaskGetCurrentTaskHandle() ) };
+
+		( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
+
+        /* Enqueue subscribe to the command queue. These commands will be processed only
+		 * when command loop starts. */
+		xResult = MQTTAgent_Subscribe( &xGlobalMqttAgentContext, &xSubArgs, &xCommandParams );
+
+		if( xResult == MQTTSuccess )
+		{
+			uint32_t ulNotifyValue = 0;
+
+			if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
+										0x0,
+										0xFFFFFFFF,
+										&ulNotifyValue,
+										portMAX_DELAY ) )
+			{
+				xResult = ( ulNotifyValue & 0x00FFFFFF );
+			}
+			else
+			{
+				xResult = MQTTKeepAliveTimeout;
+			}
+		}
+	}
+
+	return 0;
 }

@@ -312,10 +312,9 @@ Follow the steps below to set up an AWS account and provision the device:
 
      ![Image](https://user-images.githubusercontent.com/45887168/161142361-68eac8fa-8482-439d-bf90-e602cc5a28cd.png)
 
-1. Copy the PEM certificate from the terminal console and save to a file. Log into your AWS account, go to the AWS IoT Console, choose "Secure", choose
-     "Certificates", and then choose "Create". Next to "Use my certificate" choose "Get started". On
-     "Select a CA" choose "Next". On "Register existing device certificates", choose "Select certificates" and
-     select the PEM file you just created. Select "Activate all" then choose "Register certificates".
+1. Copy the PEM certificate from the terminal console and save to a file. Log into your AWS account, go to the AWS IoT Console, choose "Security", choose
+     "Certificates", and then click on the drop down "Add Certificate" and choose "Register Certificate". Choose "CA is not registered with AWS IoT" and
+     select the PEM file you just created. Select "Activate" then choose "Register".
      For more detailed instructions, see [Register a client certificate signed by an unregistered CA (console)](https://docs.aws.amazon.com/iot/latest/developerguide/manual-cert-registration.html#manual-cert-registration-console-noca).
 
      ![Image](https://user-images.githubusercontent.com/45887168/161153139-dae3151c-48f3-4d42-a47a-8f839777b425.png)
@@ -480,7 +479,7 @@ perform OTA updates.
 1. Import the code-signing certificate, private key, and certificate chain into the AWS
      Certificate Manager.
      ```
-     aws acm import-certificate --certificate fileb://ecdsasigner.crt --private-key fileb://ecdsasigner.key
+     aws acm import-certificate --certificate fileb://ecdsasigner.crt --private-key fileb://ecdsasigner.key --region=<aws_iot_region_for_account>
      ```
 
 1. Confirm the ARN for your certificate. You need this ARN when you create an OTA update job.

@@ -25,9 +25,6 @@
 [submodule "Middleware/FreeRTOS/pkcs11"]
 	path = Middleware/FreeRTOS/pkcs11
 	url = https://github.com/amazon-freertos/pkcs11.git
-[submodule "Middleware/AWS/ota"]
-	path = Middleware/AWS/ota
-	url = https://github.com/aws/ota-for-aws-iot-embedded-sdk
 [submodule "Middleware/tinycbor"]
 	path = Middleware/tinycbor
 	url = https://github.com/intel/tinycbor.git
@@ -49,3 +46,9 @@
 [submodule "Middleware/FreeRTOS/tests"]
 	path = Middleware/FreeRTOS/tests
 	url = https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests.git
+[submodule "Middleware/AWS/mqtt-stream"]
+	path = Middleware/AWS/mqtt-stream
+	url = https://github.com/aws/aws-iot-core-mqtt-file-streams-embedded-c
+[submodule "Middleware/AWS/jobs"]
+	path = Middleware/AWS/jobs
+	url = https://github.com/aws/Jobs-for-AWS-IoT-embedded-sdk.git

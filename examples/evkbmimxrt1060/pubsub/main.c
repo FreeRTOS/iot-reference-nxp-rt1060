@@ -325,6 +325,7 @@ int main( void )
     }
 }
 
+
 void vApplicationDaemonTaskStartupHook( void )
 {
     /* Initialize file system. */
