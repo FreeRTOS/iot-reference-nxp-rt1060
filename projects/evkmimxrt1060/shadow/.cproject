@@ -123,9 +123,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/se05x_03_xx_xx&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/tstUtil&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/libCommon/smCom/T1oI2C&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/ota/source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/device-shadow/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/ota/source/portable/os&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/tinycbor/src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/coreJSON/source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/flexspi&quot;"/>
@@ -137,6 +135,11 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/cli&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/shadow/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/shadow/board&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/ota/ota_os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/mqtt-stream/source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/jobs/source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/jobs/source/otaJobParser/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/mqtt_wrapper&quot;"/>
 								</option>
 								<option id="com.crt.advproject.c.misc.dialect.694419664" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.specs.604491904" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
@@ -256,9 +259,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/se05x_03_xx_xx&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/tstUtil&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/NXP/hostLib/libCommon/smCom/T1oI2C&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/ota/source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/device-shadow/source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/ota/source/portable/os&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/tinycbor/src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/coreJSON/source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../core/drivers/flexspi&quot;"/>
@@ -270,6 +271,11 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/cli&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/shadow/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/evkbmimxrt1060/shadow/board&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/ota/ota_os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/mqtt-stream/source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/jobs/source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/jobs/source/otaJobParser/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/mqtt_wrapper&quot;"/>
 								</option>
 								<inputType id="com.crt.advproject.compiler.input.1469817485" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
@@ -399,15 +405,6 @@
 &lt;/TargetConfig&gt;</projectStorage>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.2067845682;com.crt.advproject.config.exe.debug.2067845682.;com.crt.advproject.gcc.exe.debug.105390258;com.crt.advproject.compiler.input.318269832">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.2067845682;com.crt.advproject.config.exe.debug.2067845682.;com.crt.advproject.gas.exe.debug.1187433041;com.crt.advproject.assembler.input.1723538560">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/aws_iot_shadow"/>
@@ -424,5 +421,14 @@
 		<package>MIMXRT1062DVL6B</package>
 		<core>cm7</core>
 		<coreId>core0_MIMXRT1062xxxxB</coreId>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.2067845682;com.crt.advproject.config.exe.debug.2067845682.;com.crt.advproject.gas.exe.debug.1187433041;com.crt.advproject.assembler.input.1723538560">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.2067845682;com.crt.advproject.config.exe.debug.2067845682.;com.crt.advproject.gcc.exe.debug.105390258;com.crt.advproject.compiler.input.318269832">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
+		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>

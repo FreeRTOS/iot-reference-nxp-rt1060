@@ -926,8 +926,9 @@ static void processOTAEvents( void )
         case OtaPalNewImageBooted:
         	( void ) sendSuccessMessage();
 
-        	/* Short delay before restarting the loop. */
-        	vTaskDelay( pdMS_TO_TICKS( 1000 ) );
+        	/* Short delay before restarting the loop. This allows IoT core
+        	 * to update the status of the job. */
+        	vTaskDelay( pdMS_TO_TICKS( 5000 ) );
 
         	/* Get ready for new OTA job. */
         	nextEvent.eventId = OtaAgentEventRequestJobDocument;

@@ -95,9 +95,9 @@ OtaPalJobDocProcessingResult_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t
 
     LogDebug( ( "[OTA-NXP] CreateFileForRx" ) );
 
-    if( otaPal_GetPlatformImageState( pFileContext ) == OtaPalImageStateValid )
+    if( otaPal_SetPlatformImageState( pFileContext ,OtaImageStateAccepted ) == OtaPalSuccess )
     {
-    	/* TODO: Check here if anything is to be checked before sending the
+    	/* TODO: Check here if anything is to be verified before sending the
     	 * success message to IoT core. */
     	return OtaPalNewImageBooted;
     }
