@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE infoList
+  SYSTEM "crt_infolist.dtd">
+<infoList vendor="NXP">
+   <info name="LPC54018" chip="LPC54018">
+      <chip>
+         <name>LPC54018</name>
+         <family>LPC540xx</family>
+         <vendor>NXP</vendor>
+         <memory id="Flash"
+                 type="Flash"
+                 size="0"
+                 is_ro="true"
+                 can_program="true"/>
+         <memory id="RAM" type="RAM" size="352"/>
+         <memoryInstance id="SRAMX"
+                         derived_from="RAM"
+                         location="0x00000000"
+                         size="0x00030000"/>
+         <memoryInstance id="SRAM_0_1_2_3"
+                         derived_from="RAM"
+                         location="0x20000000"
+                         size="0x00028000"/>
+         <memoryInstance id="USB_RAM"
+                         derived_from="RAM"
+                         location="0x40100000"
+                         size="0x00002000"/>
+      </chip>
+      <processor>
+         <name gcc_name="cortex-m4">Cortex-M4</name>
+         <family>Cortex-M</family>
+      </processor>
+   </info>
+</infoList>

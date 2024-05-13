@@ -288,6 +288,7 @@ out:
 
 int sbl_boot_main( void )
 {
+	/* Reset ISR is at: 0x6004071c. */
     struct image_header br_hdr1 = { .ih_hdr_size = 0x2000 };
     struct boot_rsp rsp = { .br_hdr = &br_hdr1, .br_flash_dev_id = 1, .br_image_off = 0x80000 };
     int rc = 0;

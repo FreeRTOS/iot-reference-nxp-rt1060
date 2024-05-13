@@ -46,16 +46,11 @@
 #include "mbedtls/pk.h"
 #include "mbedtls/pk_internal.h"
 #include "mbedtls/error.h"
-#include "lwip/sockets.h"
+#include "FreeRTOS_Sockets.h"
 
 
 /* PKCS #11 includes. */
 #include "core_pkcs11.h"
-
-/**
- * Socket type for LWIP sockets.
- */
-typedef int Socket_t;
 
 /**
  * @brief Secured connection context.

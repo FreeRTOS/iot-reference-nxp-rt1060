@@ -7,9 +7,6 @@
 [submodule "Middleware/FreeRTOS/coreMQTT"]
 	path = Middleware/FreeRTOS/coreMQTT
 	url = https://github.com/FreeRTOS/coreMQTT.git
-[submodule "Middleware/lwip"]
-	path = Middleware/lwip
-	url = https://github.com/lwip-tcpip/lwip.git
 [submodule "Middleware/mbedtls"]
 	path = Middleware/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
@@ -37,15 +34,6 @@
 [submodule "Middleware/mcuboot"]
 	path = Middleware/mcuboot
 	url = https://github.com/mcu-tools/mcuboot.git
-[submodule "Middleware/AWS/device-shadow"]
-	path = Middleware/AWS/device-shadow
-	url = https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git
-[submodule "Middleware/AWS/device-defender"]
-	path = Middleware/AWS/device-defender
-	url = https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git
-[submodule "Middleware/unity"]
-	path = Middleware/unity
-	url = https://github.com/ThrowTheSwitch/Unity.git
-[submodule "Middleware/FreeRTOS/tests"]
-	path = Middleware/FreeRTOS/tests
-	url = https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests.git
+[submodule "Middleware/FreeRTOS/FreeRTOS-Plus-TCP"]
+	path = Middleware/FreeRTOS/FreeRTOS-Plus-TCP
+	url = https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git

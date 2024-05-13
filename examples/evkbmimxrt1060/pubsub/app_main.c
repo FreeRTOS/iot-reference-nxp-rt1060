@@ -47,7 +47,8 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 1 )
+#define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainUPDATED_APP                        ( 0 )
 
 /**
  * @brief Subscribe Publish demo tasks configuration.
@@ -55,7 +56,7 @@
  * to a topic, publishing messages to a topic and reporting the incoming messages on subscribed topic.
  * Number of subscribe publish demo tasks to be spawned is configurable.
  */
-#define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
+#define appmainMQTT_NUM_PUBSUB_TASKS              ( 1 )
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 
@@ -97,6 +98,10 @@ int app_main( void )
 
     xResult = KVStore_init();
 
+#if appmainUPDATED_APP == 1
+    configPRINTF( ( "New app Yay!\r\n" ) );
+#endif
+
     if( xResult == pdFAIL )
     {
         configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
@@ -119,6 +124,7 @@ int app_main( void )
         if( xResult == pdPASS )
         {
             xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
+            //SRC->SCR |= SRC_SCR_CORE0_RST_MASK;
         }
 
 #if ( appmainINCLUDE_OTA_UPDATE_TASK == 1 )
@@ -135,12 +141,14 @@ int app_main( void )
         }
 #endif /* if ( appmainINCLUDE_OTA_AGENT == 1 ) */
 
+#if 1
         if( xResult == pdPASS )
         {
             xResult = xStartSimplePubSubTasks( appmainMQTT_NUM_PUBSUB_TASKS,
                                                appmainMQTT_PUBSUB_TASK_STACK_SIZE,
                                                appmainMQTT_PUBSUB_TASK_PRIORITY );
         }
+#endif
     }
 #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 

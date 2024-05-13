@@ -87,11 +87,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/linkscripts</locationURI>
 		</link>
 		<link>
-			<name>lwip</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>mbedtls</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -312,16 +307,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/core/drivers/trng/fsl_trng.h</locationURI>
 		</link>
 		<link>
-			<name>lwip/port</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>lwip/src</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/lwip/src</locationURI>
-		</link>
-		<link>
 			<name>mbedtls/include</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Middleware/mbedtls/include</locationURI>
@@ -362,14 +347,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/sss</locationURI>
 		</link>
 		<link>
+			<name>source/CLI</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source/app_main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/app_main.c</locationURI>
-		</link>
-		<link>
-			<name>source/cli</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli</locationURI>
 		</link>
 		<link>
 			<name>source/kvstore</name>
@@ -405,6 +390,11 @@
 			<name>source/simple_pub_sub_task.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/simple_pub_sub_task.c</locationURI>
+		</link>
+		<link>
+			<name>source/tcp_sockets_wrapper.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/tcp_sockets_wrapper.c</locationURI>
 		</link>
 		<link>
 			<name>startup/startup_mimxrt1062.c</name>
@@ -447,6 +437,111 @@
 			<locationURI>PARENT-3-PROJECT_LOC/core/utilities/debug_console/str/fsl_str.h</locationURI>
 		</link>
 		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_ARP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_ARP.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_DHCP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_DHCP.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_DNS.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_DNS.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Cache.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Cache.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Callback.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Callback.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Networking.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Networking.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Parser.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_DNS_Parser.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_ICMP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_ICMP.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_IP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_IP.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_IP_Timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_IP_Timers.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_IP_Utils.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_IP_Utils.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_Sockets.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_Sockets.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_Stream_Buffer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_Stream_Buffer.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_IP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_IP.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_Reception.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_Reception.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_State_Handling.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_State_Handling.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_Transmission.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_Transmission.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_Utils.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_Utils.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_WIN.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_TCP_WIN.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_Tiny_TCP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_Tiny_TCP.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/FreeRTOS_UDP_IP.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/FreeRTOS_UDP_IP.c</locationURI>
+		</link>
+		<link>
 			<name>component/mflash/mflash_file.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/core/components/flash/mflash/mflash_file.c</locationURI>
@@ -457,36 +552,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/core/components/flash/mflash/mflash_file.h</locationURI>
 		</link>
 		<link>
-			<name>lwip/port/arch</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/lwip_osal/include/arch</locationURI>
-		</link>
-		<link>
-			<name>lwip/port/enet_ethernetif.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/lwip_ethernet/enet_ethernetif.c</locationURI>
-		</link>
-		<link>
-			<name>lwip/port/enet_ethernetif.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/lwip_ethernet/enet_ethernetif.h</locationURI>
-		</link>
-		<link>
-			<name>lwip/port/enet_ethernetif_kinetis.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/lwip_ethernet/enet_ethernetif_kinetis.c</locationURI>
-		</link>
-		<link>
-			<name>lwip/port/enet_ethernetif_priv.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/lwip_ethernet/enet_ethernetif_priv.h</locationURI>
-		</link>
-		<link>
-			<name>lwip/port/sys_arch.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/lwip_osal/src/sys_arch.c</locationURI>
-		</link>
-		<link>
 			<name>mbedtls/port/ksdk</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/mbedtls_port/ksdk</locationURI>
@@ -495,6 +560,216 @@
 			<name>mbedtls/port/mbedtls_freertos.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Middleware/NXP/mbedtls_port/mbedtls_freertos.c</locationURI>
+		</link>
+		<link>
+			<name>source/CLI/FreeRTOS_CLI.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli/FreeRTOS_CLI.c</locationURI>
+		</link>
+		<link>
+			<name>source/CLI/FreeRTOS_CLI.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli/FreeRTOS_CLI.h</locationURI>
+		</link>
+		<link>
+			<name>source/CLI/FreeRTOS_CLI_Console.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli/FreeRTOS_CLI_Console.c</locationURI>
+		</link>
+		<link>
+			<name>source/CLI/FreeRTOS_CLI_Console.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli/FreeRTOS_CLI_Console.h</locationURI>
+		</link>
+		<link>
+			<name>source/CLI/cli.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli/cli.c</locationURI>
+		</link>
+		<link>
+			<name>source/CLI/cli_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/cli/cli_uart.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOSIPConfigDefaults.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOSIPConfigDefaults.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_ARP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_ARP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DHCP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DHCP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Cache.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Cache.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Callback.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Callback.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Globals.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Globals.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Networking.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Networking.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Parser.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_DNS_Parser.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_ICMP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_ICMP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP_Private.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP_Private.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP_Timers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP_Timers.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP_Utils.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_IP_Utils.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_Sockets.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_Sockets.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_Stream_Buffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_Stream_Buffer.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_IP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_IP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_Reception.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_Reception.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_State_Handling.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_State_Handling.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_Transmission.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_Transmission.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_Utils.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_Utils.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_WIN.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_TCP_WIN.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_UDP_IP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_UDP_IP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/FreeRTOS_errno_TCP.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/FreeRTOS_errno_TCP.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/IPTraceMacroDefaults.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/IPTraceMacroDefaults.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/NetworkBufferManagement.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/NetworkBufferManagement.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/include/NetworkInterface.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/include/NetworkInterface.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/BufferManagement</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/Compiler</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/NetworkInterface</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/BufferManagement/BufferAllocation_2.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/portable/BufferManagement/BufferAllocation_2.c</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/Compiler/GCC</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/NetworkInterface/NXP1060</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/Compiler/GCC/pack_struct_end.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC/pack_struct_end.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/Compiler/GCC/pack_struct_start.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/FreeRTOS/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC/pack_struct_start.h</locationURI>
+		</link>
+		<link>
+			<name>FreeRTOS-Plus-TCP/source/portable/NetworkInterface/NXP1060/NetworkInterface.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/NetworkInterface.c</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>
@@ -661,15 +936,6 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1637706919000</id>
-			<name>lwip/src</name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-apps</arguments>
-			</matcher>
-		</filter>
-		<filter>
 			<id>1639622211516</id>
 			<name>pkcs11/corePKCS11</name>
 			<type>10</type>
@@ -775,15 +1041,6 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-heap_4.c</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1637706966631</id>
-			<name>lwip/src/netif</name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-ppp</arguments>
 			</matcher>
 		</filter>
 		<filter>

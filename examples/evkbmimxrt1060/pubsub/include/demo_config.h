@@ -87,7 +87,7 @@
  *
  * #define democonfigMQTT_BROKER_ENDPOINT    "...insert here..."
  */
-#define democonfigMQTT_BROKER_ENDPOINT    "a31zvyed820ljz-ats.iot.us-east-1.amazonaws.com"
+#define democonfigMQTT_BROKER_ENDPOINT    "192.168.1.2" //"aesqkxqeyrs5g-ats.iot.us-west-2.amazonaws.com"
 
 /**
  * @brief The port to use for the demo.

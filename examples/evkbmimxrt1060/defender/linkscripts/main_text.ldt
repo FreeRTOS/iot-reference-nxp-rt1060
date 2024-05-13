@@ -1,1 +1,0 @@
-        *(EXCLUDE_FILE(*mflash_drv.o *fsl_flexspi.o *ota_pal.o *flexspi_nor_flash_ops.o) .text*)

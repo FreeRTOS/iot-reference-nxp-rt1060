@@ -529,7 +529,7 @@ static void prvOTAAgentTask( void * pvParam )
  * @return None.
  */
 static void otaAppCallback( OtaJobEvent_t event,
-                            const void * pData )
+                            void * pData )
 {
     OtaErr_t err = OtaErrUninitialized;
 
