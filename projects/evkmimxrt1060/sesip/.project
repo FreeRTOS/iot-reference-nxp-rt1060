@@ -259,7 +259,7 @@
 		<link>
 			<name>source/task</name>
 			<type>2</type>
-			<location>C:/Users/kstribrn/workspace/forks/iot-reference-nxp-rt1060/examples/evkbmimxrt1060/sesip/task</location>
+			<location>/Applications/MCUXpressoIDE_11.9.0_2144/ide/MCUXpressoIDE.app/Contents/MacOS/C::/Users/kstribrn/workspace/forks/iot-reference-nxp-rt1060/examples/evkbmimxrt1060/sesip/task</location>
 		</link>
 		<link>
 			<name>startup/startup_mimxrt1062.c</name>

@@ -2,9 +2,9 @@
 <!DOCTYPE infoList
   SYSTEM "crt_infolist.dtd">
 <infoList vendor="NXP">
-   <info name="MIMXRT1062xxxxA" chip="MIMXRT1062xxxxA">
+   <info name="MIMXRT1062xxxxB" chip="MIMXRT1062xxxxB">
       <chip>
-         <name>MIMXRT1062xxxxA</name>
+         <name>MIMXRT1062xxxxB</name>
          <family>MIMXRT1060</family>
          <vendor>NXP</vendor>
          <memory id="Flash"
