@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS version 202012.00-LTS
+ * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -24,23 +25,22 @@
  * 1 tab == 4 spaces!
  */
 
-#include "mcuboot_config.h"
+/**
+ * @brief Header file contains APIs to demonstrate MPU functionalities.
+ */
 
-#if defined( MCUBOOT_SIGN_RSA )
+#ifndef USER_DEMO_RESTRICTED_TASK_H_
+#define USER_DEMO_RESTRICTED_TASK_H_
 
-#error Please use MCUBoot imgtool.py to generate an RSA signing key \
-    and replace this file with the output of the tool.
+void printRegions( void );
 
-const unsigned char rsa_pub_key[] = { 0x00 };
-const unsigned int rsa_pub_key_len = 0;
+/**
+ * @brief Demo function to create restricted tasks given priority.
+ * Function creates a read-only task and read-write task to demonstrate the MPU
+ * functionalities with FreeRTOS tasks.
+ *
+ * @param[in] xPriority Priority of the restricted tasks.
+ */
+void xCreateRestrictedTasks( BaseType_t xPriority );
 
-#elif defined( MCUBOOT_SIGN_EC256 )
-
-#error Please use MCUBoot imgtool.py to generate an EC signing key \
-    and replace this file with the output of the tool.
-
-const unsigned char ecdsa_pub_key[] = { 0x00 };
-const unsigned int ecdsa_pub_key_len = 0;
-
-#endif /* if defined( MCUBOOT_SIGN_RSA ) */
-
+#endif /* USER_DEMO_RESTRICTED_TASK_H_ */
