@@ -84,7 +84,7 @@ typedef enum OtaPalImageState
 typedef enum OtaPalJobDocProcessingResult
 {
     OtaPalJobDocFileCreated = 0,
-	OtaPalJobDocFileCreateFailed,
+    OtaPalJobDocFileCreateFailed,
     OtaPalNewImageBooted,
     OtaPalNewImageBootFailed,
     OtaPalJobDocProcessingStateInvalid
@@ -92,23 +92,23 @@ typedef enum OtaPalJobDocProcessingResult
 
 typedef enum OtaPalStatus
 {
-	OtaPalSuccess = 0,
-	OtaPalUninitialized,
-	OtaPalOutOfMemory,
-	OtaPalNullFileContext,
-	OtaPalSignatureCheckFailed,
-	OtaPalRxFileCreateFailed,
-	OtaPalRxFileTooLarge,
-	OtaPalBootInfoCreateFailed,
-	OtaPalBadSignerCert,
-	OtaPalBadImageState,
-	OtaPalAbortFailed,
-	OtaPalRejectFailed,
-	OtaPalCommitFailed,
-	OtaPalActivateFailed,
-	OtaPalFileAbort,
-	OtaPalFileClose
-}OtaPalStatus_t;
+    OtaPalSuccess = 0,
+    OtaPalUninitialized,
+    OtaPalOutOfMemory,
+    OtaPalNullFileContext,
+    OtaPalSignatureCheckFailed,
+    OtaPalRxFileCreateFailed,
+    OtaPalRxFileTooLarge,
+    OtaPalBootInfoCreateFailed,
+    OtaPalBadSignerCert,
+    OtaPalBadImageState,
+    OtaPalAbortFailed,
+    OtaPalRejectFailed,
+    OtaPalCommitFailed,
+    OtaPalActivateFailed,
+    OtaPalFileAbort,
+    OtaPalFileClose
+} OtaPalStatus_t;
 
 /**
  * @brief Abort an OTA transfer.

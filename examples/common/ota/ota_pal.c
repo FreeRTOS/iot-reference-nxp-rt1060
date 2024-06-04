@@ -54,7 +54,7 @@ static PAL_FileContext_t prvPAL_CurrentFileContext;
 OtaPalStatus_t xFlashPalValidateSignature( uint8_t * pMappedAddress,
                                            size_t mappedLength,
                                            char * pCertificatePath,
-										   size_t certlength,
+                                           size_t certlength,
                                            uint8_t * pSignature,
                                            size_t signatureLength );
 
@@ -67,11 +67,11 @@ static PAL_FileContext_t * prvPAL_GetPALFileContext( AfrOtaJobDocumentFields_t *
     }
     else if( prvPAL_CurrentFileContext.FileXRef != pFileContext )
     {
-    	return NULL;
+        return NULL;
     }
     else
     {
-    	return &prvPAL_CurrentFileContext;
+        return &prvPAL_CurrentFileContext;
     }
 }
 
@@ -95,13 +95,12 @@ OtaPalJobDocProcessingResult_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t
 
     LogDebug( ( "[OTA-NXP] CreateFileForRx" ) );
 
-    if( otaPal_SetPlatformImageState( pFileContext ,OtaImageStateAccepted ) == OtaPalSuccess )
+    if( otaPal_SetPlatformImageState( pFileContext, OtaImageStateAccepted ) == OtaPalSuccess )
     {
-    	/* TODO: Check here if anything is to be verified before sending the
-    	 * success message to IoT core. */
-    	return OtaPalNewImageBooted;
+        /* TODO: Check here if anything is to be verified before sending the
+         * success message to IoT core. */
+        return OtaPalNewImageBooted;
     }
-
 
     if( bl_get_update_partition_info( &update_partition ) != kStatus_Success )
     {
@@ -147,7 +146,7 @@ OtaPalJobDocProcessingResult_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t
 
     PalFileContext->FileXRef = pFileContext; /* pointer cross reference for integrity check */
 
-    //C->pFile = ( uint8_t * ) PalFileContext;
+    /*C->pFile = ( uint8_t * ) PalFileContext; */
 
     return OtaPalSuccess;
 }
@@ -183,33 +182,33 @@ OtaPalStatus_t otaPal_CloseFile( AfrOtaJobDocumentFields_t * const pFileContext 
     result = xFlashPalValidateSignature( ( void * ) file_data,
                                          PalFileContext->file_size,
                                          ( char * ) pFileContext->certfile,
-										 pFileContext->certfileLen,
-										 pFileContext->signature,
-										 pFileContext->signatureLen );
+                                         pFileContext->certfileLen,
+                                         pFileContext->signature,
+                                         pFileContext->signatureLen );
 
     if( result != OtaPalSuccess )
     {
         LogError( ( "[OTA-NXP] CheckFileSignature failed" ) );
     }
 
-#ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK
-    /* Sanity check of the image and its header solely from the flash as the bootloader would do */
-    if( result == OtaPalSuccess )
-    {
-        if( bl_verify_image( file_data, PalFileContext->file_size ) <= 0 )
+    #ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK
+        /* Sanity check of the image and its header solely from the flash as the bootloader would do */
+        if( result == OtaPalSuccess )
         {
-            LogError( ( "[OTA-NXP] Invalid image" ) );
+            if( bl_verify_image( file_data, PalFileContext->file_size ) <= 0 )
+            {
+                LogError( ( "[OTA-NXP] Invalid image" ) );
+                result = OtaPalBootInfoCreateFailed;
+            }
+        }
+
+        /* Prepare image to be booted in test mode */
+        if( ( result == OtaPalSuccess ) && ( bl_update_image_state( kSwapType_ReadyForTest ) != kStatus_Success ) )
+        {
+            LogError( ( "[OTA-NXP] Failed to set image state" ) );
             result = OtaPalBootInfoCreateFailed;
         }
-    }
-
-    /* Prepare image to be booted in test mode */
-    if( ( result == OtaPalSuccess ) && ( bl_update_image_state( kSwapType_ReadyForTest ) != kStatus_Success ) )
-    {
-        LogError( ( "[OTA-NXP] Failed to set image state" ) );
-        result = OtaPalBootInfoCreateFailed;
-    }
-#endif /* ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK */
+    #endif /* ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK */
 
     pFileContext->fileId = 0;
     return result;

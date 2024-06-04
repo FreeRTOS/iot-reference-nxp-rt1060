@@ -100,40 +100,40 @@
  * anticipated MQTT payload.
  */
 #ifndef MQTT_AGENT_NETWORK_BUFFER_SIZE
-#define MQTT_AGENT_NETWORK_BUFFER_SIZE    ( 5000 )
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE    ( 5000 )
 #endif
 
 /**
  * @brief Maximum number of subscriptions maintained by the MQTT agent in the subscription store.
  */
 #ifndef MQTT_AGENT_MAX_SUBSCRIPTIONS
-#define MQTT_AGENT_MAX_SUBSCRIPTIONS    10U
+    #define MQTT_AGENT_MAX_SUBSCRIPTIONS    10U
 #endif
 
 /**
  * @brief Timeout for receiving CONNACK after sending an MQTT CONNECT packet.
  * Defined in milliseconds.
  */
-#define mqttexampleCONNACK_RECV_TIMEOUT_MS           ( 2000U )
+#define mqttexampleCONNACK_RECV_TIMEOUT_MS        ( 2000U )
 
 /**
  * @brief The maximum number of retries for network operation with server.
  * The configuration is set to retry forever. MQTT agent will retry in an infinite loop until
  * its connected to broker.
  */
-#define RETRY_MAX_ATTEMPTS                           ( BACKOFF_ALGORITHM_RETRY_FOREVER )
+#define RETRY_MAX_ATTEMPTS                        ( BACKOFF_ALGORITHM_RETRY_FOREVER )
 
 /**
  * @brief The maximum back-off delay (in milliseconds) for retrying failed operation
  *  with server.
  */
-#define RETRY_MAX_BACKOFF_DELAY_MS                   ( 5000U )
+#define RETRY_MAX_BACKOFF_DELAY_MS                ( 5000U )
 
 /**
  * @brief The base back-off delay (in milliseconds) to use for network operation retry
  * attempts.
  */
-#define RETRY_BACKOFF_BASE_MS                        ( 500U )
+#define RETRY_BACKOFF_BASE_MS                     ( 500U )
 
 /**
  * @brief The maximum time interval in seconds which is allowed to elapse
@@ -144,13 +144,13 @@
  *  absence of sending any other Control Packets, the Client MUST send a
  *  PINGREQ Packet.
  *//*_RB_ Move to be the responsibility of the agent. */
-#define mqttexampleKEEP_ALIVE_INTERVAL_SECONDS       ( 60U )
+#define mqttexampleKEEP_ALIVE_INTERVAL_SECONDS    ( 60U )
 
 /**
  * @brief Socket send and receive timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_TIMEOUT_MS    ( 750 )
-#define mqttexampleTRANSPORT_RECV_TIMEOUT_MS    ( 0 )
+#define mqttexampleTRANSPORT_SEND_TIMEOUT_MS      ( 750 )
+#define mqttexampleTRANSPORT_RECV_TIMEOUT_MS      ( 0 )
 
 /**
  * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
@@ -159,19 +159,19 @@
  * will be stored by the broker and resend to device, when it comes back online.
  *
  */
-#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 0 )
+#define mqttexamplePERSISTENT_SESSION_REQUIRED    ( 0 )
 
 /**
  * @brief Used to convert times to/from ticks and milliseconds.
  */
-#define mqttexampleMILLISECONDS_PER_SECOND           ( 1000U )
-#define mqttexampleMILLISECONDS_PER_TICK             ( mqttexampleMILLISECONDS_PER_SECOND / configTICK_RATE_HZ )
+#define mqttexampleMILLISECONDS_PER_SECOND        ( 1000U )
+#define mqttexampleMILLISECONDS_PER_TICK          ( mqttexampleMILLISECONDS_PER_SECOND / configTICK_RATE_HZ )
 
 /**
  * @brief The MQTT agent manages the MQTT contexts.  This set the handle to the
  * context used by this demo.
  */
-#define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 )
+#define mqttexampleMQTT_CONTEXT_HANDLE            ( ( MQTTContextHandle_t ) 0 )
 
 /**
  * @brief Event Bit corresponding to an MQTT agent state.
@@ -188,7 +188,7 @@
 #define mqttexampleEVENT_BITS_ALL    ( ( EventBits_t ) ( ( 1ULL << MQTT_AGENT_NUM_STATES ) - 1U ) )
 
 
-#define MQTT_AGENT_NOTIFY_IDX                 ( 3U )
+#define MQTT_AGENT_NOTIFY_IDX        ( 3U )
 /*-----------------------------------------------------------*/
 
 /**
@@ -440,15 +440,15 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
      * previous session data. Also, establishing a connection with clean session
      * will ensure that the broker does not store any data when this client
      * gets disconnected. */
-#if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 1 )
+    #if ( mqttexamplePERSISTENT_SESSION_REQUIRED == 1 )
     {
         xConnectInfo.cleanSession = false;
     }
-#else
+    #else
     {
         xConnectInfo.cleanSession = true;
     }
-#endif
+    #endif
 
     /* The client identifier is used to uniquely identify this MQTT client to
      * the MQTT broker. In a production device the identifier can be something
@@ -463,31 +463,31 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
      * be moved inside the agent. */
     xConnectInfo.keepAliveSeconds = mqttexampleKEEP_ALIVE_INTERVAL_SECONDS;
 
-#if defined( democonfigUSE_AWS_IOT_CORE_BROKER ) && defined( democonfigCLIENT_USERNAME )
-    /* Append metrics string when connecting to AWS IoT Core with custom auth */
-    xConnectInfo.pUserName = democonfigCLIENT_USERNAME AWS_IOT_METRICS_STRING;
-    xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME AWS_IOT_METRICS_STRING );
+    #if defined( democonfigUSE_AWS_IOT_CORE_BROKER ) && defined( democonfigCLIENT_USERNAME )
+        /* Append metrics string when connecting to AWS IoT Core with custom auth */
+        xConnectInfo.pUserName = democonfigCLIENT_USERNAME AWS_IOT_METRICS_STRING;
+        xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME AWS_IOT_METRICS_STRING );
 
-    /* Use the provided password as-is */
-    xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
-    xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
-#elif defined( democonfigUSE_AWS_IOT_CORE_BROKER )
-    /* If no username is needed, only send the metrics string */
-    xConnectInfo.pUserName = AWS_IOT_METRICS_STRING;
-    xConnectInfo.userNameLength = ( uint16_t ) strlen( AWS_IOT_METRICS_STRING );
+        /* Use the provided password as-is */
+        xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
+        xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
+    #elif defined( democonfigUSE_AWS_IOT_CORE_BROKER )
+        /* If no username is needed, only send the metrics string */
+        xConnectInfo.pUserName = AWS_IOT_METRICS_STRING;
+        xConnectInfo.userNameLength = ( uint16_t ) strlen( AWS_IOT_METRICS_STRING );
 
-    /* Password for authentication is not used. */
-    xConnectInfo.pPassword = NULL;
-    xConnectInfo.passwordLength = 0U;
-#elif defined( democonfigCLIENT_USERNAME )
-    /* If not connecting to AWS IoT Core, send the username without modification. */
-    xConnectInfo.pUserName = democonfigCLIENT_USERNAME;
-    xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME );
+        /* Password for authentication is not used. */
+        xConnectInfo.pPassword = NULL;
+        xConnectInfo.passwordLength = 0U;
+    #elif defined( democonfigCLIENT_USERNAME )
+        /* If not connecting to AWS IoT Core, send the username without modification. */
+        xConnectInfo.pUserName = democonfigCLIENT_USERNAME;
+        xConnectInfo.userNameLength = ( uint16_t ) strlen( democonfigCLIENT_USERNAME );
 
-    /* Add the password as provided */
-    xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
-    xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
-#endif /* defined( democonfigCLIENT_USERNAME ) */
+        /* Add the password as provided */
+        xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
+        xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
+    #endif /* defined( democonfigCLIENT_USERNAME ) */
 
     LogInfo( ( "Creating an MQTT connection to the broker." ) );
 
@@ -522,33 +522,35 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     TlsTransportStatus_t xNetworkStatus = TLS_TRANSPORT_CONNECT_FAILURE;
     NetworkCredentials_t xNetworkCredentials = { 0 };
 
-#if defined( democonfigUSE_AWS_IOT_CORE_BROKER )
-#if defined( democonfigCLIENT_USERNAME )
-    /*
-     * When democonfigCLIENT_USERNAME is defined, use the "mqtt" alpn to connect
-     * to AWS IoT Core with Custom Authentication on port 443.
-     *
-     * Custom Authentication uses the contents of the username and password
-     * fields of the MQTT CONNECT packet to authenticate the client.
-     *
-     * For more information, refer to the documentation at:
-     * https://docs.aws.amazon.com/iot/latest/developerguide/custom-authentication.html
-     */
-    static const char * ppcAlpnProtocols[] = { "mqtt", NULL };
+    #if defined( democonfigUSE_AWS_IOT_CORE_BROKER )
+    #if defined( democonfigCLIENT_USERNAME )
 
-    if( ulBrokerPort != 443U )
-    {
-        xConnected = pdFAIL;
-        LogError( ( "Connections to AWS IoT Core with custom authentication"
-                    "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
-    }
-#else /* if defined( democonfigCLIENT_USERNAME ) */
-    /*
-     * Otherwise, use the "x-amzn-mqtt-ca" alpn to connect to AWS IoT Core using
-     * x509 Certificate Authentication.
-     */
-    static const char * ppcAlpnProtocols[] = { "x-amzn-mqtt-ca", NULL };
-#endif /* defined( democonfigCLIENT_USERNAME ) */
+        /*
+         * When democonfigCLIENT_USERNAME is defined, use the "mqtt" alpn to connect
+         * to AWS IoT Core with Custom Authentication on port 443.
+         *
+         * Custom Authentication uses the contents of the username and password
+         * fields of the MQTT CONNECT packet to authenticate the client.
+         *
+         * For more information, refer to the documentation at:
+         * https://docs.aws.amazon.com/iot/latest/developerguide/custom-authentication.html
+         */
+        static const char * ppcAlpnProtocols[] = { "mqtt", NULL };
+
+        if( ulBrokerPort != 443U )
+        {
+            xConnected = pdFAIL;
+            LogError( ( "Connections to AWS IoT Core with custom authentication"
+                        "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
+        }
+    #else /* if defined( democonfigCLIENT_USERNAME ) */
+
+        /*
+         * Otherwise, use the "x-amzn-mqtt-ca" alpn to connect to AWS IoT Core using
+         * x509 Certificate Authentication.
+         */
+        static const char * ppcAlpnProtocols[] = { "x-amzn-mqtt-ca", NULL };
+    #endif /* defined( democonfigCLIENT_USERNAME ) */
 
     /*
      * An ALPN identifier is only required when connecting to AWS IoT core on port 443.
@@ -568,9 +570,9 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
         xConnected = pdFAIL;
         LogError( ( "MQTT connections to AWS IoT Core are only allowed on ports 443 and 8883." ) );
     }
-#else /* defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
-    xNetworkCredentials.pAlpnProtos = NULL;
-#endif /* !defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
+    #else /* defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
+        xNetworkCredentials.pAlpnProtos = NULL;
+    #endif /* !defined( democonfigUSE_AWS_IOT_CORE_BROKER ) */
 
     /* Set the credentials for establishing a TLS connection. */
     xNetworkCredentials.pRootCa = ( unsigned char * ) democonfigROOT_CA_PEM;
@@ -738,13 +740,13 @@ static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
      * handle it as an unsolicited publish. */
     if( xPublishHandled != true )
     {
-    	xPublishHandled = otaDemo_handleIncomingMQTTMessage( pxPublishInfo->pTopicName,
+        xPublishHandled = otaDemo_handleIncomingMQTTMessage( pxPublishInfo->pTopicName,
                                                              pxPublishInfo->topicNameLength,
                                                              pxPublishInfo->pPayload,
                                                              pxPublishInfo->payloadLength );
 
-    	if( xPublishHandled != true )
-    	{
+        if( xPublishHandled != true )
+        {
             /* Ensure the topic string is terminated for printing.  This will over-
              * write the message ID, which is restored afterwards. */
             pcLocation = ( char * ) &( pxPublishInfo->pTopicName[ pxPublishInfo->topicNameLength ] );
@@ -752,7 +754,7 @@ static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
             *pcLocation = 0x00;
             LogWarn( ( "WARN:  Received an unsolicited publish from topic %s", pxPublishInfo->pTopicName ) );
             *pcLocation = cOriginalChar;
-    	}
+        }
     }
 }
 
@@ -868,8 +870,8 @@ void prvMQTTAgentTask( void * pvParameters )
              * which the error happened is returned so there is an attempt to
              * clean up and reconnect. */
 
-        	/* Set the MQTT context to be used by the MQTT wrapper. */
-        	mqttWrapper_setCoreMqttContext( &( xGlobalMqttAgentContext.mqttContext ) );
+            /* Set the MQTT context to be used by the MQTT wrapper. */
+            mqttWrapper_setCoreMqttContext( &( xGlobalMqttAgentContext.mqttContext ) );
 
             prvSetMQTTAgentState( MQTT_AGENT_STATE_CONNECTED );
 
@@ -1238,53 +1240,62 @@ MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
                                       IncomingPubCallback_t pxCallback,
                                       void * pvCallbackCtx )
 {
-	BaseType_t xMQTTCallbackAdded;
-	MQTTStatus_t xResult;
+    BaseType_t xMQTTCallbackAdded;
+    MQTTStatus_t xResult;
 
-	xMQTTCallbackAdded = xAddMQTTTopicFilterCallback( pcTopicFilter,
+    xMQTTCallbackAdded = xAddMQTTTopicFilterCallback( pcTopicFilter,
                                                       uxTopicFilterLength,
                                                       pxCallback,
                                                       pvCallbackCtx,
                                                       pdFALSE );
 
-	if( xMQTTCallbackAdded == pdTRUE )
-	{
-		MQTTSubscribeInfo_t xSubInfo = { .qos = xRequestedQoS,
-                                         .pTopicFilter = pcTopicFilter,
-                                         .topicFilterLength = uxTopicFilterLength };
+    if( xMQTTCallbackAdded == pdTRUE )
+    {
+        MQTTSubscribeInfo_t xSubInfo =
+        {
+            .qos               = xRequestedQoS,
+            .pTopicFilter      = pcTopicFilter,
+            .topicFilterLength = uxTopicFilterLength
+        };
 
-		MQTTAgentSubscribeArgs_t xSubArgs = { .pSubscribeInfo = &xSubInfo,
-                                              .numSubscriptions = 1 };
+        MQTTAgentSubscribeArgs_t xSubArgs =
+        {
+            .pSubscribeInfo   = &xSubInfo,
+            .numSubscriptions = 1
+        };
 
-		/* The block time can be 0 as the command loop is not running at this point. */
-		MQTTAgentCommandInfo_t xCommandParams = { .blockTimeMs = portMAX_DELAY,
-		                                          .cmdCompleteCallback = prvSubscribeRqCallback,
-		                                          .pCmdCompleteCallbackContext = ( void * ) ( xTaskGetCurrentTaskHandle() ) };
+        /* The block time can be 0 as the command loop is not running at this point. */
+        MQTTAgentCommandInfo_t xCommandParams =
+        {
+            .blockTimeMs                 = portMAX_DELAY,
+            .cmdCompleteCallback         = prvSubscribeRqCallback,
+            .pCmdCompleteCallbackContext = ( void * ) ( xTaskGetCurrentTaskHandle() )
+        };
 
-		( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
+        ( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
 
         /* Enqueue subscribe to the command queue. These commands will be processed only
-		 * when command loop starts. */
-		xResult = MQTTAgent_Subscribe( &xGlobalMqttAgentContext, &xSubArgs, &xCommandParams );
+         * when command loop starts. */
+        xResult = MQTTAgent_Subscribe( &xGlobalMqttAgentContext, &xSubArgs, &xCommandParams );
 
-		if( xResult == MQTTSuccess )
-		{
-			uint32_t ulNotifyValue = 0;
+        if( xResult == MQTTSuccess )
+        {
+            uint32_t ulNotifyValue = 0;
 
-			if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
-										0x0,
-										0xFFFFFFFF,
-										&ulNotifyValue,
-										portMAX_DELAY ) )
-			{
-				xResult = ( ulNotifyValue & 0x00FFFFFF );
-			}
-			else
-			{
-				xResult = MQTTKeepAliveTimeout;
-			}
-		}
-	}
+            if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
+                                        0x0,
+                                        0xFFFFFFFF,
+                                        &ulNotifyValue,
+                                        portMAX_DELAY ) )
+            {
+                xResult = ( ulNotifyValue & 0x00FFFFFF );
+            }
+            else
+            {
+                xResult = MQTTKeepAliveTimeout;
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
