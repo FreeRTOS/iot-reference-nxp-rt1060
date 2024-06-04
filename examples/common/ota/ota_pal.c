@@ -191,24 +191,24 @@ OtaPalStatus_t otaPal_CloseFile( AfrOtaJobDocumentFields_t * const pFileContext 
         LogError( ( "[OTA-NXP] CheckFileSignature failed" ) );
     }
 
-    #ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK
-        /* Sanity check of the image and its header solely from the flash as the bootloader would do */
-        if( result == OtaPalSuccess )
+#ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK
+    /* Sanity check of the image and its header solely from the flash as the bootloader would do */
+    if( result == OtaPalSuccess )
+    {
+        if( bl_verify_image( file_data, PalFileContext->file_size ) <= 0 )
         {
-            if( bl_verify_image( file_data, PalFileContext->file_size ) <= 0 )
-            {
-                LogError( ( "[OTA-NXP] Invalid image" ) );
-                result = OtaPalBootInfoCreateFailed;
-            }
-        }
-
-        /* Prepare image to be booted in test mode */
-        if( ( result == OtaPalSuccess ) && ( bl_update_image_state( kSwapType_ReadyForTest ) != kStatus_Success ) )
-        {
-            LogError( ( "[OTA-NXP] Failed to set image state" ) );
+            LogError( ( "[OTA-NXP] Invalid image" ) );
             result = OtaPalBootInfoCreateFailed;
         }
-    #endif /* ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK */
+    }
+
+    /* Prepare image to be booted in test mode */
+    if( ( result == OtaPalSuccess ) && ( bl_update_image_state( kSwapType_ReadyForTest ) != kStatus_Success ) )
+    {
+        LogError( ( "[OTA-NXP] Failed to set image state" ) );
+        result = OtaPalBootInfoCreateFailed;
+    }
+#endif /* ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK */
 
     pFileContext->fileId = 0;
     return result;
