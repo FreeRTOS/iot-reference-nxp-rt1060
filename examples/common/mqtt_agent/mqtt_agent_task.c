@@ -524,7 +524,6 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 
     #if defined( democonfigUSE_AWS_IOT_CORE_BROKER )
     #if defined( democonfigCLIENT_USERNAME )
-
         /*
          * When democonfigCLIENT_USERNAME is defined, use the "mqtt" alpn to connect
          * to AWS IoT Core with Custom Authentication on port 443.
@@ -544,7 +543,6 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
                         "must connect to TCP port 443 with the \"mqtt\" alpn." ) );
         }
     #else /* if defined( democonfigCLIENT_USERNAME ) */
-
         /*
          * Otherwise, use the "x-amzn-mqtt-ca" alpn to connect to AWS IoT Core using
          * x509 Certificate Authentication.
