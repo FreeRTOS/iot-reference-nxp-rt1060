@@ -45,12 +45,6 @@ dependencies:
       type: "git"
       url: "https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git"
       path: "Middleware/AWS/device-defender"
-  - name: "ota"
-    version: "v3.4.0"
-    repository:
-      type: "git"
-      url: "https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git"
-      path: "Middleware/AWS/ota"
   - name: "device-shadow"
     version: "v1.3.0"
     repository:
