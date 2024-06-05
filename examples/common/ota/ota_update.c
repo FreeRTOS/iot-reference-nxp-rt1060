@@ -64,7 +64,7 @@
 #include "ota_job_processor.h"
 
 /* Include firmware version struct definition. */
-//#include "ota_appversion32.h"
+/*#include "ota_appversion32.h" */
 
 #include "ota_demo.h"
 #include "ota_os_freertos.h"
@@ -180,16 +180,16 @@
 #define otaexampleAGENT_TASK_STACK_SIZE          ( 4096 * 2 )
 
 
-#define CONFIG_MAX_FILE_SIZE    200   /* TODO:!! */
-#define NUM_OF_BLOCKS_REQUESTED 1U
-#define START_JOB_MSG_LENGTH    147U
-#define MAX_THING_NAME_SIZE     128U
-#define MAX_JOB_ID_LENGTH       64U
-#define UPDATE_JOB_MSG_LENGTH   48U
-#define MAX_NUM_OF_OTA_DATA_BUFFERS 2U
+#define CONFIG_MAX_FILE_SIZE                     200 /* TODO:!! */
+#define NUM_OF_BLOCKS_REQUESTED                  1U
+#define START_JOB_MSG_LENGTH                     147U
+#define MAX_THING_NAME_SIZE                      128U
+#define MAX_JOB_ID_LENGTH                        64U
+#define UPDATE_JOB_MSG_LENGTH                    48U
+#define MAX_NUM_OF_OTA_DATA_BUFFERS              2U
 
 /* Max bytes supported for a file signature (3072 bit RSA is 384 bytes). */
-#define OTA_MAX_SIGNATURE_SIZE    ( 384U )
+#define OTA_MAX_SIGNATURE_SIZE                   ( 384U )
 
 /**
  * @brief Defines the structure to use as the command callback context in this
@@ -210,10 +210,10 @@ char globalJobId[ MAX_JOB_ID_LENGTH ] = { 0 };
 
 static SemaphoreHandle_t bufferSemaphore;
 
-static OtaDataEvent_t dataBuffers[MAX_NUM_OF_OTA_DATA_BUFFERS] = { 0 };
+static OtaDataEvent_t dataBuffers[ MAX_NUM_OF_OTA_DATA_BUFFERS ] = { 0 };
 static OtaJobEventData_t jobDocBuffer = { 0 };
 static AfrOtaJobDocumentFields_t jobFields = { 0 };
-static uint8_t OtaImageSingatureDecoded[OTA_MAX_SIGNATURE_SIZE] = { 0 };
+static uint8_t OtaImageSingatureDecoded[ OTA_MAX_SIGNATURE_SIZE ] = { 0 };
 static SemaphoreHandle_t bufferSemaphore;
 
 static OtaState_t otaAgentState = OtaAgentStateInit;
@@ -285,18 +285,18 @@ static void requestDataBlock( void );
 /**
  * @brief
  */
-static int16_t handleMqttStreamsBlockArrived( uint8_t *data,
+static int16_t handleMqttStreamsBlockArrived( uint8_t * data,
                                               size_t dataLength );
 
 /**
  * @brief
  */
-static bool convertSignatureToDER(AfrOtaJobDocumentFields_t *jobFields);
+static bool convertSignatureToDER( AfrOtaJobDocumentFields_t * jobFields );
 
 /**
  * @brief
  */
-static void initMqttDownloader( AfrOtaJobDocumentFields_t *jobFields );
+static void initMqttDownloader( AfrOtaJobDocumentFields_t * jobFields );
 
 /**
  * @brief
@@ -306,7 +306,9 @@ static void requestJobDocumentHandler( void );
 /**
  * @brief
  */
-static bool jobDocumentParser( char * message, size_t messageLength, AfrOtaJobDocumentFields_t *jobFields );
+static bool jobDocumentParser( char * message,
+                               size_t messageLength,
+                               AfrOtaJobDocumentFields_t * jobFields );
 
 
 /**
@@ -347,39 +349,39 @@ static size_t xThingNameLength = 0U;
 
 static void prvOTAAgentTask( void * pvParam )
 {
-	BaseType_t xResult;
-	size_t xValueLength = 0U;
-	char * pcValue = NULL;
+    BaseType_t xResult;
+    size_t xValueLength = 0U;
+    char * pcValue = NULL;
 
-	LogError( "Running OTA Agent task. Waiting..." );
+    LogError( "Running OTA Agent task. Waiting..." );
 
-	while( 1 )
-	{
-	    xResult = xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED,
+    while( 1 )
+    {
+        xResult = xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED,
                                           portMAX_DELAY );
 
-	    if( xResult == pdTRUE )
-	    {
-	    	break;
-	    }
-	}
+        if( xResult == pdTRUE )
+        {
+            break;
+        }
+    }
 
-	/* Load broker thing name from the key store. */
-	xValueLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
+    /* Load broker thing name from the key store. */
+    xValueLength = KVStore_getValueLength( KVS_CORE_THING_NAME );
 
-	if( xValueLength > 0 )
-	{
-		pcValue = pvPortMalloc( xValueLength + 1 );
+    if( xValueLength > 0 )
+    {
+        pcValue = pvPortMalloc( xValueLength + 1 );
 
-		if( pcValue != NULL )
-		{
-			( void ) KVStore_getString( KVS_CORE_THING_NAME, pcValue, ( xValueLength + 1 ) );
-		}
-	}
+        if( pcValue != NULL )
+        {
+            ( void ) KVStore_getString( KVS_CORE_THING_NAME, pcValue, ( xValueLength + 1 ) );
+        }
+    }
 
-	mqttWrapper_setThingName( pcValue, xValueLength );
+    mqttWrapper_setThingName( pcValue, xValueLength );
 
-	vPortFree( pcValue );
+    vPortFree( pcValue );
 
     otaDemo_start();
 
@@ -394,7 +396,7 @@ void otaDemo_start( void )
 
     if( !mqttWrapper_isConnected() )
     {
-    	LogInfo("MQTT not connected, exiting!");
+        LogInfo( "MQTT not connected, exiting!" );
         return;
     }
 
@@ -405,14 +407,15 @@ void otaDemo_start( void )
         memset( dataBuffers, 0x00, sizeof( dataBuffers ) );
     }
 
-    LogError("Starting OTA thread.");
+    LogError( "Starting OTA thread." );
 
     OtaInitEvent_FreeRTOS();
 
     initEvent.eventId = OtaAgentEventRequestJobDocument;
     OtaSendEvent_FreeRTOS( &initEvent );
 
-    while (otaAgentState != OtaAgentStateStopped ) {
+    while( otaAgentState != OtaAgentStateStopped )
+    {
         processOTAEvents();
     }
 }
@@ -426,6 +429,7 @@ static void requestJobDocumentHandler( void )
     char topicBuffer[ TOPIC_BUFFER_SIZE + 1 ] = { 0 };
     char messageBuffer[ START_JOB_MSG_LENGTH ] = { 0 };
     size_t topicLength = 0U;
+
     mqttWrapper_getThingName( thingName, &thingNameLength );
 
     /*
@@ -433,40 +437,39 @@ static void requestJobDocumentHandler( void )
      * Creates the topic string for a StartNextPendingJobExecution request.
      * It used to check if any pending jobs are available.
      */
-    Jobs_StartNext(topicBuffer,
-                   TOPIC_BUFFER_SIZE,
-                   thingName,
-                   ( uint16_t ) thingNameLength,
-                   &topicLength);
+    Jobs_StartNext( topicBuffer,
+                    TOPIC_BUFFER_SIZE,
+                    thingName,
+                    ( uint16_t ) thingNameLength,
+                    &topicLength );
 
     /*
      * AWS IoT Jobs library:
      * Creates the message string for a StartNextPendingJobExecution request.
      * It will be sent on the topic created in the previous step.
      */
-    size_t messageLength = Jobs_StartNextMsg("test",
-                                             4U,
-                                             messageBuffer,
-                                             START_JOB_MSG_LENGTH );
+    size_t messageLength = Jobs_StartNextMsg( "test",
+                                              4U,
+                                              messageBuffer,
+                                              START_JOB_MSG_LENGTH );
 
-    mqttWrapper_publish(topicBuffer,
-                        topicLength,
-                        ( uint8_t * ) messageBuffer,
-                        messageLength);
-
+    mqttWrapper_publish( topicBuffer,
+                         topicLength,
+                         ( uint8_t * ) messageBuffer,
+                         messageLength );
 }
 
 /*-----------------------------------------------------------*/
 
-static void initMqttDownloader( AfrOtaJobDocumentFields_t *jobFields )
+static void initMqttDownloader( AfrOtaJobDocumentFields_t * jobFields )
 {
     char thingName[ MAX_THING_NAME_SIZE + 1 ] = { 0 };
     size_t thingNameLength = 0U;
 
     numOfBlocksRemaining = jobFields->fileSize /
-                            mqttFileDownloader_CONFIG_BLOCK_SIZE;
+                           mqttFileDownloader_CONFIG_BLOCK_SIZE;
     numOfBlocksRemaining += ( jobFields->fileSize %
-                            mqttFileDownloader_CONFIG_BLOCK_SIZE > 0 ) ? 1 : 0;
+                              mqttFileDownloader_CONFIG_BLOCK_SIZE > 0 ) ? 1 : 0;
     currentFileId = ( uint8_t ) jobFields->fileId;
     currentBlockOffset = 0;
     totalBytesReceived = 0;
@@ -492,26 +495,26 @@ static void initMqttDownloader( AfrOtaJobDocumentFields_t *jobFields )
 
 /*-----------------------------------------------------------*/
 
-static bool convertSignatureToDER(AfrOtaJobDocumentFields_t *jobFields)
+static bool convertSignatureToDER( AfrOtaJobDocumentFields_t * jobFields )
 {
-	bool returnVal = true;
-	size_t decodedSignatureLength = 0;
+    bool returnVal = true;
+    size_t decodedSignatureLength = 0;
 
 
     Base64Status_t xResult = base64_Decode( OtaImageSingatureDecoded,
-                              sizeof(OtaImageSingatureDecoded),
-                              &decodedSignatureLength,
-							  jobFields->signature,
-							  jobFields->signatureLen );
+                                            sizeof( OtaImageSingatureDecoded ),
+                                            &decodedSignatureLength,
+                                            jobFields->signature,
+                                            jobFields->signatureLen );
 
     if( xResult == Base64Success )
     {
-    	jobFields->signature = OtaImageSingatureDecoded;
-    	jobFields->signatureLen = decodedSignatureLength;
+        jobFields->signature = OtaImageSingatureDecoded;
+        jobFields->signatureLen = decodedSignatureLength;
     }
     else
     {
-    	returnVal = false;
+        returnVal = false;
     }
 
     return returnVal;
@@ -519,21 +522,21 @@ static bool convertSignatureToDER(AfrOtaJobDocumentFields_t *jobFields)
 
 /*-----------------------------------------------------------*/
 
-static int16_t handleMqttStreamsBlockArrived( uint8_t *data,
+static int16_t handleMqttStreamsBlockArrived( uint8_t * data,
                                               size_t dataLength )
 {
-	int16_t writeblockRes = -1;
+    int16_t writeblockRes = -1;
 
-    LogInfo( "Downloaded block %u of %u. \n", currentBlockOffset, (currentBlockOffset + numOfBlocksRemaining) );
+    LogInfo( "Downloaded block %u of %u. \n", currentBlockOffset, ( currentBlockOffset + numOfBlocksRemaining ) );
 
     writeblockRes = otaPal_WriteBlock( &jobFields,
-                               totalBytesReceived,
-                               data,
-							   dataLength );
+                                       totalBytesReceived,
+                                       data,
+                                       dataLength );
 
     if( writeblockRes > 0 )
     {
-    	totalBytesReceived += writeblockRes;
+        totalBytesReceived += writeblockRes;
     }
 
     return writeblockRes;
@@ -553,12 +556,12 @@ static void requestDataBlock( void )
      * like coreMQTT are required.
      */
     getStreamRequestLength = mqttDownloader_createGetDataBlockRequest( mqttFileDownloaderContext.dataType,
-                                        currentFileId,
-                                        mqttFileDownloader_CONFIG_BLOCK_SIZE,
-										( uint16_t ) currentBlockOffset,
-                                        NUM_OF_BLOCKS_REQUESTED,
-                                        getStreamRequest,
-                                        GET_STREAM_REQUEST_BUFFER_SIZE );
+                                                                       currentFileId,
+                                                                       mqttFileDownloader_CONFIG_BLOCK_SIZE,
+                                                                       ( uint16_t ) currentBlockOffset,
+                                                                       NUM_OF_BLOCKS_REQUESTED,
+                                                                       getStreamRequest,
+                                                                       GET_STREAM_REQUEST_BUFFER_SIZE );
 
     mqttWrapper_publish( mqttFileDownloaderContext.topicGetStream,
                          mqttFileDownloaderContext.topicGetStreamLength,
@@ -570,14 +573,14 @@ static void requestDataBlock( void )
 
 static bool closeFileHandler( void )
 {
-    return ( OtaPalSuccess == otaPal_CloseFile( &jobFields ) );
+    return( OtaPalSuccess == otaPal_CloseFile( &jobFields ) );
 }
 
 /*-----------------------------------------------------------*/
 
 static bool imageActivationHandler( void )
 {
-	return ( OtaPalSuccess == otaPal_ActivateNewImage( &jobFields ) );
+    return( OtaPalSuccess == otaPal_ActivateNewImage( &jobFields ) );
 }
 
 /*-----------------------------------------------------------*/
@@ -591,30 +594,31 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler( OtaJobEventDat
     size_t jobIdLength = 0U;
     OtaPalJobDocProcessingResult_t xResult = OtaPalJobDocFileCreateFailed;
 
-    memset( &jobFields,0 , sizeof(jobFields) );
+    memset( &jobFields, 0, sizeof( jobFields ) );
 
     /*
      * AWS IoT Jobs library:
      * Extracting the job ID from the received OTA job document.
      */
-    jobIdLength = Jobs_GetJobId( (char *)jobDoc->jobData, jobDoc->jobDataLength, jobIdptr );
+    jobIdLength = Jobs_GetJobId( ( char * ) jobDoc->jobData, jobDoc->jobDataLength, jobIdptr );
 
-    if ( jobIdLength )
+    if( jobIdLength )
     {
-        if ( strncmp( globalJobId, jobId, jobIdLength ) )
+        if( strncmp( globalJobId, jobId, jobIdLength ) )
         {
             parseJobDocument = true;
             strncpy( globalJobId, jobId, jobIdLength );
         }
         else
         {
-        	xResult = OtaPalJobDocFileCreated;
+            xResult = OtaPalJobDocFileCreated;
         }
     }
 
-    if ( parseJobDocument )
+    if( parseJobDocument )
     {
-        handled = jobDocumentParser( (char * )jobDoc->jobData, jobDoc->jobDataLength, &jobFields );
+        handled = jobDocumentParser( ( char * ) jobDoc->jobData, jobDoc->jobDataLength, &jobFields );
+
         if( handled )
         {
             initMqttDownloader( &jobFields );
@@ -626,11 +630,11 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler( OtaJobEventDat
 
             if( handled )
             {
-            	xResult = otaPal_CreateFileForRx( &jobFields );
+                xResult = otaPal_CreateFileForRx( &jobFields );
             }
             else
             {
-            	LogError( "Failed to decode the image signature to DER format." );
+                LogError( "Failed to decode the image signature to DER format." );
             }
         }
     }
@@ -651,7 +655,7 @@ static uint16_t getFreeOTABuffers( void )
         {
             if( dataBuffers[ ulIndex ].bufferUsed == false )
             {
-            	freeBuffers++;
+                freeBuffers++;
             }
         }
 
@@ -659,7 +663,7 @@ static uint16_t getFreeOTABuffers( void )
     }
     else
     {
-        LogInfo("Failed to get buffer semaphore. \n" );
+        LogInfo( "Failed to get buffer semaphore. \n" );
     }
 
     return freeBuffers;
@@ -693,42 +697,43 @@ bool otaDemo_handleIncomingMQTTMessage( char * topic,
     size_t thingNameLength = 0U;
 
     /*
-	 * MQTT streams Library:
-	 * Checks if the incoming message contains the requested data block. It is performed by
-	 * comparing the incoming MQTT message topic with MQTT streams topics.
-	 */
-    bool handled = mqttDownloader_isDataBlockReceived(&mqttFileDownloaderContext, topic, topicLength);
+     * MQTT streams Library:
+     * Checks if the incoming message contains the requested data block. It is performed by
+     * comparing the incoming MQTT message topic with MQTT streams topics.
+     */
+    bool handled = mqttDownloader_isDataBlockReceived( &mqttFileDownloaderContext, topic, topicLength );
 
-	if (handled)
-	{
-		nextEvent.eventId = OtaAgentEventReceivedFileBlock;
-		OtaDataEvent_t * dataBuf = getOtaDataEventBuffer();
-		memcpy(dataBuf->data, message, messageLength);
-		nextEvent.dataEvent = dataBuf;
-		dataBuf->dataLength = messageLength;
-		OtaSendEvent_FreeRTOS( &nextEvent );
-	}
-	else
-	{
-		mqttWrapper_getThingName(thingName, &thingNameLength);
-		/*
-		 * AWS IoT Jobs library:
-		 * Checks if a message comes from the start-next/accepted reserved topic.
-		 */
-		 handled = Jobs_IsStartNextAccepted( topic,
-                                             topicLength,
-                                             thingName,
-                                             thingNameLength );
+    if( handled )
+    {
+        nextEvent.eventId = OtaAgentEventReceivedFileBlock;
+        OtaDataEvent_t * dataBuf = getOtaDataEventBuffer();
+        memcpy( dataBuf->data, message, messageLength );
+        nextEvent.dataEvent = dataBuf;
+        dataBuf->dataLength = messageLength;
+        OtaSendEvent_FreeRTOS( &nextEvent );
+    }
+    else
+    {
+        mqttWrapper_getThingName( thingName, &thingNameLength );
 
-		if( handled )
-		{
-			memcpy(jobDocBuffer.jobData, message, messageLength);
-			nextEvent.jobEvent = &jobDocBuffer;
-			jobDocBuffer.jobDataLength = messageLength;
-			nextEvent.eventId = OtaAgentEventReceivedJobDocument;
-			OtaSendEvent_FreeRTOS( &nextEvent );
-		}
-	}
+        /*
+         * AWS IoT Jobs library:
+         * Checks if a message comes from the start-next/accepted reserved topic.
+         */
+        handled = Jobs_IsStartNextAccepted( topic,
+                                            topicLength,
+                                            thingName,
+                                            thingNameLength );
+
+        if( handled )
+        {
+            memcpy( jobDocBuffer.jobData, message, messageLength );
+            nextEvent.jobEvent = &jobDocBuffer;
+            jobDocBuffer.jobDataLength = messageLength;
+            nextEvent.eventId = OtaAgentEventReceivedJobDocument;
+            OtaSendEvent_FreeRTOS( &nextEvent );
+        }
+    }
 
     return handled;
 }
@@ -738,12 +743,12 @@ bool otaDemo_handleIncomingMQTTMessage( char * topic,
 static bool sendSuccessMessage( void )
 {
     char thingName[ MAX_THING_NAME_SIZE + 1 ] = { 0 };
-	size_t thingNameLength = 0U;
-	char topicBuffer[ TOPIC_BUFFER_SIZE + 1 ] = { 0 };
-	size_t topicBufferLength = 0U;
-	char messageBuffer[ UPDATE_JOB_MSG_LENGTH ] = { 0 };
-	bool result = true;
-	JobsStatus_t jobStatusResult;
+    size_t thingNameLength = 0U;
+    char topicBuffer[ TOPIC_BUFFER_SIZE + 1 ] = { 0 };
+    size_t topicBufferLength = 0U;
+    char messageBuffer[ UPDATE_JOB_MSG_LENGTH ] = { 0 };
+    bool result = true;
+    JobsStatus_t jobStatusResult;
 
     mqttWrapper_getThingName( thingName, &thingNameLength );
 
@@ -761,32 +766,32 @@ static bool sendSuccessMessage( void )
 
     if( jobStatusResult == JobsSuccess )
     {
-		/*
-		 * AWS IoT Jobs library:
-		 * Creating the message which contains the status of OTA job.
-		 * It will be published on the topic created in the previous step.
-		 */
-		size_t messageBufferLength = Jobs_UpdateMsg( Succeeded,
-													 "2",
-													 1U,
-													 messageBuffer,
-													 UPDATE_JOB_MSG_LENGTH );
+        /*
+         * AWS IoT Jobs library:
+         * Creating the message which contains the status of OTA job.
+         * It will be published on the topic created in the previous step.
+         */
+        size_t messageBufferLength = Jobs_UpdateMsg( Succeeded,
+                                                     "2",
+                                                     1U,
+                                                     messageBuffer,
+                                                     UPDATE_JOB_MSG_LENGTH );
 
-		result = mqttWrapper_publish( topicBuffer,
+        result = mqttWrapper_publish( topicBuffer,
                                       topicBufferLength,
                                       ( uint8_t * ) messageBuffer,
                                       messageBufferLength );
 
-		LogInfo( "\033[1;32mOTA Completed successfully!\033[0m\n" );
-		globalJobId[ 0 ] = 0U;
+        LogInfo( "\033[1;32mOTA Completed successfully!\033[0m\n" );
+        globalJobId[ 0 ] = 0U;
 
-		/* Clean up the job doc buffer so that it is ready for when we
-		 * receive new job doc. */
-		memset( &jobDocBuffer, 0, sizeof( jobDocBuffer ) );
+        /* Clean up the job doc buffer so that it is ready for when we
+         * receive new job doc. */
+        memset( &jobDocBuffer, 0, sizeof( jobDocBuffer ) );
     }
     else
     {
-    	result = false;
+        result = false;
     }
 
     return result;
@@ -794,7 +799,9 @@ static bool sendSuccessMessage( void )
 
 /*-----------------------------------------------------------*/
 
-static bool jobDocumentParser( char * message, size_t messageLength, AfrOtaJobDocumentFields_t *jobFields )
+static bool jobDocumentParser( char * message,
+                               size_t messageLength,
+                               AfrOtaJobDocumentFields_t * jobFields )
 {
     const char * jobDoc;
     size_t jobDocLength = 0U;
@@ -816,9 +823,9 @@ static bool jobDocumentParser( char * message, size_t messageLength, AfrOtaJobDo
              * the new firmware.
              */
             fileIndex = otaParser_parseJobDocFile( jobDoc,
-                                                jobDocLength,
-                                                fileIndex,
-                                                jobFields );
+                                                   jobDocLength,
+                                                   fileIndex,
+                                                   jobFields );
         } while( fileIndex > 0 );
     }
 
@@ -850,7 +857,7 @@ static OtaDataEvent_t * getOtaDataEventBuffer( void )
     }
     else
     {
-        LogInfo("Failed to get buffer semaphore. \n" );
+        LogInfo( "Failed to get buffer semaphore. \n" );
     }
 
     return freeBuffer;
@@ -865,212 +872,220 @@ static void processOTAEvents( void )
     static OtaEvent_t lastRecvEventId = OtaAgentEventStart;
     OtaEventMsg_t nextEvent = { 0 };
 
-    OtaReceiveEvent_FreeRTOS(&recvEvent);
+    OtaReceiveEvent_FreeRTOS( &recvEvent );
     recvEventId = recvEvent.eventId;
 
     if( recvEventId != OtaAgentEventStart )
     {
-    	lastRecvEventId = recvEventId;
+        lastRecvEventId = recvEventId;
     }
     else
     {
-    	if( lastRecvEventId == OtaAgentEventRequestFileBlock )
-    	{
-    		/* No current event and we have not received the new block
-    		 * since last timeout, try sending the request for block again. */
-    		recvEventId = lastRecvEventId;
+        if( lastRecvEventId == OtaAgentEventRequestFileBlock )
+        {
+            /* No current event and we have not received the new block
+             * since last timeout, try sending the request for block again. */
+            recvEventId = lastRecvEventId;
 
-    		/* It is likely that the network was disconnected and reconnected,
-    		 * we should wait for the MQTT connection to go up. */
-    		while( !mqttWrapper_isConnected() )
-    		{
-    			vTaskDelay( pdMS_TO_TICKS( 100 ) );
-    		}
-    	}
+            /* It is likely that the network was disconnected and reconnected,
+             * we should wait for the MQTT connection to go up. */
+            while( !mqttWrapper_isConnected() )
+            {
+                vTaskDelay( pdMS_TO_TICKS( 100 ) );
+            }
+        }
     }
 
-    switch (recvEventId)
+    switch( recvEventId )
     {
-    case OtaAgentEventRequestJobDocument:
-        LogInfo("Request Job Document event Received \n");
-        LogInfo("-------------------------------------\n");
-        requestJobDocumentHandler();
-        otaAgentState = OtaAgentStateRequestingJob;
-        break;
-
-    case OtaAgentEventReceivedJobDocument:
-        LogInfo("Received Job Document event Received \n");
-        LogInfo("-------------------------------------\n");
-
-        if (otaAgentState == OtaAgentStateSuspended)
-        {
-            LogInfo("OTA-Agent is in Suspend State. Hence dropping Job Document. \n");
-            break;
-        }
-
-        switch( receivedJobDocumentHandler(recvEvent.jobEvent) )
-        {
-        case OtaPalJobDocFileCreated:
-            LogInfo( "Received OTA Job. \n" );
-            nextEvent.eventId = OtaAgentEventRequestFileBlock;
-            OtaSendEvent_FreeRTOS( &nextEvent );
-            otaAgentState = OtaAgentStateCreatingFile;
+        case OtaAgentEventRequestJobDocument:
+            LogInfo( "Request Job Document event Received \n" );
+            LogInfo( "-------------------------------------\n" );
+            requestJobDocumentHandler();
+            otaAgentState = OtaAgentStateRequestingJob;
             break;
 
-        case OtaPalJobDocFileCreateFailed:
-        case OtaPalNewImageBootFailed:
-        case OtaPalJobDocProcessingStateInvalid:
-        	LogInfo("This is not an OTA job \n");
-        	break;
+        case OtaAgentEventReceivedJobDocument:
+            LogInfo( "Received Job Document event Received \n" );
+            LogInfo( "-------------------------------------\n" );
 
-        case OtaPalNewImageBooted:
-        	( void ) sendSuccessMessage();
+            if( otaAgentState == OtaAgentStateSuspended )
+            {
+                LogInfo( "OTA-Agent is in Suspend State. Hence dropping Job Document. \n" );
+                break;
+            }
 
-        	/* Short delay before restarting the loop. This allows IoT core
-        	 * to update the status of the job. */
-        	vTaskDelay( pdMS_TO_TICKS( 5000 ) );
+            switch( receivedJobDocumentHandler( recvEvent.jobEvent ) )
+            {
+                case OtaPalJobDocFileCreated:
+                    LogInfo( "Received OTA Job. \n" );
+                    nextEvent.eventId = OtaAgentEventRequestFileBlock;
+                    OtaSendEvent_FreeRTOS( &nextEvent );
+                    otaAgentState = OtaAgentStateCreatingFile;
+                    break;
 
-        	/* Get ready for new OTA job. */
-        	nextEvent.eventId = OtaAgentEventRequestJobDocument;
-        	OtaSendEvent_FreeRTOS( &nextEvent );
-        	break;
-        }
+                case OtaPalJobDocFileCreateFailed:
+                case OtaPalNewImageBootFailed:
+                case OtaPalJobDocProcessingStateInvalid:
+                    LogInfo( "This is not an OTA job \n" );
+                    break;
 
-        break;
+                case OtaPalNewImageBooted:
+                    ( void ) sendSuccessMessage();
 
-    case OtaAgentEventRequestFileBlock:
-        otaAgentState = OtaAgentStateRequestingFileBlock;
-        LogInfo("Request File Block event Received \n");
-        LogInfo("-----------------------------------\n");
-        if (currentBlockOffset == 0)
-        {
-            LogInfo( "Starting The Download. \n" );
-        }
-        requestDataBlock();
-        LogInfo("ReqSent----------------------------\n");
-        break;
+                    /* Short delay before restarting the loop. This allows IoT core
+                     * to update the status of the job. */
+                    vTaskDelay( pdMS_TO_TICKS( 5000 ) );
 
-    case OtaAgentEventReceivedFileBlock:
-        LogInfo("Received File Block event Received \n");
-        LogInfo("---------------------------------------\n");
-        if (otaAgentState == OtaAgentStateSuspended)
-        {
-            LogInfo("OTA-Agent is in Suspend State. Hence dropping File Block. \n");
-            freeOtaDataEventBuffer(recvEvent.dataEvent);
+                    /* Get ready for new OTA job. */
+                    nextEvent.eventId = OtaAgentEventRequestJobDocument;
+                    OtaSendEvent_FreeRTOS( &nextEvent );
+                    break;
+            }
+
             break;
-        }
-        uint8_t decodedData[ mqttFileDownloader_CONFIG_BLOCK_SIZE ];
-        size_t decodedDataLength = 0;
-        MQTTFileDownloaderStatus_t xReturnStatus;
-        int16_t result = -1;
-        int32_t fileId;
-        int32_t blockId;
-        int32_t blockSize;
-        static int32_t lastReceivedblockId = -1;
 
-        /*
-         * MQTT streams Library:
-         * Extracting and decoding the received data block from the incoming MQTT message.
-         */
-        xReturnStatus = mqttDownloader_processReceivedDataBlock(
-                                 &mqttFileDownloaderContext,
-                                 recvEvent.dataEvent->data,
-                                 recvEvent.dataEvent->dataLength,
-                                 &fileId,
-                                 &blockId,
-                                 &blockSize,
-                                 decodedData,
-                                 &decodedDataLength );
+        case OtaAgentEventRequestFileBlock:
+            otaAgentState = OtaAgentStateRequestingFileBlock;
+            LogInfo( "Request File Block event Received \n" );
+            LogInfo( "-----------------------------------\n" );
 
-        if( xReturnStatus != MQTTFileDownloaderSuccess )
-        {
-        	/* There was some failure in trying to decode the block. */
-        }
-        else if( fileId != jobFields.fileId )
-        {
-        	/* Error - the file ID doesn't match with the one we received in the job document. */
-        }
-        else if( blockSize > mqttFileDownloader_CONFIG_BLOCK_SIZE )
-        {
-        	/* Error - the block size doesn't match with what we requested. It can be smaller as
-        	 * the last block may or may not be of exact size. */
-        }
-        else if( blockId <= lastReceivedblockId )
-        {
-        	/* Ignore this block. */
-        }
-        else
-        {
-            result = handleMqttStreamsBlockArrived(decodedData, decodedDataLength);
-            lastReceivedblockId = blockId;
-        }
+            if( currentBlockOffset == 0 )
+            {
+                LogInfo( "Starting The Download. \n" );
+            }
 
-        freeOtaDataEventBuffer(recvEvent.dataEvent);
+            requestDataBlock();
+            LogInfo( "ReqSent----------------------------\n" );
+            break;
 
-        if( result > 0 )
-        {
-            numOfBlocksRemaining--;
-            currentBlockOffset++;
-        }
+        case OtaAgentEventReceivedFileBlock:
+            LogInfo( "Received File Block event Received \n" );
+            LogInfo( "---------------------------------------\n" );
 
-        if( ( numOfBlocksRemaining % 10 ) == 0 )
-        {
-        	LogInfo("Free OTA buffers %u", getFreeOTABuffers());
-        }
+            if( otaAgentState == OtaAgentStateSuspended )
+            {
+                LogInfo( "OTA-Agent is in Suspend State. Hence dropping File Block. \n" );
+                freeOtaDataEventBuffer( recvEvent.dataEvent );
+                break;
+            }
 
-        if( numOfBlocksRemaining == 0 )
-        {
-            nextEvent.eventId = OtaAgentEventCloseFile;
-            OtaSendEvent_FreeRTOS( &nextEvent );
-        }
-        else
-        {
-        	if( currentBlockOffset % NUM_OF_BLOCKS_REQUESTED == 0 )
-        	{
-                nextEvent.eventId = OtaAgentEventRequestFileBlock;
+            uint8_t decodedData[ mqttFileDownloader_CONFIG_BLOCK_SIZE ];
+            size_t decodedDataLength = 0;
+            MQTTFileDownloaderStatus_t xReturnStatus;
+            int16_t result = -1;
+            int32_t fileId;
+            int32_t blockId;
+            int32_t blockSize;
+            static int32_t lastReceivedblockId = -1;
+
+            /*
+             * MQTT streams Library:
+             * Extracting and decoding the received data block from the incoming MQTT message.
+             */
+            xReturnStatus = mqttDownloader_processReceivedDataBlock(
+                &mqttFileDownloaderContext,
+                recvEvent.dataEvent->data,
+                recvEvent.dataEvent->dataLength,
+                &fileId,
+                &blockId,
+                &blockSize,
+                decodedData,
+                &decodedDataLength );
+
+            if( xReturnStatus != MQTTFileDownloaderSuccess )
+            {
+                /* There was some failure in trying to decode the block. */
+            }
+            else if( fileId != jobFields.fileId )
+            {
+                /* Error - the file ID doesn't match with the one we received in the job document. */
+            }
+            else if( blockSize > mqttFileDownloader_CONFIG_BLOCK_SIZE )
+            {
+                /* Error - the block size doesn't match with what we requested. It can be smaller as
+                 * the last block may or may not be of exact size. */
+            }
+            else if( blockId <= lastReceivedblockId )
+            {
+                /* Ignore this block. */
+            }
+            else
+            {
+                result = handleMqttStreamsBlockArrived( decodedData, decodedDataLength );
+                lastReceivedblockId = blockId;
+            }
+
+            freeOtaDataEventBuffer( recvEvent.dataEvent );
+
+            if( result > 0 )
+            {
+                numOfBlocksRemaining--;
+                currentBlockOffset++;
+            }
+
+            if( ( numOfBlocksRemaining % 10 ) == 0 )
+            {
+                LogInfo( "Free OTA buffers %u", getFreeOTABuffers() );
+            }
+
+            if( numOfBlocksRemaining == 0 )
+            {
+                nextEvent.eventId = OtaAgentEventCloseFile;
                 OtaSendEvent_FreeRTOS( &nextEvent );
-        	}
-        }
-        break;
+            }
+            else
+            {
+                if( currentBlockOffset % NUM_OF_BLOCKS_REQUESTED == 0 )
+                {
+                    nextEvent.eventId = OtaAgentEventRequestFileBlock;
+                    OtaSendEvent_FreeRTOS( &nextEvent );
+                }
+            }
 
-    case OtaAgentEventCloseFile:
-        LogInfo("Close file event Received \n");
-        LogInfo("-----------------------\n");
-        if( closeFileHandler() == true )
-        {
-        	nextEvent.eventId = OtaAgentEventActivateImage;
-        	OtaSendEvent_FreeRTOS( &nextEvent );
-        }
-        break;
+            break;
 
-    case OtaAgentEventActivateImage:
-    	LogInfo("Activate Image event Received \n");
-		LogInfo("-----------------------\n");
-		if( imageActivationHandler() == true )
-		{
-			nextEvent.eventId = OtaAgentEventActivateImage;
-			OtaSendEvent_FreeRTOS( &nextEvent );
-		}
+        case OtaAgentEventCloseFile:
+            LogInfo( "Close file event Received \n" );
+            LogInfo( "-----------------------\n" );
 
-    	otaAgentState = OtaAgentStateStopped;
-    	break;
+            if( closeFileHandler() == true )
+            {
+                nextEvent.eventId = OtaAgentEventActivateImage;
+                OtaSendEvent_FreeRTOS( &nextEvent );
+            }
+
+            break;
+
+        case OtaAgentEventActivateImage:
+            LogInfo( "Activate Image event Received \n" );
+            LogInfo( "-----------------------\n" );
+
+            if( imageActivationHandler() == true )
+            {
+                nextEvent.eventId = OtaAgentEventActivateImage;
+                OtaSendEvent_FreeRTOS( &nextEvent );
+            }
+
+            otaAgentState = OtaAgentStateStopped;
+            break;
 
 
-    case OtaAgentEventSuspend:
-        LogInfo("Suspend Event Received \n");
-        LogInfo("-----------------------\n");
-        otaAgentState = OtaAgentStateSuspended;
-        break;
+        case OtaAgentEventSuspend:
+            LogInfo( "Suspend Event Received \n" );
+            LogInfo( "-----------------------\n" );
+            otaAgentState = OtaAgentStateSuspended;
+            break;
 
-    case OtaAgentEventResume:
-        LogInfo("Resume Event Received \n");
-        LogInfo("---------------------\n");
-        otaAgentState = OtaAgentStateRequestingJob;
-        nextEvent.eventId = OtaAgentEventRequestJobDocument;
-        OtaSendEvent_FreeRTOS( &nextEvent );
+        case OtaAgentEventResume:
+            LogInfo( "Resume Event Received \n" );
+            LogInfo( "---------------------\n" );
+            otaAgentState = OtaAgentStateRequestingJob;
+            nextEvent.eventId = OtaAgentEventRequestJobDocument;
+            OtaSendEvent_FreeRTOS( &nextEvent );
 
-    default:
-        break;
+        default:
+            break;
     }
 }
 

@@ -28,15 +28,15 @@
  */
 typedef enum OtaOsStatus
 {
-    OtaOsSuccess = 0, /*!< @brief OTA OS interface success. */
+    OtaOsSuccess = 0,                    /*!< @brief OTA OS interface success. */
     OtaOsEventQueueCreateFailed = 0x80U, /*!< @brief Failed to create the event
-                                            queue. */
-    OtaOsEventQueueSendFailed,    /*!< @brief Posting event message to the event
-                                     queue failed. */
-    OtaOsEventQueueReceiveFailed, /*!< @brief Failed to receive from the event
-                                     queue. */
-    OtaOsEventQueueDeleteFailed,  /*!< @brief Failed to delete the event queue.
-                                   */
+                                          * queue. */
+    OtaOsEventQueueSendFailed,           /*!< @brief Posting event message to the event
+                                          * queue failed. */
+    OtaOsEventQueueReceiveFailed,        /*!< @brief Failed to receive from the event
+                                          * queue. */
+    OtaOsEventQueueDeleteFailed,         /*!< @brief Failed to delete the event queue.
+                                          */
 } OtaOsStatus_t;
 
 /**
@@ -100,4 +100,3 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg );
 void OtaDeinitEvent_FreeRTOS();
 
 #endif /* ifndef _OTA_OS_FREERTOS_H_ */
-

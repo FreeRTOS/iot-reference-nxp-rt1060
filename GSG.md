@@ -88,7 +88,7 @@ Many of these steps are automated in production environments.
     [Configuration basics](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
     to configure the basic settings (security credentials, the default AWS output format and the default AWS Region)
     that AWS CLI uses to interact with AWS.
-* A serial terminal application, such as [Tera Term](https://ttssh2.osdn.jp/index.html.en).
+* A serial terminal application, such as [Tera Term](https://teratermproject.github.io/index-en.html).
 
 
 ## 2 Hardware and Software Setup

@@ -13,11 +13,11 @@
 #include "mqtt_wrapper.h"
 #include "ota_demo.h"
 
-#define MQTT_AGENT_NOTIFY_IDX   ( 2 )
+#define MQTT_AGENT_NOTIFY_IDX    ( 2 )
 
 static MQTTContext_t * globalCoreMqttContext = NULL;
 
-#define MAX_THING_NAME_SIZE 128U
+#define MAX_THING_NAME_SIZE    128U
 static char globalThingName[ MAX_THING_NAME_SIZE + 1 ];
 static size_t globalThingNameLength = 0U;
 
@@ -41,6 +41,7 @@ static void handleIncomingMQTTMessage( char * topic,
                                                              topicLength,
                                                              message,
                                                              messageLength );
+
     if( !messageHandled )
     {
         printf( "Unhandled incoming PUBLISH received on topic, message: "
@@ -63,9 +64,10 @@ MQTTContext_t * mqttWrapper_getCoreMqttContext( void )
     return globalCoreMqttContext;
 }
 
-void mqttWrapper_setThingName( char * thingName, size_t thingNameLength )
+void mqttWrapper_setThingName( char * thingName,
+                               size_t thingNameLength )
 {
-	assert( thingNameLength <= MAX_THING_NAME_SIZE );
+    assert( thingNameLength <= MAX_THING_NAME_SIZE );
     strncpy( globalThingName, thingName, MAX_THING_NAME_SIZE );
     globalThingNameLength = thingNameLength;
 }
@@ -80,7 +82,8 @@ void mqttWrapper_getThingName( char * thingNameBuffer,
     *thingNameLength = globalThingNameLength;
 }
 
-bool mqttWrapper_connect( char * thingName, size_t thingNameLength )
+bool mqttWrapper_connect( char * thingName,
+                          size_t thingNameLength )
 {
     MQTTConnectInfo_t connectInfo = { 0 };
     MQTTStatus_t mqttStatus = MQTTSuccess;
@@ -107,6 +110,7 @@ bool mqttWrapper_connect( char * thingName, size_t thingNameLength )
 bool mqttWrapper_isConnected( void )
 {
     bool isConnected = false;
+
     assert( globalCoreMqttContext != NULL );
     isConnected = globalCoreMqttContext->connectStatus == MQTTConnected;
     return isConnected;
@@ -115,23 +119,23 @@ bool mqttWrapper_isConnected( void )
 static void prvPublishCommandCallback( MQTTAgentCommandContext_t * pCmdCallbackContext,
                                        MQTTAgentReturnInfo_t * pReturnInfo )
 {
-	TaskHandle_t xTaskHandle = ( struct tskTaskControlBlock * ) pCmdCallbackContext->xTaskToNotify;
+    TaskHandle_t xTaskHandle = ( struct tskTaskControlBlock * ) pCmdCallbackContext->xTaskToNotify;
 
 
-	if( xTaskHandle != NULL )
-	{
-		uint32_t ulNotifyValue = MQTTSuccess; // ( pxReturnInfo->returnCode & 0xFFFFFF );
-//
-//		if( pxReturnInfo->pSubackCodes )
-//		{
-//			ulNotifyValue += ( pxReturnInfo->pSubackCodes[ 0 ] << 24 );
-//		}
+    if( xTaskHandle != NULL )
+    {
+        uint32_t ulNotifyValue = MQTTSuccess; /* ( pxReturnInfo->returnCode & 0xFFFFFF ); */
+/* */
+/*		if( pxReturnInfo->pSubackCodes ) */
+/*		{ */
+/*			ulNotifyValue += ( pxReturnInfo->pSubackCodes[ 0 ] << 24 ); */
+/*		} */
 
-		( void ) xTaskNotifyIndexed( xTaskHandle,
-									 MQTT_AGENT_NOTIFY_IDX,
-									 ulNotifyValue,
-									 eSetValueWithOverwrite );
-	}
+        ( void ) xTaskNotifyIndexed( xTaskHandle,
+                                     MQTT_AGENT_NOTIFY_IDX,
+                                     ulNotifyValue,
+                                     eSetValueWithOverwrite );
+    }
 }
 
 bool mqttWrapper_publish( char * topic,
@@ -140,9 +144,11 @@ bool mqttWrapper_publish( char * topic,
                           size_t messageLength )
 {
     bool success = false;
+
     assert( globalCoreMqttContext != NULL );
 
     success = mqttWrapper_isConnected();
+
     if( success )
     {
         MQTTStatus_t mqttStatus = MQTTSuccess;
@@ -157,71 +163,73 @@ bool mqttWrapper_publish( char * topic,
         pubInfo.pPayload = message;
         pubInfo.payloadLength = messageLength;
 
-		MQTTAgentCommandContext_t xCommandContext =
-		{
-			.xTaskToNotify = xTaskGetCurrentTaskHandle(),
-			.xReturnStatus = MQTTIllegalState,
-		};
+        MQTTAgentCommandContext_t xCommandContext =
+        {
+            .xTaskToNotify = xTaskGetCurrentTaskHandle(),
+            .xReturnStatus = MQTTIllegalState,
+        };
 
-		MQTTAgentCommandInfo_t xCommandParams =
-		{
-			.blockTimeMs                 = 1000,
-			.cmdCompleteCallback         = prvPublishCommandCallback,
-			.pCmdCompleteCallbackContext = &xCommandContext,
-		};
+        MQTTAgentCommandInfo_t xCommandParams =
+        {
+            .blockTimeMs                 = 1000,
+            .cmdCompleteCallback         = prvPublishCommandCallback,
+            .pCmdCompleteCallbackContext = &xCommandContext,
+        };
 
-		( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
+        ( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
 
-		mqttStatus = MQTTAgent_Publish( xAgentHandle,
-									 &pubInfo,
-									 &xCommandParams );
+        mqttStatus = MQTTAgent_Publish( xAgentHandle,
+                                        &pubInfo,
+                                        &xCommandParams );
 
-		if( mqttStatus == MQTTSuccess )
-		{
-			uint32_t ulNotifyValue = 0;
+        if( mqttStatus == MQTTSuccess )
+        {
+            uint32_t ulNotifyValue = 0;
 
-			if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
-										0x0,
-										0xFFFFFFFF,
-										&ulNotifyValue,
-										portMAX_DELAY ) )
-			{
-				mqttStatus = ( ulNotifyValue & 0x00FFFFFF );
-			}
-			else
-			{
-				mqttStatus = MQTTKeepAliveTimeout;
-			}
-		}
-
-
+            if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
+                                        0x0,
+                                        0xFFFFFFFF,
+                                        &ulNotifyValue,
+                                        portMAX_DELAY ) )
+            {
+                mqttStatus = ( ulNotifyValue & 0x00FFFFFF );
+            }
+            else
+            {
+                mqttStatus = MQTTKeepAliveTimeout;
+            }
+        }
 
         success = mqttStatus == MQTTSuccess;
     }
+
     return success;
 }
 
 void handleIncomingPublish( void * pvIncomingPublishCallbackContext,
                             MQTTPublishInfo_t * pxPublishInfo )
 {
-	char * topic = NULL;
-	size_t topicLength = 0U;
-	uint8_t * message = NULL;
-	size_t messageLength = 0U;
+    char * topic = NULL;
+    size_t topicLength = 0U;
+    uint8_t * message = NULL;
+    size_t messageLength = 0U;
 
-	topic = ( char * ) pxPublishInfo->pTopicName;
-	topicLength = pxPublishInfo->topicNameLength;
-	message = ( uint8_t * ) pxPublishInfo->pPayload;
-	messageLength = pxPublishInfo->payloadLength;
-	handleIncomingMQTTMessage( topic, topicLength, message, messageLength );
+    topic = ( char * ) pxPublishInfo->pTopicName;
+    topicLength = pxPublishInfo->topicNameLength;
+    message = ( uint8_t * ) pxPublishInfo->pPayload;
+    messageLength = pxPublishInfo->payloadLength;
+    handleIncomingMQTTMessage( topic, topicLength, message, messageLength );
 }
 
-bool mqttWrapper_subscribe( char * topic, size_t topicLength )
+bool mqttWrapper_subscribe( char * topic,
+                            size_t topicLength )
 {
     bool success = false;
+
     assert( globalCoreMqttContext != NULL );
 
     success = mqttWrapper_isConnected();
+
     if( success )
     {
         MQTTStatus_t mqttStatus = MQTTSuccess;
@@ -229,13 +237,13 @@ bool mqttWrapper_subscribe( char * topic, size_t topicLength )
         mqttStatus = MqttAgent_SubscribeSync( topic,
                                               topicLength,
                                               0,
-											  handleIncomingPublish,
+                                              handleIncomingPublish,
                                               NULL );
 
         configASSERT( mqttStatus == MQTTSuccess );
 
         success = mqttStatus == MQTTSuccess;
     }
+
     return success;
 }
-

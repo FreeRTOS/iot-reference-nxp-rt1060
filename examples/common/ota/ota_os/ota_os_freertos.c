@@ -24,8 +24,8 @@
 #include "ota_os_freertos.h"
 
 /* OTA Event queue attributes.*/
-#define MAX_MESSAGES 20
-#define MAX_MSG_SIZE sizeof( OtaEventMsg_t )
+#define MAX_MESSAGES    20
+#define MAX_MSG_SIZE    sizeof( OtaEventMsg_t )
 
 /* Array containing pointer to the OTA event structures used to send events to
  * the OTA task. */
@@ -50,14 +50,14 @@ OtaOsStatus_t OtaInitEvent_FreeRTOS()
     {
         otaOsStatus = OtaOsEventQueueCreateFailed;
 
-//        printf( "Failed to create OTA Event Queue: "
-//                "xQueueCreateStatic returned error: "
-//                "OtaOsStatus_t=%d \n",
-//                ( int ) otaOsStatus );
+/*        printf( "Failed to create OTA Event Queue: " */
+/*                "xQueueCreateStatic returned error: " */
+/*                "OtaOsStatus_t=%d \n", */
+/*                ( int ) otaOsStatus ); */
     }
     else
     {
-//        printf( "OTA Event Queue created.\n" );
+/*        printf( "OTA Event Queue created.\n" ); */
     }
 
     return otaOsStatus;
@@ -73,16 +73,16 @@ OtaOsStatus_t OtaSendEvent_FreeRTOS( const void * pEventMsg )
 
     if( retVal == pdTRUE )
     {
-//        printf( "OTA Event Sent.\n" );
+/*        printf( "OTA Event Sent.\n" ); */
     }
     else
     {
         otaOsStatus = OtaOsEventQueueSendFailed;
 
-//        printf( "Failed to send event to OTA Event Queue: "
-//                "xQueueSendToBack returned error: "
-//                "OtaOsStatus_t=%d \n",
-//                ( int ) otaOsStatus );
+/*        printf( "Failed to send event to OTA Event Queue: " */
+/*                "xQueueSendToBack returned error: " */
+/*                "OtaOsStatus_t=%d \n", */
+/*                ( int ) otaOsStatus ); */
     }
 
     return otaOsStatus;
@@ -93,20 +93,20 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg )
     OtaOsStatus_t otaOsStatus = OtaOsSuccess;
     BaseType_t retVal = pdFALSE;
 
-    retVal = xQueueReceive( otaEventQueue, (OtaEventMsg_t *) pEventMsg, pdMS_TO_TICKS( 3000U ) );
+    retVal = xQueueReceive( otaEventQueue, ( OtaEventMsg_t * ) pEventMsg, pdMS_TO_TICKS( 3000U ) );
 
     if( retVal == pdTRUE )
     {
-//        printf( "OTA Event received \n" );
+/*        printf( "OTA Event received \n" ); */
     }
     else
     {
         otaOsStatus = OtaOsEventQueueReceiveFailed;
 
- //        printf( "Failed to receive event or timeout from OTA Event Queue: "
-//                "xQueueReceive returned error: "
-//                "OtaOsStatus_t=%d \n",
-//                ( int ) otaOsStatus );
+        /*        printf( "Failed to receive event or timeout from OTA Event Queue: " */
+/*                "xQueueReceive returned error: " */
+/*                "OtaOsStatus_t=%d \n", */
+/*                ( int ) otaOsStatus ); */
     }
 
     return otaOsStatus;
@@ -114,10 +114,7 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg )
 
 void OtaDeinitEvent_FreeRTOS()
 {
-
     vQueueDelete( otaEventQueue );
 
-//    printf( "OTA Event Queue Deleted. \n" );
-
+/*    printf( "OTA Event Queue Deleted. \n" ); */
 }
-

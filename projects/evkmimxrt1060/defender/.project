@@ -329,7 +329,7 @@
 		<link>
 			<name>jobs/source</name>
 			<type>2</type>
-			<location>/Users/kanherea/Desktop/nxp_gri/iot-reference-nxp-rt1060/Middleware/AWS/jobs/source</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/jobs/source</locationURI>
 		</link>
 		<link>
 			<name>lwip/port</name>
@@ -359,7 +359,7 @@
 		<link>
 			<name>mqtt-stream/source</name>
 			<type>2</type>
-			<location>/Users/kanherea/Desktop/nxp_gri/iot-reference-nxp-rt1060/Middleware/AWS/mqtt-stream/source</location>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/mqtt-stream/source</locationURI>
 		</link>
 		<link>
 			<name>pkcs11/corePKCS11</name>
@@ -449,7 +449,7 @@
 		<link>
 			<name>source/mqtt_wrapper</name>
 			<type>2</type>
-			<location>/Users/kanherea/Desktop/nxp_gri/iot-reference-nxp-rt1060/examples/common/mqtt_wrapper</location>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/mqtt_wrapper</locationURI>
 		</link>
 		<link>
 			<name>source/ota</name>

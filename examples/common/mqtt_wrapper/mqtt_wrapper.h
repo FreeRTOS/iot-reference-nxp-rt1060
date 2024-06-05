@@ -21,12 +21,14 @@ void mqttWrapper_setCoreMqttContext( MQTTContext_t * mqttContext );
 
 MQTTContext_t * mqttWrapper_getCoreMqttContext( void );
 
-void mqttWrapper_setThingName( char * thingName, size_t thingNameLength );
+void mqttWrapper_setThingName( char * thingName,
+                               size_t thingNameLength );
 
 void mqttWrapper_getThingName( char * thingNameBuffer,
                                size_t * thingNameLength );
 
-bool mqttWrapper_connect( char * thingName, size_t thingNameLength );
+bool mqttWrapper_connect( char * thingName,
+                          size_t thingNameLength );
 
 bool mqttWrapper_isConnected( void );
 
@@ -35,7 +37,7 @@ bool mqttWrapper_publish( char * topic,
                           uint8_t * message,
                           size_t messageLength );
 
-bool mqttWrapper_subscribe( char * topic, size_t topicLength );
+bool mqttWrapper_subscribe( char * topic,
+                            size_t topicLength );
 
-#endif
-
+#endif /* ifndef MQTT_WRAPPER_H */
