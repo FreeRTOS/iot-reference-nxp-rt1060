@@ -105,5 +105,11 @@ dependencies:
       type: "git"
       url: "https://github.com/aws/aws-iot-core-mqtt-file-streams-embedded-c"
       path: "Middleware/AWS/mqtt-stream"
+  - name: "pkcs11"
+    version: "v2.40_errata01"
+    repository:
+      type: "git"
+      url: "https://github.com/amazon-freertos/pkcs11.git"
+      path: "Middleware/FreeRTOS/pkcs11"
 
 license: "MIT"
