@@ -111,5 +111,11 @@ dependencies:
       type: "git"
       url: "https://github.com/amazon-freertos/pkcs11.git"
       path: "Middleware/FreeRTOS/pkcs11"
+  - name: "Jobs-for-AWS-IoT-embedded-sdk"
+    version: "05f2afa"
+    repository:
+      type: "git"
+      url: "https://github.com/aws/Jobs-for-AWS-IoT-embedded-sdk.git"
+      path: "Middleware/AWS/jobs"
 
 license: "MIT"
