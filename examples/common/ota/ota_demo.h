@@ -14,6 +14,7 @@
 #include <stdbool.h>
 
 #include "MQTTFileDownloader.h"
+#include "MQTTFileDownloader_defaults.h"
 
 #define OTA_DATA_BLOCK_SIZE    mqttFileDownloader_CONFIG_BLOCK_SIZE
 #define JOB_DOC_SIZE           2048U
