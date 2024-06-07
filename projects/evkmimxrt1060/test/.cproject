@@ -209,7 +209,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="freertos/examples|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -286,7 +286,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="tests/src/mqtt/mqtt_test.c|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="freertos/examples|tests/src/mqtt/mqtt_test.c|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
