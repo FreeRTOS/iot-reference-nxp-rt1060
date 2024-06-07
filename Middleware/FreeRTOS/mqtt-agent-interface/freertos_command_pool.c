@@ -37,6 +37,9 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+/* Demo Specific configs. */
+#include "core_mqtt_config.h"
+
 /* Header include. */
 #include "freertos_command_pool.h"
 #include "freertos_agent_message.h"
