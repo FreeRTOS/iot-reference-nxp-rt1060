@@ -76,6 +76,9 @@ extern void vLoggingPrintf( const char * pcFormat,
 #define configOVERRIDE_DEFAULT_TICK_CONFIGURATION    0
 #define configRECORD_STACK_HIGH_ADDRESS              1
 
+/* Task notification settings. */
+#define configTASK_NOTIFICATION_ARRAY_ENTRIES        ( 4 )
+
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                        0
 #define configMAX_CO_ROUTINE_PRIORITIES              ( 2 )
