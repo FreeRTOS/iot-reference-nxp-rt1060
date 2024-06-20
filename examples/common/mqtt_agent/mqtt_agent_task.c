@@ -66,6 +66,8 @@
 
 #include "core_pkcs11_config.h"
 
+#include "core_mqtt_config.h"
+
 /* MQTT library includes. */
 #include "core_mqtt.h"
 

@@ -4,31 +4,31 @@ description: |-
   "Reference IoT integration project using NXP i.MX RT1060 with EdgeLock® SE050 secure element and FreeRTOS LTS libraries"
 dependencies:
   - name: "FreeRTOS-Kernel"
-    version: "V10.5.1"
+    version: "V11.1.0"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
       path: "Middleware/FreeRTOS/kernel"
   - name: "coreJSON"
-    version: "v3.2.0"
+    version: "v3.3.0"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreJSON.git"
       path: "Middleware/FreeRTOS/coreJSON"
   - name: "coreMQTT"
-    version: "v2.1.1"
+    version: "v2.3.0"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT.git"
       path: "Middleware/FreeRTOS/coreMQTT"
   - name: "corePKCS11"
-    version: "v3.5.0"
+    version: "v3.6.1"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/corePKCS11.git"
       path: "Middleware/FreeRTOS/corePKCS11"
   - name: "backoffAlgorithm"
-    version: "v1.3.0"
+    version: "v1.4.1"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/backoffAlgorithm"
@@ -40,13 +40,13 @@ dependencies:
       url: "https://github.com/FreeRTOS/coreMQTT-Agent.git"
       path: "Middleware/FreeRTOS/coreMQTT-Agent"
   - name: "device-defender"
-    version: "v1.3.0"
+    version: "v1.4.0"
     repository:
       type: "git"
       url: "https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git"
       path: "Middleware/AWS/device-defender"
   - name: "device-shadow"
-    version: "v1.3.0"
+    version: "v1.4.1"
     repository:
       type: "git"
       url: "https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git"
@@ -88,13 +88,13 @@ dependencies:
       url: "https://github.com/ThrowTheSwitch/Unity.git"
       path: "Middleware/unity"
   - name: "FreeRTOS-Libraries-Integration-Tests"
-    version: "202210.01"
+    version: "692d509"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests"
       path: "Middleware/FreeRTOS/tests"
   - name: "aws-iot-core-mqtt-file-streams-embedded-c"
-    version: "690fb2b"
+    version: "v1.1.0"
     repository:
       type: "git"
       url: "https://github.com/aws/aws-iot-core-mqtt-file-streams-embedded-c"
@@ -106,7 +106,7 @@ dependencies:
       url: "https://github.com/amazon-freertos/pkcs11.git"
       path: "Middleware/FreeRTOS/pkcs11"
   - name: "Jobs-for-AWS-IoT-embedded-sdk"
-    version: "05f2afa"
+    version: "v1.5.1"
     repository:
       type: "git"
       url: "https://github.com/aws/Jobs-for-AWS-IoT-embedded-sdk.git"
