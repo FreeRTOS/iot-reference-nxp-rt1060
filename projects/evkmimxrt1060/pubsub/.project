@@ -82,6 +82,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/include</locationURI>
 		</link>
 		<link>
+			<name>jobs</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>linkscripts</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/pubsub/linkscripts</locationURI>
@@ -102,9 +107,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/core/components/phy/mdio/enet</locationURI>
 		</link>
 		<link>
-			<name>ota</name>
+			<name>mqtt-stream</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/ota</locationURI>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>phy</name>
@@ -312,6 +317,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/core/drivers/trng/fsl_trng.h</locationURI>
 		</link>
 		<link>
+			<name>jobs/source</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/jobs/source</locationURI>
+		</link>
+		<link>
 			<name>lwip/port</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -335,6 +345,11 @@
 			<name>mbedtls/port</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>mqtt-stream/source</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/mqtt-stream/source</locationURI>
 		</link>
 		<link>
 			<name>pkcs11/corePKCS11</name>
@@ -390,6 +405,11 @@
 			<name>source/mqtt_agent</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/examples/common/mqtt_agent</locationURI>
+		</link>
+		<link>
+			<name>source/mqtt_wrapper</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/mqtt_wrapper</locationURI>
 		</link>
 		<link>
 			<name>source/ota</name>
@@ -556,24 +576,6 @@
 			<id>1637631780774</id>
 			<name>device</name>
 			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-*</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1640798696866</id>
-			<name>ota</name>
-			<type>9</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-source</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1640798696880</id>
-			<name>ota</name>
-			<type>6</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*</arguments>

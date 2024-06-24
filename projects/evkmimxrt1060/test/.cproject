@@ -59,6 +59,8 @@
 									<listOptionValue builtIn="false" value="DEBUG_CONSOLE_RECEIVE_BUFFER_LEN=2048"/>
 									<listOptionValue builtIn="false" value="DEBUG_CONSOLE_ENABLE_ECHO=1"/>
 									<listOptionValue builtIn="false" value="UNITY_INCLUDE_CONFIG_H"/>
+									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B"/>
+									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B_cm7"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1579638486" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fomit-frame-pointer -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.401864418" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-common" valueType="string"/>
@@ -145,9 +147,15 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/tests/src/ota&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/tests/src/pkcs11/dev_mode_key_provisioning&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/FreeRTOS/tests/src/mqtt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/ota/ota_os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../examples/common/mqtt_wrapper&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/jobs/source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/jobs/source/otaJobParser/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../Middleware/AWS/mqtt-stream/source/include&quot;"/>
 								</option>
 								<option id="com.crt.advproject.c.misc.dialect.694419664" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.specs.604491904" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.1129734695" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="true"/>
 								<inputType id="com.crt.advproject.compiler.input.318269832" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
 							<tool id="com.crt.advproject.gas.exe.debug.1187433041" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug">
@@ -191,6 +199,7 @@
 								<option id="com.crt.advproject.link.fpu.171556106" name="Floating point" superClass="com.crt.advproject.link.fpu" useByScannerDiscovery="false" value="com.crt.advproject.link.fpu.fpv5dp.hard" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.scriptdir.796273466" name="Script path" superClass="com.crt.advproject.link.scriptdir" useByScannerDiscovery="false" value="../" valueType="string"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.497166009" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.link.gcc.multicore.master.717010996" name="Multicore master" superClass="com.crt.advproject.link.gcc.multicore.master"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.626617858" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -200,7 +209,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="freertos/examples|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -233,6 +242,8 @@
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
+									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B"/>
+									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B_cm7"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.861110121" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.1379798117" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-common" valueType="string"/>
@@ -256,7 +267,7 @@
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.crt.advproject.link.gcc.multicore.master.userobjs.268625899" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.gcc.multicore.master.userobjs" valueType="userObjs"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.65823663" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
 								<option id="com.crt.advproject.link.arch.2029149205" name="Architecture" superClass="com.crt.advproject.link.arch"/>
-								<option id="com.crt.advproject.link.script.74547243" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;aws_iot_qual_test_Release.ld&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.script.74547243" name="Linker script" superClass="com.crt.advproject.link.script" value="aws_iot_qual_test_Release.ld" valueType="string"/>
 								<option id="com.crt.advproject.link.manage.1108718318" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostdlibs.1218730684" name="No startup or default libs (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.other.1290653435" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList">
@@ -275,7 +286,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="tests/src/mqtt/mqtt_test.c|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="freertos/examples|tests/src/mqtt/mqtt_test.c|lwip/src/netif/lowpan6_common.c|lwip/src/netif/lowpan6.c|tinycbor/src/open_memstream.c|ota/source/portable/os/ota_os_posix.c|ota/source/dependency|source/mqtt/mqtt_mutual_auth.c|lwip/src/core/ipv6|lwip/src/netif/lowpan6_ble.c|secure_element/hostlib/libCommon/infra/cm_commands.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -286,35 +297,31 @@
 		<project id="aws_iot_qual_test.com.crt.advproject.projecttype.exe.1645350724" name="Executable" projectType="com.crt.advproject.projecttype.exe"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
-		<sdkName>SDK_2.x_EVK-MIMXRT1060</sdkName>
-		<sdkVersion>2.12.0</sdkVersion>
-	</storageModule>
 	<storageModule moduleId="com.crt.config">
-		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
-&lt;TargetConfig&gt;&#13;
-&lt;Properties property_2="LPC11_12_13_32K_8K.cfx" property_3="NXP" property_4="MIMXRT1062xxxxA" property_count="5" version="100300"/&gt;&#13;
-&lt;infoList vendor="NXP"&gt;&#13;
-&lt;info chip="MIMXRT1062xxxxA" name="MIMXRT1062xxxxA"&gt;&#13;
-&lt;chip&gt;&#13;
-&lt;name&gt;MIMXRT1062xxxxA&lt;/name&gt;&#13;
-&lt;family&gt;MIMXRT1060&lt;/family&gt;&#13;
-&lt;vendor&gt;NXP&lt;/vendor&gt;&#13;
-&lt;memory can_program="true" id="Flash" is_ro="true" size="0" type="Flash"/&gt;&#13;
-&lt;memory id="RAM" size="1024" type="RAM"/&gt;&#13;
-&lt;memoryInstance derived_from="Flash" driver="MIMXRT1060_SFDP_QSPI.cfx" edited="true" id="BOARD_FLASH" location="0x60040000" size="0x1ffc00"/&gt;&#13;
-&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_DTC" location="0x20000000" size="0x20000"/&gt;&#13;
-&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_ITC" location="0x0" size="0x20000"/&gt;&#13;
-&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC" location="0x20200000" size="0xc0000"/&gt;&#13;
-&lt;memoryInstance derived_from="RAM" edited="true" id="BOARD_SDRAM" location="0x80000000" size="0x1e00000"/&gt;&#13;
-&lt;memoryInstance derived_from="RAM" edited="true" id="NCACHE_REGION" location="0x81e00000" size="0x200000"/&gt;&#13;
-&lt;/chip&gt;&#13;
-&lt;processor&gt;&#13;
-&lt;name gcc_name="cortex-m7"&gt;Cortex-M7&lt;/name&gt;&#13;
-&lt;family&gt;Cortex-M&lt;/family&gt;&#13;
-&lt;/processor&gt;&#13;
-&lt;/info&gt;&#13;
-&lt;/infoList&gt;&#13;
+		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;TargetConfig&gt;
+&lt;Properties property_2="LPC11_12_13_32K_8K.cfx" property_3="NXP" property_4="MIMXRT1062xxxxB" property_count="5" version="100300"/&gt;
+&lt;infoList vendor="NXP"&gt;
+&lt;info chip="MIMXRT1062xxxxB" name="MIMXRT1062xxxxB"&gt;
+&lt;chip&gt;
+&lt;name&gt;MIMXRT1062xxxxB&lt;/name&gt;
+&lt;family&gt;MIMXRT1060&lt;/family&gt;
+&lt;vendor&gt;NXP&lt;/vendor&gt;
+&lt;memory can_program="true" id="Flash" is_ro="true" size="0" type="Flash"/&gt;
+&lt;memory id="RAM" size="1024" type="RAM"/&gt;
+&lt;memoryInstance derived_from="Flash" driver="MIMXRT1060_SFDP_QSPI.cfx" edited="true" id="BOARD_FLASH" location="0x60040000" size="0x1ffc00"/&gt;
+&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_DTC" location="0x20000000" size="0x20000"/&gt;
+&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_ITC" location="0x0" size="0x20000"/&gt;
+&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC" location="0x20200000" size="0xc0000"/&gt;
+&lt;memoryInstance derived_from="RAM" edited="true" id="BOARD_SDRAM" location="0x80000000" size="0x1e00000"/&gt;
+&lt;memoryInstance derived_from="RAM" edited="true" id="NCACHE_REGION" location="0x81e00000" size="0x200000"/&gt;
+&lt;/chip&gt;
+&lt;processor&gt;
+&lt;name gcc_name="cortex-m7"&gt;Cortex-M7&lt;/name&gt;
+&lt;family&gt;Cortex-M&lt;/family&gt;
+&lt;/processor&gt;
+&lt;/info&gt;
+&lt;/infoList&gt;
 &lt;/TargetConfig&gt;</projectStorage>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
@@ -336,4 +343,13 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.pathentry"/>
+	<storageModule moduleId="openCmsis"/>
+	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
+		<sdkName>SDK_2.x_MIMXRT1060-EVKB</sdkName>
+		<sdkVersion>2.15.000</sdkVersion>
+		<boardId>evkbmimxrt1060</boardId>
+		<package>MIMXRT1062DVL6B</package>
+		<core>cm7</core>
+		<coreId>core0_MIMXRT1062xxxxB</coreId>
+	</storageModule>
 </cproject>

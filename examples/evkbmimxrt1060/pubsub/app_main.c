@@ -47,7 +47,7 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 1 )
+#define appmainPROVISIONING_MODE                  ( 0 )
 
 /**
  * @brief Subscribe Publish demo tasks configuration.
@@ -55,7 +55,7 @@
  * to a topic, publishing messages to a topic and reporting the incoming messages on subscribed topic.
  * Number of subscribe publish demo tasks to be spawned is configurable.
  */
-#define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
+#define appmainMQTT_NUM_PUBSUB_TASKS              ( 0 )
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 
@@ -96,6 +96,8 @@ int app_main( void )
     BaseType_t xResult = pdFAIL;
 
     xResult = KVStore_init();
+
+    configPRINTF( ( "Version 0.1.0" ) );
 
     if( xResult == pdFAIL )
     {

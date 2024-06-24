@@ -127,4 +127,12 @@ void vRemoveMQTTTopicFilterCallback( const char * pcTopicFilter,
                                      uint16_t usTopicFilterLength );
 
 
+MQTTAgentContext_t * xGetMqttAgentHandle( void );
+
+MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
+                                      uint16_t uxTopicFilterLength,
+                                      MQTTQoS_t xRequestedQoS,
+                                      IncomingPubCallback_t pxCallback,
+                                      void * pvCallbackCtx );
+
 #endif /* ifndef _MQTT_AGENT_TASK_H_ */

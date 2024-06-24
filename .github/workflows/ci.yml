@@ -10,37 +10,18 @@ jobs:
   spell-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Parent Repo
-        uses: actions/checkout@v2
-        with:
-          ref: main
-          repository: FreeRTOS/CI-CD-Github-Actions
-          path: actions
       - name: Clone This Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+      - name: Run spellings check
+        uses: FreeRTOS/CI-CD-Github-Actions/spellings@main
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
-            path: ./NXPRef
-      - name: Install spell
-        run: |
-          sudo apt-get install spell
-          sudo apt-get install util-linux
-      - name: Check spelling
-        run: |
-          PATH=$PATH:actions/spellings/tools
-          # Make sure that the portable directory is not included in the spellcheck.
-          sed -i  "s/-iname \\\\\*.\[ch\] -o/-not -path \\\*Middleware\\\\\/NXP\\\* -iname \\\\\*.\[ch\] -o/g" actions/spellings/tools/find-unknown-comment-words
-          find-unknown-comment-words --directory NXPRef/ --lexicon NXPRef/lexicon.txt
-          if [ "$?" = "0" ]; then
-            exit 0
-          else
-            exit 1
-          fi
+          path: ./
+
   link-verifier:
     runs-on: ubuntu-latest
     steps:
       - name: Clone This Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Run link verifier
         uses: FreeRTOS/CI-CD-Github-Actions/link-verifier@main
         with:
@@ -51,7 +32,7 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Uncrustify
         run: sudo apt-get install uncrustify
       - name: Run Uncrustify
@@ -78,9 +59,9 @@ jobs:
   git-secrets:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Checkout awslabs/git-secrets
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: awslabs/git-secrets
           ref: master
@@ -91,3 +72,17 @@ jobs:
         run: |
           git-secrets --register-aws
           git-secrets --scan
+
+  verify-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Run manifest verifier
+        uses: FreeRTOS/CI-CD-GitHub-Actions/manifest-verifier@main
+        with:
+          path: ./
+          fail-on-incorrect-version: true

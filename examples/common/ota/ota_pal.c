@@ -37,13 +37,10 @@
 #include "mcuboot_app_support.h"
 
 
-/* Specify the OTA signature algorithm we support on this platform. */
-const char OTA_JsonFileSignatureKey[ OTA_FILE_SIG_KEY_STR_MAX_LENGTH ] = "sig-sha256-ecdsa";
-
 /* PAL file context structure */
 typedef struct
 {
-    const OtaFileContext_t * FileXRef;
+    const AfrOtaJobDocumentFields_t * FileXRef;
     uint32_t partition_log_addr;
     uint32_t partition_phys_addr;
     uint32_t partition_size;
@@ -54,43 +51,56 @@ typedef struct
 
 static PAL_FileContext_t prvPAL_CurrentFileContext;
 
-static PAL_FileContext_t * prvPAL_GetPALFileContext( OtaFileContext_t * const C )
+OtaPalStatus_t xFlashPalValidateSignature( uint8_t * pMappedAddress,
+                                           size_t mappedLength,
+                                           char * pCertificatePath,
+                                           size_t certlength,
+                                           uint8_t * pSignature,
+                                           size_t signatureLength );
+
+
+static PAL_FileContext_t * prvPAL_GetPALFileContext( AfrOtaJobDocumentFields_t * const pFileContext )
 {
-    PAL_FileContext_t * PalFileContext;
-
-    if( ( C == NULL ) || ( C->pFile == NULL ) )
+    if( pFileContext == NULL )
     {
         return NULL;
     }
-
-    PalFileContext = ( PAL_FileContext_t * ) C->pFile;
-
-    if( ( PalFileContext == NULL ) || ( PalFileContext->FileXRef != C ) )
+    else if( prvPAL_CurrentFileContext.FileXRef != pFileContext )
     {
         return NULL;
     }
-
-    return PalFileContext;
+    else
+    {
+        return &prvPAL_CurrentFileContext;
+    }
 }
 
 
-OtaPalStatus_t xOtaPalAbort( OtaFileContext_t * const C )
+OtaPalStatus_t otaPal_Abort( AfrOtaJobDocumentFields_t * const pFileContext )
 {
     OtaPalStatus_t result = OtaPalSuccess;
 
     LogInfo( ( "[OTA-NXP] Abort" ) );
 
-    C->pFile = NULL;
+    pFileContext->fileId = 0;
+    pFileContext->filepath = NULL;
     return result;
 }
 
 
-OtaPalStatus_t xOtaPalCreateFileForRx( OtaFileContext_t * const C )
+OtaPalJobDocProcessingResult_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t * const pFileContext )
 {
     partition_t update_partition;
     PAL_FileContext_t * PalFileContext = &prvPAL_CurrentFileContext;
 
     LogDebug( ( "[OTA-NXP] CreateFileForRx" ) );
+
+    if( otaPal_SetPlatformImageState( pFileContext, OtaImageStateAccepted ) == OtaPalSuccess )
+    {
+        /* TODO: Check here if anything is to be verified before sending the
+         * success message to IoT core. */
+        return OtaPalNewImageBooted;
+    }
 
     if( bl_get_update_partition_info( &update_partition ) != kStatus_Success )
     {
@@ -108,21 +118,21 @@ OtaPalStatus_t xOtaPalCreateFileForRx( OtaFileContext_t * const C )
     if( PalFileContext->partition_phys_addr == MFLASH_INVALID_ADDRESS )
     {
         LogError( ( "[OTA-NXP] Could not get update partition FLASH address" ) );
-        return OTA_PAL_COMBINE_ERR( OtaPalRxFileCreateFailed, 0U );
+        return OtaPalRxFileCreateFailed;
     }
 
     /* Check partition alignment */
     if( !mflash_drv_is_sector_aligned( PalFileContext->partition_phys_addr ) || !mflash_drv_is_sector_aligned( PalFileContext->partition_size ) )
     {
         LogError( ( "[OTA-NXP] Invalid update partition" ) );
-        return OTA_PAL_COMBINE_ERR( OtaPalRxFileCreateFailed, 0U );
+        return OtaPalRxFileCreateFailed;
     }
 
     /* Check whether the file fits at all */
-    if( C->fileSize > update_partition.size )
+    if( pFileContext->fileSize > update_partition.size )
     {
         LogError( ( "[OTA-NXP] File too large" ) );
-        return OTA_PAL_COMBINE_ERR( OtaPalRxFileTooLarge, 0U );
+        return OtaPalRxFileTooLarge;
     }
 
     /* Actual size of the file according to data received */
@@ -134,14 +144,15 @@ OtaPalStatus_t xOtaPalCreateFileForRx( OtaFileContext_t * const C )
     /* Pre-set address of area not erased so far */
     PalFileContext->next_erase_addr = PalFileContext->partition_phys_addr;
 
-    PalFileContext->FileXRef = C; /* pointer cross reference for integrity check */
-    C->pFile = ( uint8_t * ) PalFileContext;
+    PalFileContext->FileXRef = pFileContext; /* pointer cross reference for integrity check */
+
+    /*C->pFile = ( uint8_t * ) PalFileContext; */
 
     return OtaPalSuccess;
 }
 
 
-OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const C )
+OtaPalStatus_t otaPal_CloseFile( AfrOtaJobDocumentFields_t * const pFileContext )
 {
     OtaPalStatus_t result = OtaPalSuccess;
     PAL_FileContext_t * PalFileContext;
@@ -149,14 +160,14 @@ OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const C )
 
     LogDebug( ( "[OTA-NXP] CloseFile" ) );
 
-    PalFileContext = prvPAL_GetPALFileContext( C );
+    PalFileContext = prvPAL_GetPALFileContext( pFileContext );
 
     if( PalFileContext == NULL )
     {
-        return OTA_PAL_COMBINE_ERR( OtaPalFileClose, 0U );
+        return OtaPalFileClose;
     }
 
-    if( PalFileContext->file_size != C->fileSize )
+    if( PalFileContext->file_size != pFileContext->fileSize )
     {
         LogWarn( ( "[OTA-NXP] Actual file size is not as expected" ) );
     }
@@ -165,14 +176,15 @@ OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const C )
 
     if( file_data == NULL )
     {
-        return OTA_PAL_COMBINE_ERR( OtaPalSignatureCheckFailed, 0U );
+        return OtaPalSignatureCheckFailed;
     }
 
     result = xFlashPalValidateSignature( ( void * ) file_data,
                                          PalFileContext->file_size,
-                                         ( char * ) C->pCertFilepath,
-                                         C->pSignature->data,
-                                         C->pSignature->size );
+                                         ( char * ) pFileContext->certfile,
+                                         pFileContext->certfileLen,
+                                         pFileContext->signature,
+                                         pFileContext->signatureLen );
 
     if( result != OtaPalSuccess )
     {
@@ -198,12 +210,12 @@ OtaPalStatus_t xOtaPalCloseFile( OtaFileContext_t * const C )
     }
 #endif /* ifndef DISABLE_OTA_CLOSE_FILE_HEADER_CHECK */
 
-    C->pFile = NULL;
-    return OTA_PAL_COMBINE_ERR( result, 0U );
+    pFileContext->fileId = 0;
+    return result;
 }
 
 
-int16_t xOtaPalWriteBlock( OtaFileContext_t * const C,
+int16_t otaPal_WriteBlock( AfrOtaJobDocumentFields_t * const pFileContext,
                            uint32_t ulOffset,
                            uint8_t * const pcData,
                            uint32_t ulBlockSize )
@@ -219,7 +231,7 @@ int16_t xOtaPalWriteBlock( OtaFileContext_t * const C,
 
     LogDebug( ( "[OTA-NXP] WriteBlock 0x%x : 0x%x", ulOffset, ulBlockSize ) );
 
-    PalFileContext = prvPAL_GetPALFileContext( C );
+    PalFileContext = prvPAL_GetPALFileContext( pFileContext );
 
     if( PalFileContext == NULL )
     {
@@ -315,31 +327,23 @@ int16_t xOtaPalWriteBlock( OtaFileContext_t * const C,
 }
 
 
-OtaPalStatus_t xOtaPalActivateNewImage( OtaFileContext_t * const C )
+OtaPalStatus_t otaPal_ActivateNewImage( AfrOtaJobDocumentFields_t * const pFileContext )
 {
     LogInfo( ( "[OTA-NXP] ActivateNewImage" ) );
 
-    xOtaPalResetDevice( C ); /* go for reboot */
+    otaPal_ResetDevice( pFileContext ); /* go for reboot */
     return OtaPalSuccess;
 }
 
 
-OtaPalStatus_t xOtaPalResetDevice( OtaFileContext_t * const C )
-{
-    LogInfo( ( "[OTA-NXP] SystemReset" ) );
-    vTaskDelay( 100 / portTICK_PERIOD_MS );
-    NVIC_SystemReset(); /* this should never return */
-}
-
-
-OtaPalStatus_t xOtaPalSetPlatformImageState( OtaFileContext_t * const C,
+OtaPalStatus_t otaPal_SetPlatformImageState( AfrOtaJobDocumentFields_t * const pFileContext,
                                              OtaImageState_t eState )
 {
     OtaPalStatus_t result = OtaPalSuccess;
 
     LogDebug( ( "[OTA-NXP] SetPlatformImageState %d", eState ) );
 
-    if( xOtaPalGetPlatformImageState( C ) == OtaPalImageStatePendingCommit )
+    if( otaPal_GetPlatformImageState( pFileContext ) == OtaPalImageStatePendingCommit )
     {
         /* Device in test mode */
         switch( eState )
@@ -414,11 +418,11 @@ OtaPalStatus_t xOtaPalSetPlatformImageState( OtaFileContext_t * const C,
         }
     }
 
-    return OTA_PAL_COMBINE_ERR( result, 0U );
+    return result;
 }
 
 
-OtaPalImageState_t xOtaPalGetPlatformImageState( OtaFileContext_t * const C )
+OtaPalImageState_t otaPal_GetPlatformImageState( AfrOtaJobDocumentFields_t * const pFileContext )
 {
     uint32_t state;
 
@@ -441,4 +445,12 @@ OtaPalImageState_t xOtaPalGetPlatformImageState( OtaFileContext_t * const C )
     }
 
     return OtaPalImageStateInvalid;
+}
+
+
+OtaPalStatus_t otaPal_ResetDevice( AfrOtaJobDocumentFields_t * const pFileContext )
+{
+    LogInfo( ( "[OTA-NXP] SystemReset" ) );
+    vTaskDelay( 100 / portTICK_PERIOD_MS );
+    NVIC_SystemReset(); /* this should never return */
 }

@@ -62,7 +62,7 @@
 #include "core_pkcs11.h"
 
 #ifndef errno
-int errno = 0;
+volatile int errno = 0;
 #endif
 
 /*

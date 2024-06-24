@@ -322,6 +322,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/core/drivers/trng/fsl_trng.h</locationURI>
 		</link>
 		<link>
+			<name>jobs/source</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/jobs/source</locationURI>
+		</link>
+		<link>
 			<name>lwip/port</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -345,6 +350,11 @@
 			<name>mbedtls/port</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>mqtt_stream/source</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middleware/AWS/mqtt-stream/source</locationURI>
 		</link>
 		<link>
 			<name>pkcs11/corePKCS11</name>
@@ -405,6 +415,11 @@
 			<name>source/mqtt_agent</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/examples/common/mqtt_agent</locationURI>
+		</link>
+		<link>
+			<name>source/mqtt_wrapper</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/common/mqtt_wrapper</locationURI>
 		</link>
 		<link>
 			<name>source/ota</name>

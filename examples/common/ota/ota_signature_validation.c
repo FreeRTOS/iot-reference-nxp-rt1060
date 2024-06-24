@@ -246,6 +246,7 @@ CK_RV xVerifyImageSignatureUsingPKCS11( CK_SESSION_HANDLE session,
 OtaPalStatus_t xFlashPalValidateSignature( uint8_t * pMappedAddress,
                                            size_t mappedLength,
                                            char * pCertificatePath,
+                                           size_t certlength,
                                            uint8_t * pSignature,
                                            size_t signatureLength )
 {
@@ -254,6 +255,10 @@ OtaPalStatus_t xFlashPalValidateSignature( uint8_t * pMappedAddress,
     CK_RV xPKCS11Status = CKR_OK;
     CK_OBJECT_HANDLE certHandle;
     uint8_t pkcs11Signature[ pkcs11ECDSA_P256_SIGNATURE_LENGTH ] = { 0 };
+    /* TODO: Fix the label length. */
+    char certfile[ 30 + 1 ] = { '\0' };
+
+    memcpy( certfile, pCertificatePath, certlength );
 
     if( PKI_mbedTLSSignatureToPkcs11Signature( pkcs11Signature, pSignature ) != 0 )
     {
