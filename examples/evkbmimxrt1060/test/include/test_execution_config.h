@@ -51,20 +51,6 @@
 #define TRANSPORT_INTERFACE_TEST_ENABLED    ( 0 )
 
 /**
- * @brief Configuration to enable the OTA PAL test.
- *
- * #define OTA_PAL_TEST_ENABLED  (0)
- */
-#define OTA_PAL_TEST_ENABLED                ( 0 )
-
-/**
- * @brief Configuration to enable the OTA End-to-end test.
- *
- * #define OTA_E2E_TEST_ENABLED  (0)
- */
-#define OTA_E2E_TEST_ENABLED                ( 0 )
-
-/**
  * @brief Configuration to enable the corePKCS11 test.
  *
  * #define CORE_PKCS11_TEST_ENABLED  (0)

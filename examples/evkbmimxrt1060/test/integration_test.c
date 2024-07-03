@@ -32,7 +32,6 @@
 #include "test_execution_config.h"
 #include "qualification_test.h"
 #include "transport_interface_test.h"
-#include "ota_pal_test.h"
 #include "mqtt_test.h"
 #include "demo_config.h"
 #include "using_mbedtls.h"
@@ -311,13 +310,6 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
 }
 #endif /* if ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 ) */
-
-#if ( OTA_PAL_TEST_ENABLED == 1 )
-void SetupOtaPalTestParam( OtaPalTestParam_t * pTestParam )
-{
-    pTestParam->pageSize = MFLASH_PAGE_SIZE;
-}
-#endif /* if ( OTA_PAL_TEST_ENABLED == 1 ) */
 
 void prvQualificationTestTask( void * pvParameters )
 {
