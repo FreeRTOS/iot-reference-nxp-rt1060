@@ -35,20 +35,13 @@
 #include "test_execution_config.h"
 
 
-#define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainPROVISIONING_MODE             ( 0 )
 
+#define appmainTEST_TASK_STACK_SIZE          ( 6144 )
+#define appmainTEST_TASK_PRIORITY            ( tskIDLE_PRIORITY + 1 )
 
-#define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
-#define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
-
-#define appmainTEST_TASK_STACK_SIZE               ( 6144 )
-#define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
-
-#define appmainCLI_TASK_STACK_SIZE                ( 6144 )
-#define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
-
-#define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 4096 )
-#define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1 )
+#define appmainCLI_TASK_STACK_SIZE           ( 6144 )
+#define appmainCLI_TASK_PRIORITY             ( tskIDLE_PRIORITY + 1 )
 
 /**
  * @brief Stack size and priority for MQTT agent task.
@@ -57,16 +50,14 @@
  * higher than other MQTT application tasks, so that the agent can drain the queue
  * as work is being produced.
  */
-#define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
-#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
+#define appmainMQTT_AGENT_TASK_STACK_SIZE    ( 6144 )
+#define appmainMQTT_AGENT_TASK_PRIORITY      ( tskIDLE_PRIORITY + 2 )
 
 extern void prvQualificationTestTask( void * pvParameters );
 
 extern void vSubscribePublishTestTask( void * pvParameters );
 
 extern void vCLITask( void * pvParam );
-
-extern void vOTAUpdateTask( void * pvParam );
 
 int RunDeviceAdvisorDemo( void )
 {
@@ -88,32 +79,6 @@ int RunDeviceAdvisorDemo( void )
                                appmainTEST_TASK_STACK_SIZE,
                                NULL,
                                appmainTEST_TASK_PRIORITY,
-                               NULL );
-    }
-
-    return ( xResult == pdPASS ) ? 0 : -1;
-}
-
-int RunOtaE2eDemo( void )
-{
-    BaseType_t xResult = pdFAIL;
-
-    if( xGetMQTTAgentState() < MQTT_AGENT_STATE_INITIALIZED )
-    {
-        xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-    }
-    else
-    {
-        xResult = pdPASS;
-    }
-
-    if( xResult == pdPASS )
-    {
-        xResult = xTaskCreate( vOTAUpdateTask,
-                               "OTA",
-                               appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE,
-                               NULL,
-                               appmainMQTT_OTA_UPDATE_TASK_PRIORITY,
                                NULL );
     }
 

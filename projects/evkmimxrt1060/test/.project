@@ -422,11 +422,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/examples/common/mqtt_wrapper</locationURI>
 		</link>
 		<link>
-			<name>source/ota</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/examples/common/ota</locationURI>
-		</link>
-		<link>
 			<name>source/pub_sub_test_task.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/examples/evkbmimxrt1060/test/pub_sub_test_task.c</locationURI>
