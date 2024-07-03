@@ -96,7 +96,7 @@ int app_main( void )
         configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
     }
 
-    #if ( appmainPROVISIONING_MODE == 1 )
+#if ( appmainPROVISIONING_MODE == 1 )
     {
         if( xResult == pdPASS )
         {
@@ -108,7 +108,7 @@ int app_main( void )
                                    NULL );
         }
     }
-    #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
+#endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 
     {
         if( xResult == pdPASS )
