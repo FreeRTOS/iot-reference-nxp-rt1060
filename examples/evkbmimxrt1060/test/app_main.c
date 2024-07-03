@@ -35,13 +35,13 @@
 #include "test_execution_config.h"
 
 
-#define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainPROVISIONING_MODE             ( 0 )
 
-#define appmainTEST_TASK_STACK_SIZE               ( 6144 )
-#define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
+#define appmainTEST_TASK_STACK_SIZE          ( 6144 )
+#define appmainTEST_TASK_PRIORITY            ( tskIDLE_PRIORITY + 1 )
 
-#define appmainCLI_TASK_STACK_SIZE                ( 6144 )
-#define appmainCLI_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 1 )
+#define appmainCLI_TASK_STACK_SIZE           ( 6144 )
+#define appmainCLI_TASK_PRIORITY             ( tskIDLE_PRIORITY + 1 )
 
 /**
  * @brief Stack size and priority for MQTT agent task.
@@ -50,8 +50,8 @@
  * higher than other MQTT application tasks, so that the agent can drain the queue
  * as work is being produced.
  */
-#define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
-#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
+#define appmainMQTT_AGENT_TASK_STACK_SIZE    ( 6144 )
+#define appmainMQTT_AGENT_TASK_PRIORITY      ( tskIDLE_PRIORITY + 2 )
 
 extern void prvQualificationTestTask( void * pvParameters );
 
@@ -96,7 +96,7 @@ int app_main( void )
         configPRINTF( ( "Failed to initialize key value configuration store.\r\n" ) );
     }
 
-#if ( appmainPROVISIONING_MODE == 1 )
+    #if ( appmainPROVISIONING_MODE == 1 )
     {
         if( xResult == pdPASS )
         {
@@ -108,7 +108,7 @@ int app_main( void )
                                    NULL );
         }
     }
-#endif /* if ( appmainPROVISIONING_MODE == 1 ) */
+    #endif /* if ( appmainPROVISIONING_MODE == 1 ) */
 
     {
         if( xResult == pdPASS )
