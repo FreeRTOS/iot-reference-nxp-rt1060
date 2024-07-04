@@ -58,13 +58,13 @@ dependencies:
       url: "https://github.com/NXPmicro/mcux-sdk.git"
       path: "core"
   - name: "lwip"
-    version: "STABLE-2_1_2_RELEASE"
+    version: "STABLE-2_2_0_RELEASE"
     repository:
       type: "git"
       url: "https://github.com/lwip-tcpip/lwip.git"
       path: "Middleware/lwip"
   - name: "mbedtls"
-    version: "v2.26.0"
+    version: "v2.28.8"
     repository:
       type: "git"
       url: "https://github.com/Mbed-TLS/mbedtls.git"
@@ -82,7 +82,7 @@ dependencies:
       url: "https://github.com/intel/tinycbor.git"
       path: "Middleware/tinycbor"
   - name: "unity"
-    version: "db878ccaedaea3d07b3c5443a00d131ecacd30b3"
+    version: "v2.6.0"
     repository:
       type: "git"
       url: "https://github.com/ThrowTheSwitch/Unity.git"
