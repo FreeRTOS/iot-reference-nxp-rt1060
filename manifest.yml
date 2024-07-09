@@ -1,5 +1,5 @@
 name : "NXP i.MXRT1060 and EdgeLock® SE050 Reference Integration"
-version: "v202210.01"
+version: "v202407.00"
 description: |-
   "Reference IoT integration project using NXP i.MX RT1060 with EdgeLock® SE050 secure element and FreeRTOS LTS libraries"
 dependencies:
