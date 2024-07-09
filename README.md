@@ -11,19 +11,19 @@ For more details on the feature, see the [NXP Featured IoT Reference Integration
 ### Folder Structure
 The folder inside the repository is organized as follows:
 ```
-|— core/
-|- Middleware/
-   |- NXP/
-   |- AWS/
-   |- FreeRTOS/
-   |- third_party libs
-|- examples/
-  |- evkbmimxrt1060/ 
-  |- common/
-|- projects/
-   |- evkbmimxrt1060/ 
-|- README.md
-|- LICENSE
+├─ core/
+├─ Middleware/
+│  ├─ NXP/
+│  ├─ AWS/
+│  ├─ FreeRTOS/
+│  └─ third_party libs
+├─ examples/
+│ ├─ evkbmimxrt1060/ 
+│ └─ common/
+├─ projects/
+│  └─ evkbmimxrt1060/ 
+├─ README.md
+└─ LICENSE
 ```
 The root of the repository contains the following top level folders:
 * `core` contains submodules to NXP's MCUX SDK repository. The repository hosts the MCUXpresso software development package which contains ARM CMSIS core files, 

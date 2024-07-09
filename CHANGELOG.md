@@ -1,5 +1,22 @@
 # Changelog for NXP i.MX RT1060 Featured FreeRTOS IoT Integration
 
+## v202407.00 ( July 2024 )
+
+- [#48](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/48) Update third party submodule
+  * [Unity v2.6.0](https://github.com/ThrowTheSwitch/Unity/tree/v2.6.0)
+  * [mbedtls v2.28.8](https://github.com/Mbed-TLS/mbedtls/tree/v2.28.8)
+- [#47](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/47) Update integration test to 202406.00 version
+- [#45](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/45) Switch to modular OTA and aws-iot-core-mqtt-file-streams-embedded-c. Update Long Term Support (LTS) libraries to 202406.00.
+  * [FreeRTOS-Kernel V11.1.0](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/V11.1.0)
+  * [coreMQTT v2.3.0](https://github.com/FreeRTOS/coreMQTT/blob/v2.3.0)
+  * [corePKCS11 v3.6.1](https://github.com/FreeRTOS/corePKCS11/tree/v3.6.1)
+  * [coreJSON v3.3.0](https://github.com/FreeRTOS/coreJSON/tree/v3.3.0)
+  * [backoffAlgorithm v1.4.1](https://github.com/FreeRTOS/backoffAlgorithm/tree/v1.4.1)
+  * [AWS IoT Jobs v1.5.1](https://github.com/aws/Jobs-for-AWS-IoT-embedded-sdk/tree/v1.5.1)
+  * [AWS IoT Device Shadow v1.4.1](https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk/tree/v1.4.1)
+  * [AWS IoT Device Defender v1.4.0](https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk/tree/v1.4.0)
+  * [AWS MQTT file streams v1.1.0](https://github.com/aws/aws-iot-core-mqtt-file-streams-embedded-c/tree/v1.1.0)
+
 ## v202212.00 ( December 2022 )
 - [#33](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/33) and [#29](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/29) Update Long Term Support (LTS) libraries to 202210.01-LTS:
   * [FreeRTOS-Kernel V10.5.1](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/V10.5.1/History.txt)
