@@ -626,6 +626,13 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
         mbedtls_ssl_conf_cert_profile( &( pNetworkContext->sslContext.config ),
                                        &( pNetworkContext->sslContext.certProfile ) );
 
+        /* Only use this cipher suite to connect to the broker. */
+        const int ciphersuites[] = {
+               MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+               0 /* End of list. */
+           };
+        mbedtls_ssl_conf_ciphersuites( &( pNetworkContext->sslContext.config ), ciphersuites );
+
         /* Parse the server root CA certificate into the SSL context. */
         mbedtlsError = mbedtls_x509_crt_parse( &( pNetworkContext->sslContext.rootCa ),
                                                pNetworkCredentials->pRootCa,
