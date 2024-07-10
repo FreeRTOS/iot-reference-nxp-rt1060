@@ -576,12 +576,12 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     xNetworkCredentials.disableSni = democonfigDISABLE_SNI;
 
     /*
-    xNetworkCredentials.pClientCert = democonfigCLIENT_CERT;
-    xNetworkCredentials.clientCertSize = sizeof( democonfigCLIENT_CERT );
-
-    xNetworkCredentials.pPrivateKey = democonfigPRIVATE_KEY;
-    xNetworkCredentials.privateKeySize = sizeof( democonfigPRIVATE_KEY );
-    */
+     * xNetworkCredentials.pClientCert = democonfigCLIENT_CERT;
+     * xNetworkCredentials.clientCertSize = sizeof( democonfigCLIENT_CERT );
+     *
+     * xNetworkCredentials.pPrivateKey = democonfigPRIVATE_KEY;
+     * xNetworkCredentials.privateKeySize = sizeof( democonfigPRIVATE_KEY );
+     */
 
     if( xConnected == pdPASS )
     {
@@ -785,7 +785,7 @@ void prvMQTTAgentTask( void * pvParameters )
     ulGlobalEntryTimeMs = prvGetTimeMs();
 
     /* Load broker endpoint and thing name for client connection, from the key store. */
-    pcThingName = prvKVStoreGetString( KVS_CORE_THING_NAME );  //democonfigCLIENT_IDENTIFIER;  //
+    pcThingName = prvKVStoreGetString( KVS_CORE_THING_NAME ); /*democonfigCLIENT_IDENTIFIER;  // */
     LogInfo( ( "Thing name %s\n", pcThingName ) );
 
     if( pcThingName != NULL )
@@ -799,7 +799,7 @@ void prvMQTTAgentTask( void * pvParameters )
 
     if( xStatus == pdPASS )
     {
-        pcBrokerEndpoint = prvKVStoreGetString( KVS_CORE_MQTT_ENDPOINT ); //democonfigMQTT_BROKER_ENDPOINT; //
+        pcBrokerEndpoint = prvKVStoreGetString( KVS_CORE_MQTT_ENDPOINT ); /*democonfigMQTT_BROKER_ENDPOINT; // */
         LogInfo( ( "Endpoint %s\n", pcBrokerEndpoint ) );
 
         if( pcBrokerEndpoint == NULL )
@@ -810,29 +810,29 @@ void prvMQTTAgentTask( void * pvParameters )
 
     if( xStatus == pdPASS )
     {
-        ulBrokerPort = KVStore_getUInt32( KVS_CORE_MQTT_PORT, &xStatus ); //democonfigMQTT_BROKER_PORT; //
+        ulBrokerPort = KVStore_getUInt32( KVS_CORE_MQTT_PORT, &xStatus ); /*democonfigMQTT_BROKER_PORT; // */
         LogInfo( ( "Port %u\n", ulBrokerPort ) );
     }
 
     if( xStatus == pdPASS )
-	{
-		pcDevicePrivKeyID = prvKVStoreGetString( KVS_DEVICE_PRIVKEY_ID );
+    {
+        pcDevicePrivKeyID = prvKVStoreGetString( KVS_DEVICE_PRIVKEY_ID );
 
-		if( pcDevicePrivKeyID == NULL )
-		{
-			xStatus = pdFAIL;
-		}
-	}
+        if( pcDevicePrivKeyID == NULL )
+        {
+            xStatus = pdFAIL;
+        }
+    }
 
-	if( xStatus == pdPASS )
-	{
-		pcDeviceCertID = prvKVStoreGetString( KVS_DEVICE_CERT_ID );
+    if( xStatus == pdPASS )
+    {
+        pcDeviceCertID = prvKVStoreGetString( KVS_DEVICE_CERT_ID );
 
-		if( pcDeviceCertID == NULL )
-		{
-			xStatus = pdFAIL;
-		}
-	}
+        if( pcDeviceCertID == NULL )
+        {
+            xStatus = pdFAIL;
+        }
+    }
 
     /* Initialize the MQTT context with the buffer and transport interface. */
     if( xStatus == pdPASS )
@@ -899,16 +899,16 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
     if( pcDevicePrivKeyID != NULL )
-	{
-		vPortFree( pcDevicePrivKeyID );
-		pcDevicePrivKeyID = NULL;
-	}
+    {
+        vPortFree( pcDevicePrivKeyID );
+        pcDevicePrivKeyID = NULL;
+    }
 
-	if( pcDeviceCertID != NULL )
-	{
-		vPortFree( pcDeviceCertID );
-		pcDeviceCertID = NULL;
-	}
+    if( pcDeviceCertID != NULL )
+    {
+        vPortFree( pcDeviceCertID );
+        pcDeviceCertID = NULL;
+    }
 
     vTaskDelete( NULL );
 }

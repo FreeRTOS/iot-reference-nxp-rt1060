@@ -50,9 +50,9 @@
 #include "NetworkInterface.h"
 
 #if ipconfigETHERNET_DRIVER_FILTERS_FRAME_TYPES != 1
-    #define ipCONSIDER_FRAME_FOR_PROCESSING( pucEthernetBuffer )    eProcessBuffer
+#define ipCONSIDER_FRAME_FOR_PROCESSING( pucEthernetBuffer )    eProcessBuffer
 #else
-    #define ipCONSIDER_FRAME_FOR_PROCESSING( pucEthernetBuffer )    eConsiderFrameForProcessing( ( pucEthernetBuffer ) )
+#define ipCONSIDER_FRAME_FOR_PROCESSING( pucEthernetBuffer )    eConsiderFrameForProcessing( ( pucEthernetBuffer ) )
 #endif
 
 /* MDIO operations. */
@@ -72,25 +72,25 @@
 
 /* The length or RX buffer. */
 #ifndef ENET_RXBUFF_SIZE
-    #define ENET_RXBUFF_SIZE    ( ENET_FRAME_MAX_FRAMELEN )
+#define ENET_RXBUFF_SIZE    ( ENET_FRAME_MAX_FRAMELEN )
 #endif
 
 /* ENET IRQ priority. Used in FreeRTOS. */
 /* Interrupt priorities. */
 #ifdef __CA7_REV
-    #ifndef ENET_PRIORITY
-        #define ENET_PRIORITY         ( 21U )
-    #endif
-    #ifndef ENET_1588_PRIORITY
-        #define ENET_1588_PRIORITY    ( 20U )
-    #endif
+#ifndef ENET_PRIORITY
+#define ENET_PRIORITY         ( 21U )
+#endif
+#ifndef ENET_1588_PRIORITY
+#define ENET_1588_PRIORITY    ( 20U )
+#endif
 #else
-    #ifndef ENET_PRIORITY
-        #define ENET_PRIORITY         ( 6U )
-    #endif
-    #ifndef ENET_1588_PRIORITY
-        #define ENET_1588_PRIORITY    ( 5U )
-    #endif
+#ifndef ENET_PRIORITY
+#define ENET_PRIORITY         ( 6U )
+#endif
+#ifndef ENET_1588_PRIORITY
+#define ENET_1588_PRIORITY    ( 5U )
+#endif
 #endif /* ifdef __CA7_REV */
 
 /* The number of ENET buffers needed to receive frame of maximum length. */
@@ -99,33 +99,33 @@
 
 /* The length or TX buffer. */
 #ifndef ENET_TXBUFF_SIZE
-    #define ENET_TXBUFF_SIZE    ( ENET_FRAME_MAX_FRAMELEN )
+#define ENET_TXBUFF_SIZE    ( ENET_FRAME_MAX_FRAMELEN )
 #endif
 
 /* The number of buffer descriptors in ENET RX ring. */
 #ifndef ENET_RXBD_NUM
-    #define ENET_RXBD_NUM    ( 5 )
+#define ENET_RXBD_NUM    ( 5 )
 #endif
 
 /* Ring should be able to receive at least 1 frame with maximum length. */
 #if ENET_RXBD_NUM < MAX_BUFFERS_PER_FRAME
-    #error "ENET_RXBD_NUM < MAX_BUFFERS_PER_FRAME"
+#error "ENET_RXBD_NUM < MAX_BUFFERS_PER_FRAME"
 #endif
 
 /* The number of RX buffers. ENET_RXBD_NUM is always held by ENET driver. */
 #ifndef ENET_RXBUFF_NUM
-    #define ENET_RXBUFF_NUM    ( ENET_RXBD_NUM * 2 )
+#define ENET_RXBUFF_NUM    ( ENET_RXBD_NUM * 2 )
 #endif
 
 /* At least ENET_RXBD_NUM number of buffers is always held by ENET driver
  * for RX. */
 #if ENET_RXBUFF_NUM < ( ENET_RXBD_NUM + MAX_BUFFERS_PER_FRAME )
-    #error "ENET_RXBUFF_NUM < (ENET_RXBD_NUM + MAX_BUFFERS_PER_FRAME)"
+#error "ENET_RXBUFF_NUM < (ENET_RXBD_NUM + MAX_BUFFERS_PER_FRAME)"
 #endif
 
 /* The number of buffer descriptors in ENET TX ring. */
 #ifndef ENET_TXBD_NUM
-    #define ENET_TXBD_NUM    ( 3 )
+#define ENET_TXBD_NUM    ( 3 )
 #endif
 
 /* Set the timeout values such that the total timeout adds up to 4000ms. */
@@ -133,21 +133,21 @@
 #define SINGLE_ITERATION_TIMEOUT     ( 100 )
 
 #if defined( FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL ) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
-    #if defined( FSL_FEATURE_L2CACHE_LINESIZE_BYTE ) && \
+#if defined( FSL_FEATURE_L2CACHE_LINESIZE_BYTE ) && \
     ( ( !defined( FSL_SDK_DISBLE_L2CACHE_PRESENT ) ) || ( FSL_SDK_DISBLE_L2CACHE_PRESENT == 0 ) )
-        #if defined( FSL_FEATURE_L1DCACHE_LINESIZE_BYTE )
-            #define FSL_CACHE_LINESIZE_MAX     MAX( FSL_FEATURE_L1DCACHE_LINESIZE_BYTE, FSL_FEATURE_L2CACHE_LINESIZE_BYTE )
-            #define FSL_ENET_BUFF_ALIGNMENT    MAX( ENET_BUFF_ALIGNMENT, FSL_CACHE_LINESIZE_MAX )
-        #else
-            #define FSL_ENET_BUFF_ALIGNMENT    MAX( ENET_BUFF_ALIGNMENT, FSL_FEATURE_L2CACHE_LINESIZE_BYTE )
-        #endif
-    #elif defined( FSL_FEATURE_L1DCACHE_LINESIZE_BYTE )
-        #define FSL_ENET_BUFF_ALIGNMENT        MAX( ENET_BUFF_ALIGNMENT, FSL_FEATURE_L1DCACHE_LINESIZE_BYTE )
-    #else
-        #define FSL_ENET_BUFF_ALIGNMENT        ENET_BUFF_ALIGNMENT
-    #endif /* if defined( FSL_FEATURE_L2CACHE_LINESIZE_BYTE ) && ( ( !defined( FSL_SDK_DISBLE_L2CACHE_PRESENT ) ) || ( FSL_SDK_DISBLE_L2CACHE_PRESENT == 0 ) ) */
+#if defined( FSL_FEATURE_L1DCACHE_LINESIZE_BYTE )
+#define FSL_CACHE_LINESIZE_MAX     MAX( FSL_FEATURE_L1DCACHE_LINESIZE_BYTE, FSL_FEATURE_L2CACHE_LINESIZE_BYTE )
+#define FSL_ENET_BUFF_ALIGNMENT    MAX( ENET_BUFF_ALIGNMENT, FSL_CACHE_LINESIZE_MAX )
+#else
+#define FSL_ENET_BUFF_ALIGNMENT    MAX( ENET_BUFF_ALIGNMENT, FSL_FEATURE_L2CACHE_LINESIZE_BYTE )
+#endif
+#elif defined( FSL_FEATURE_L1DCACHE_LINESIZE_BYTE )
+#define FSL_ENET_BUFF_ALIGNMENT    MAX( ENET_BUFF_ALIGNMENT, FSL_FEATURE_L1DCACHE_LINESIZE_BYTE )
+#else
+#define FSL_ENET_BUFF_ALIGNMENT    ENET_BUFF_ALIGNMENT
+#endif /* if defined( FSL_FEATURE_L2CACHE_LINESIZE_BYTE ) && ( ( !defined( FSL_SDK_DISBLE_L2CACHE_PRESENT ) ) || ( FSL_SDK_DISBLE_L2CACHE_PRESENT == 0 ) ) */
 #else /* if defined( FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL ) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
-    #define FSL_ENET_BUFF_ALIGNMENT            ENET_BUFF_ALIGNMENT
+#define FSL_ENET_BUFF_ALIGNMENT    ENET_BUFF_ALIGNMENT
 #endif /* if defined( FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL ) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
 
 /* A bigger value is chosen so that the previous notification values are
@@ -156,7 +156,7 @@
 #define DRIVER_FATAL    ( DRIVER_READY << 1 )
 
 #if defined( ENET_ENHANCEDBUFFERDESCRIPTOR_MODE )
-    #error "ENET_ENHANCEDBUFFERDESCRIPTOR_MODE is not supported by this driver"
+#error "ENET_ENHANCEDBUFFERDESCRIPTOR_MODE is not supported by this driver"
 #endif
 
 typedef uint8_t   rx_buffer_t[ SDK_SIZEALIGN( ENET_RXBUFF_SIZE, FSL_ENET_BUFF_ALIGNMENT ) ];
@@ -479,7 +479,7 @@ static void prvEMACHandlerTask( void * parameter )
                         break;
 
                     case kStatus_ENET_RxFrameError: /* Received an error frame.  Read & drop it */
-                    	FreeRTOS_printf( ( "RX Receive Error" ) );
+                        FreeRTOS_printf( ( "RX Receive Error" ) );
                         ENET_ReadFrame( ethernetifLocal->base, &( ethernetifLocal->handle ), NULL, 0, 0, NULL );
                         /* Not sure if a trace is required.  The MAC had an error and needed to dump bytes */
                         break;
@@ -554,28 +554,28 @@ static void prvProcessFrame( int length )
         }
         else
         {
-            #if ( ( ipconfigHAS_DEBUG_PRINTF == 1 ) && defined( FreeRTOS_debug_printf ) )
-                const EthernetHeader_t * pxEthernetHeader;
-                char ucSource[ 18 ];
-                char ucDestination[ 18 ];
+#if ( ( ipconfigHAS_DEBUG_PRINTF == 1 ) && defined( FreeRTOS_debug_printf ) )
+            const EthernetHeader_t * pxEthernetHeader;
+            char ucSource[ 18 ];
+            char ucDestination[ 18 ];
 
-                pxEthernetHeader = ( ( const EthernetHeader_t * ) pxBufferDescriptor->pucEthernetBuffer );
+            pxEthernetHeader = ( ( const EthernetHeader_t * ) pxBufferDescriptor->pucEthernetBuffer );
 
 
-                FreeRTOS_EUI48_ntop( pxEthernetHeader->xSourceAddress.ucBytes, ucSource, 'A', ':' );
-                FreeRTOS_EUI48_ntop( pxEthernetHeader->xDestinationAddress.ucBytes, ucDestination, 'A', ':' );
+            FreeRTOS_EUI48_ntop( pxEthernetHeader->xSourceAddress.ucBytes, ucSource, 'A', ':' );
+            FreeRTOS_EUI48_ntop( pxEthernetHeader->xDestinationAddress.ucBytes, ucDestination, 'A', ':' );
 
-                FreeRTOS_debug_printf( ( "Invalid target MAC: dropping frame from: %s to: %s", ucSource, ucDestination ) );
-            #endif /* if ( ( ipconfigHAS_DEBUG_PRINTF == 1 ) && defined( FreeRTOS_debug_printf ) ) */
+            FreeRTOS_debug_printf( ( "Invalid target MAC: dropping frame from: %s to: %s", ucSource, ucDestination ) );
+#endif /* if ( ( ipconfigHAS_DEBUG_PRINTF == 1 ) && defined( FreeRTOS_debug_printf ) ) */
             vReleaseNetworkBufferAndDescriptor( pxBufferDescriptor );
             /* Not sure if a trace is required.  The stack did not want this message */
         }
     }
     else
     {
-        #if ( ( ipconfigHAS_DEBUG_PRINTF == 1 ) && defined( FreeRTOS_debug_printf ) )
-            FreeRTOS_debug_printf( ( "No Buffer Available: dropping incoming frame!!" ) );
-        #endif
+#if ( ( ipconfigHAS_DEBUG_PRINTF == 1 ) && defined( FreeRTOS_debug_printf ) )
+        FreeRTOS_debug_printf( ( "No Buffer Available: dropping incoming frame!!" ) );
+#endif
         ENET_ReadFrame( ENET, &( ethernetifLocal->handle ), NULL, 0, 0, NULL );
 
         /* No buffer available to receive this message */

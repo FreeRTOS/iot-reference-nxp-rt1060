@@ -43,4 +43,3 @@ const unsigned char ecdsa_pub_key[] = { 0x00 };
 const unsigned int ecdsa_pub_key_len = 0;
 
 #endif /* if defined( MCUBOOT_SIGN_RSA ) */
-

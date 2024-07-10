@@ -124,15 +124,15 @@ static mflash_file_t dir_template[] =
  ******************************************************************************/
 void Board_InitNetwork( void )
 {
-	BaseType_t xResult;
+    BaseType_t xResult;
 
-	xResult = FreeRTOS_IPInit( ucIPAddress,
-	                           ucNetMask,
-	                           ucGatewayAddress,
-	                           ucDNSServerAddress,
-							   ucMACAddress );
+    xResult = FreeRTOS_IPInit( ucIPAddress,
+                               ucNetMask,
+                               ucGatewayAddress,
+                               ucDNSServerAddress,
+                               ucMACAddress );
 
-	assert( xResult == pdPASS );
+    assert( xResult == pdPASS );
 }
 
 void BOARD_InitModuleClock( void )
@@ -350,66 +350,67 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 
 BaseType_t xApplicationGetRandomNumber( uint32_t * pulNumber )
 {
-	*pulNumber = 0x1234;
-	return pdTRUE;
+    *pulNumber = 0x1234;
+    return pdTRUE;
 }
 
 BaseType_t xApplicationDNSQueryHook( const char * pcName )
 {
-	return pdFALSE;
+    return pdFALSE;
 }
 
 void pvPingTask( void * arg )
 {
-	uint32_t ipADDR_DST;
-	FreeRTOS_inet_pton( FREERTOS_AF_INET, "192.168.0.2", &ipADDR_DST );
-	static uint16_t i = 0;
+    uint32_t ipADDR_DST;
 
-	( void ) arg;
-	while( 1 )
-	{
-		FreeRTOS_OutputARPRequest( ipADDR_DST );
+    FreeRTOS_inet_pton( FREERTOS_AF_INET, "192.168.0.2", &ipADDR_DST );
+    static uint16_t i = 0;
 
-		FreeRTOS_SendPingRequest( ipADDR_DST, 20, 20 );
-		configPRINTF(("Sent %u", i++ ));
+    ( void ) arg;
 
-		vTaskDelay( pdMS_TO_TICKS( 500 ) );
-	}
+    while( 1 )
+    {
+        FreeRTOS_OutputARPRequest( ipADDR_DST );
+
+        FreeRTOS_SendPingRequest( ipADDR_DST, 20, 20 );
+        configPRINTF( ( "Sent %u", i++ ) );
+
+        vTaskDelay( pdMS_TO_TICKS( 500 ) );
+    }
 }
 
 void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 {
-	static BaseType_t xTasksStarted = pdFALSE;
+    static BaseType_t xTasksStarted = pdFALSE;
 
-	if( ( eNetworkEvent == eNetworkUp ) && ( xTasksStarted != pdTRUE ) )
-	{
-		xTasksStarted = pdTRUE;
+    if( ( eNetworkEvent == eNetworkUp ) && ( xTasksStarted != pdTRUE ) )
+    {
+        xTasksStarted = pdTRUE;
 #if 0
-		xTaskCreate( pvPingTask,
-				     "PingTask",
-					 configMINIMAL_STACK_SIZE * 4,
-					 NULL,
-					 tskIDLE_PRIORITY,
-					 NULL );
-
+        xTaskCreate( pvPingTask,
+                     "PingTask",
+                     configMINIMAL_STACK_SIZE * 4,
+                     NULL,
+                     tskIDLE_PRIORITY,
+                     NULL );
 #else
-		if( app_main() != pdPASS )
-		{
-			PRINTF( "\r\nApp main initialization failed.\r\n" );
+        if( app_main() != pdPASS )
+        {
+            PRINTF( "\r\nApp main initialization failed.\r\n" );
 
-			for( ; ; )
-			{
-				__asm( "NOP" );
-			}
-		}
-#endif
-	}
+            for( ; ; )
+            {
+                __asm( "NOP" );
+            }
+        }
+#endif /* if 0 */
+    }
 }
 
 void vApplicationPingReplyHook( ePingReplyStatus_t eStatus,
-                                    uint16_t usIdentifier )
+                                uint16_t usIdentifier )
 {
-	/* Do nothing */
+    /* Do nothing */
 }
 
 uint32_t ulApplicationGetNextSequenceNumber( uint32_t ulSourceAddress,
@@ -417,5 +418,5 @@ uint32_t ulApplicationGetNextSequenceNumber( uint32_t ulSourceAddress,
                                              uint32_t ulDestinationAddress,
                                              uint16_t usDestinationPort )
 {
-	return ( ( ulSourceAddress | usSourcePort | ulDestinationAddress | usDestinationPort ) & 0xFF );
+    return( ( ulSourceAddress | usSourcePort | ulDestinationAddress | usDestinationPort ) & 0xFF );
 }

@@ -42,7 +42,7 @@
 #include "nxLog_App.h"
 #include "mflash_drv.h"
 
-//#include "ex_sss_boot.h"
+/*#include "ex_sss_boot.h" */
 
 #include "mflash_file.h"
 
@@ -128,7 +128,7 @@ int main( void )
  */
 void vApplicationDaemonTaskStartupHook( void )
 {
-	/* Create read-only and a read-write task. */
+    /* Create read-only and a read-write task. */
     xCreateRestrictedTasks( hello_task_PRIORITY );
 
     /* Print the memory regions once. */

@@ -54,8 +54,8 @@
 #define TCP_SOCKETS_ERRNO_EINTR               ( -11 ) /*!< Interrupted system call */
 
 #ifndef SOCKET_T_TYPEDEFED
-    struct xSOCKET;
-    typedef struct xSOCKET * Socket_t; /**< @brief Socket handle data type. */
+struct xSOCKET;
+typedef struct xSOCKET * Socket_t; /**< @brief Socket handle data type. */
 #endif
 
 /**

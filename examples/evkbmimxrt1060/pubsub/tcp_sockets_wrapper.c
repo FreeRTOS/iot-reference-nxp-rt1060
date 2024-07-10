@@ -34,10 +34,10 @@
 
 /* Logging configuration for the Sockets. */
 #ifndef LIBRARY_LOG_NAME
-    #define LIBRARY_LOG_NAME     "SocketsWrapper"
+#define LIBRARY_LOG_NAME     "SocketsWrapper"
 #endif
 #ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_INFO
+#define LIBRARY_LOG_LEVEL    LOG_INFO
 #endif
 
 extern void vLoggingPrintf( const char * pcFormatString,
@@ -65,7 +65,7 @@ extern void vLoggingPrintf( const char * pcFormatString,
  * @brief Maximum number of times to call FreeRTOS_recv when initiating a graceful shutdown.
  */
 #ifndef FREERTOS_SOCKETS_WRAPPER_SHUTDOWN_LOOPS
-    #define FREERTOS_SOCKETS_WRAPPER_SHUTDOWN_LOOPS    ( 3 )
+#define FREERTOS_SOCKETS_WRAPPER_SHUTDOWN_LOOPS    ( 3 )
 #endif
 
 /**
