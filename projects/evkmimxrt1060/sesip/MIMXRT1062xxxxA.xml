@@ -2,4 +2,4 @@
  <chips chipVendor='NXP' >
   <chip name='MIMXRT1062xxxxA' xml_file='MIMXRT1062xxxxA_part.xml' />
  </chips>
-</directory> 
+</directory>
