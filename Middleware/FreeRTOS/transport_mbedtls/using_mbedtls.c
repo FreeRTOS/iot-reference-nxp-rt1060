@@ -627,10 +627,12 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
                                        &( pNetworkContext->sslContext.certProfile ) );
 
         /* Only use this cipher suite to connect to the broker. */
-        const int ciphersuites[] = {
-               MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-               0 /* End of list. */
-           };
+        const int ciphersuites[] =
+        {
+            MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            0 /* End of list. */
+        };
+
         mbedtls_ssl_conf_ciphersuites( &( pNetworkContext->sslContext.config ), ciphersuites );
 
         /* Parse the server root CA certificate into the SSL context. */
@@ -731,8 +733,8 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
             /* coverity[misra_c_2012_rule_11_2_violation] */
             mbedtls_ssl_set_bio( &( pNetworkContext->sslContext.context ),
                                  ( void * ) pNetworkContext->tcpSocket,
-								 xMbedTLSBioTCPSocketsWrapperSend,
-								 xMbedTLSBioTCPSocketsWrapperRecv,
+                                 xMbedTLSBioTCPSocketsWrapperSend,
+                                 xMbedTLSBioTCPSocketsWrapperRecv,
                                  NULL );
         }
     }
@@ -810,6 +812,7 @@ static TlsTransportStatus_t tlsSetup( NetworkContext_t * pNetworkContext,
 }
 
 /*-----------------------------------------------------------*/
+
 /**
  * @brief Sends data over TCP socket.
  *
@@ -856,6 +859,7 @@ int xMbedTLSBioTCPSocketsWrapperSend( void * ctx,
 }
 
 /*-----------------------------------------------------------*/
+
 /**
  * @brief Receives data from TCP socket.
  *
@@ -949,15 +953,15 @@ TlsTransportStatus_t TLS_FreeRTOS_Connect( NetworkContext_t * pNetworkContext,
         returnStatus = tlsSetup( pNetworkContext, pHostName, pNetworkCredentials );
     }
 
-//    if( returnStatus == TLS_TRANSPORT_SUCCESS )
-//    {
-//        opt = 1;
-//
-//        if( lwip_ioctl( pNetworkContext->tcpSocket, FIONBIO, &opt ) != 0 )
-//        {
-//            returnStatus = TLS_TRANSPORT_CONNECT_FAILURE;
-//        }
-//    }
+/*    if( returnStatus == TLS_TRANSPORT_SUCCESS ) */
+/*    { */
+/*        opt = 1; */
+/* */
+/*        if( lwip_ioctl( pNetworkContext->tcpSocket, FIONBIO, &opt ) != 0 ) */
+/*        { */
+/*            returnStatus = TLS_TRANSPORT_CONNECT_FAILURE; */
+/*        } */
+/*    } */
 
     /* Clean up on failure. */
     if( returnStatus != TLS_TRANSPORT_SUCCESS )

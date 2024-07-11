@@ -34,34 +34,34 @@ MEMORY
   SRAM_ITC (rwx) : ORIGIN = 0x0, LENGTH = 0x20000 /* 128K bytes (alias RAM2) == ITCM */
   SRAM_OC_512 (rwx) : ORIGIN = 0x20200000, LENGTH = 0x80000 /* 512k bytes (alias RAM3) == OCRAM-FleRAM + OCRAM2. Max of 1M. */
   SRAM_OC_REM (rwx) : ORIGIN = 0x20280000, LENGTH = 0x40000
-  BOARD_SDRAM (rwx) : ORIGIN = 0x80000000, LENGTH = 0x1e00000 /* 30M bytes (alias RAM4) == SDRAM: Can be 32MB at max. */ 
+  BOARD_SDRAM (rwx) : ORIGIN = 0x80000000, LENGTH = 0x1e00000 /* 30M bytes (alias RAM4) == SDRAM: Can be 32MB at max. */
   NCACHE_REGION (rwx) : ORIGIN = 0x81e00000, LENGTH = 0x200000 /* 2M bytes (alias RAM5) == SEMC external memories (SDRAM, NOR, PSRAM, NAND and 8080) shared memory space */
 }
 
   /* Define a symbol for the top of each memory region */
-  __base_BOARD_FLASH = 0x60040400  ; /* BOARD_FLASH */  
-  __base_Flash = 0x60040400 ; /* Flash */  
-  __top_BOARD_FLASH = 0x60040400 + 0x1ffc00 ; /* 2047K bytes */  
-  __top_Flash = 0x60040400 + 0x1ffc00 ; /* 2047K bytes */  
-  __base_SRAM_DTC = 0x20000000  ; /* SRAM_DTC */  
-  __base_RAM = 0x20000000 ; /* RAM */  
-  __top_SRAM_DTC = 0x20000000 + 0x20000 ; /* 128K bytes */  
-  __top_RAM = 0x20000000 + 0x20000 ; /* 128K bytes */  
-  __base_SRAM_ITC = 0x0  ; /* SRAM_ITC */  
-  __base_RAM2 = 0x0 ; /* RAM2 */  
-  __top_SRAM_ITC = 0x0 + 0x20000 ; /* 128K bytes */  
-  __top_RAM2 = 0x0 + 0x20000 ; /* 128K bytes */  
-  __base_SRAM_OC_512 = 0x20200000  ; /* SRAM_OC */  
-  __base_RAM3 = 0x20200000 ; /* RAM3 */  
-  __top_SRAM_OC_512 = 0x20200000 + 0x80000 ; /* 768K bytes */  
-  __top_RAM3 = 0x20200000 + 0xc0000 ; /* 768K bytes */  
-  __base_BOARD_SDRAM = 0x80000000  ; /* BOARD_SDRAM */  
-  __base_RAM4 = 0x80000000 ; /* RAM4 */  
-  __top_BOARD_SDRAM = 0x80000000 + 0x1e00000 ; /* 30M bytes */  
-  __top_RAM4 = 0x80000000 + 0x1e00000 ; /* 30M bytes */  
-  __base_NCACHE_REGION = 0x81e00000  ; /* NCACHE_REGION */  
-  __base_RAM5 = 0x81e00000 ; /* RAM5 */  
-  __top_NCACHE_REGION = 0x81e00000 + 0x200000 ; /* 2M bytes */  
+  __base_BOARD_FLASH = 0x60040400  ; /* BOARD_FLASH */
+  __base_Flash = 0x60040400 ; /* Flash */
+  __top_BOARD_FLASH = 0x60040400 + 0x1ffc00 ; /* 2047K bytes */
+  __top_Flash = 0x60040400 + 0x1ffc00 ; /* 2047K bytes */
+  __base_SRAM_DTC = 0x20000000  ; /* SRAM_DTC */
+  __base_RAM = 0x20000000 ; /* RAM */
+  __top_SRAM_DTC = 0x20000000 + 0x20000 ; /* 128K bytes */
+  __top_RAM = 0x20000000 + 0x20000 ; /* 128K bytes */
+  __base_SRAM_ITC = 0x0  ; /* SRAM_ITC */
+  __base_RAM2 = 0x0 ; /* RAM2 */
+  __top_SRAM_ITC = 0x0 + 0x20000 ; /* 128K bytes */
+  __top_RAM2 = 0x0 + 0x20000 ; /* 128K bytes */
+  __base_SRAM_OC_512 = 0x20200000  ; /* SRAM_OC */
+  __base_RAM3 = 0x20200000 ; /* RAM3 */
+  __top_SRAM_OC_512 = 0x20200000 + 0x80000 ; /* 768K bytes */
+  __top_RAM3 = 0x20200000 + 0xc0000 ; /* 768K bytes */
+  __base_BOARD_SDRAM = 0x80000000  ; /* BOARD_SDRAM */
+  __base_RAM4 = 0x80000000 ; /* RAM4 */
+  __top_BOARD_SDRAM = 0x80000000 + 0x1e00000 ; /* 30M bytes */
+  __top_RAM4 = 0x80000000 + 0x1e00000 ; /* 30M bytes */
+  __base_NCACHE_REGION = 0x81e00000  ; /* NCACHE_REGION */
+  __base_RAM5 = 0x81e00000 ; /* RAM5 */
+  __top_NCACHE_REGION = 0x81e00000 + 0x200000 ; /* 2M bytes */
   __top_RAM5 = 0x81e00000 + 0x200000 ; /* 2M bytes */
 
 
@@ -86,34 +86,34 @@ SECTIONS
         FILL(0xff)
         __vectors_start__ = ABSOLUTE(.);
         __privileged_functions_start__ = .;
-        
+
         /* Add in the list of all ISR vectors. */
         KEEP(*(.isr_vector))
         /* Global Section Table. Align it to a 4 byte boundary. */
         . = ALIGN(4) ;
         __section_table_start = .;
         __data_section_table = .;
-        
+
         /* SRAM_DTC */
         LONG(LOADADDR(.data));
         LONG(    ADDR(.data));
         LONG(  SIZEOF(.data));
-        
+
         /* SRAM_ITC */
         LONG(LOADADDR(.data_RAM2));
         LONG(    ADDR(.data_RAM2));
         LONG(  SIZEOF(.data_RAM2));
-        
+
         /* SRAM_OC */
         LONG(LOADADDR(.data_RAM3));
         LONG(    ADDR(.data_RAM3));
         LONG(  SIZEOF(.data_RAM3));
-        
+
         /* BOARD_SDRAM */
         LONG(LOADADDR(.data_RAM4));
         LONG(    ADDR(.data_RAM4));
         LONG(  SIZEOF(.data_RAM4));
-        
+
         /* NCACHE_REGION */
         LONG(LOADADDR(.data_RAM5));
         LONG(    ADDR(.data_RAM5));
@@ -137,12 +137,12 @@ SECTIONS
 
         /* Reset ISR and data init functions for the board. */
         *(.after_vectors*)
-        
+
         /* Kernel code. */
         *(privileged_functions)
-        
+
         FILL(0xDEAD);
-        
+
         /* Ensure that non-privileged code is placed after the region reserved for
          * privileged kernel code. */
         /* Note that dot (.) actually refers to the byte offset from the start of
@@ -151,10 +151,10 @@ SECTIONS
         . = __privileged_functions_region_size__;
         __privileged_functions_end__ = .;
     } > BOARD_FLASH
-    
+
     /* Text Section. */
     .text : ALIGN(4)
-    {        
+    {
         /* Place the FreeRTOS System Calls first in the unprivileged region. */
         __syscalls_flash_start__ = .;
         *(freertos_system_calls)
@@ -166,7 +166,7 @@ SECTIONS
         *(.rodata .rodata.* .constdata .constdata.*)
         . = ALIGN(4);
     } > BOARD_FLASH
-    
+
     /*
      * for exception handling/unwind - some Newlib functions (in common
      * with C++ and STDC++) use this.
@@ -182,10 +182,10 @@ SECTIONS
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end = .;
     } > BOARD_FLASH
- 
+
     /* End of text section. */
     _etext = .;
-        
+
     /* DATA section for SRAM_ITC */
     .data_RAM2 : ALIGN(4)
     {
@@ -194,7 +194,7 @@ SECTIONS
         PROVIDE(__start_data_SRAM_ITC = .) ;
         *(.ramfunc.$RAM2)
         *(.ramfunc.$SRAM_ITC)
-        
+
         *mflash_drv.o(.text .text* .rodata .rodata*)
         *fsl_flexspi.o(.text .text* .rodata .rodata*)
         *ota_pal.o(.text .text* .rodata .rodata*)
@@ -263,7 +263,7 @@ SECTIONS
        __privileged_data_start__ = _data;
        PROVIDE(__start_data_RAM = .) ;
        PROVIDE(__start_data_SRAM_DTC = .) ;
-       
+
        /* FreeRTOS kernel data. */
         *(privileged_data)
 
@@ -275,7 +275,7 @@ SECTIONS
          * dot (.) to a value extends the size of the section. */
         . = __privileged_data_region_size__;
         __privileged_data_end__ = .;
-       
+
        FILL(0xff)
        *(vtable)
        *(.ramfunc*)
@@ -305,7 +305,7 @@ SECTIONS
     {
        PROVIDE(__start_bss_RAM3 = .) ;
        PROVIDE(__start_bss_SRAM_OC = .) ;
-        
+
         *(.bss*)
        . = ALIGN (. != 0 ? 4 : 1) ; /* avoid empty segment */
        PROVIDE(__end_bss_RAM3 = .) ;
@@ -414,7 +414,7 @@ SECTIONS
          . = ALIGN(4) ;
         _end_noinit = .;
        PROVIDE(__end_noinit_RAM = .) ;
-       PROVIDE(__end_noinit_SRAM_DTC = .) ;        
+       PROVIDE(__end_noinit_SRAM_DTC = .) ;
     } > SRAM_DTC AT> SRAM_DTC
 
     /* Reserve and place Heap within memory map */

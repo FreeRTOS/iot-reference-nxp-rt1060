@@ -124,7 +124,7 @@ int app_main( void )
         if( xResult == pdPASS )
         {
             xResult = xMQTTAgentInit( appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY );
-            //SRC->SCR |= SRC_SCR_CORE0_RST_MASK;
+            /*SRC->SCR |= SRC_SCR_CORE0_RST_MASK; */
         }
 
 #if ( appmainINCLUDE_OTA_UPDATE_TASK == 1 )

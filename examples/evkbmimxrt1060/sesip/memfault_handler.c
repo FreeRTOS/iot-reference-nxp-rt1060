@@ -25,16 +25,16 @@
  * 1 tab == 4 spaces!
  */
 
- /**
-  * @brief File shows a sample implementation of memory fault handler.
-  */
+/**
+ * @brief File shows a sample implementation of memory fault handler.
+ */
 
-  /**
-   * @brief Memory fault handler invoked by the MPU unit for illegal access to a previleged memory.
-   * This overrides the default platform MemManage_Handler and calls the demo defined hard fault
-   * handler in user/demo_restrictions.c file.
-   */
-void MemManage_Handler(void) __attribute__((naked));
+/**
+ * @brief Memory fault handler invoked by the MPU unit for illegal access to a previleged memory.
+ * This overrides the default platform MemManage_Handler and calls the demo defined hard fault
+ * handler in user/demo_restrictions.c file.
+ */
+void MemManage_Handler( void ) __attribute__( ( naked ) );
 /*-----------------------------------------------------------*/
 #include "FreeRTOS.h"
 extern void vHandleMemoryFault( uint32_t * pulFaultStackAddress );
@@ -44,7 +44,7 @@ extern void vHandleMemoryFault( uint32_t * pulFaultStackAddress );
  * The handler jumps to vHandleMemoryFault function to actually
  * handle the fault.
  */
-void MemManage_Handler(void)
+void MemManage_Handler( void )
 {
     __asm volatile
     (
@@ -55,8 +55,8 @@ void MemManage_Handler(void)
         " ldr r1, .handler_address_const					\n"
         " bx r1												\n"
         "													\n"
-    	" .ALIGN 4                                          \n"
+        " .ALIGN 4                                          \n"
         " .handler_address_const: .word vHandleMemoryFault	\n"
-        );
+    );
 }
 /*-----------------------------------------------------------*/

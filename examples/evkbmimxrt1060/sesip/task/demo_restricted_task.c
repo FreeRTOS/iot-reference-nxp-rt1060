@@ -71,11 +71,11 @@
  * @brief Macro to override printf funtion to run it in privileged mode.
  * NXP PRINTF code resides somewhere in RAM that could be provided as accessible region, but it's simpler to
  * just run it as privileged */
-#define MPU_PRINTF( ... )                                      \
-    {                                                          \
-        portRAISE_PRIVILEGE();                                 \
-        PRINTF( __VA_ARGS__ );                                 \
-        portRESET_PRIVILEGE();                                 \
+#define MPU_PRINTF( ... )      \
+    {                          \
+        portRAISE_PRIVILEGE(); \
+        PRINTF( __VA_ARGS__ ); \
+        portRESET_PRIVILEGE(); \
     }
 
 /* For readability. Read about Hardfault Entry in ARMv7 docs for more details */
@@ -246,25 +246,25 @@ static void prvROAccessTask( void * pvParameters )
         /* Silent compiler warnings about unused variables. */
         ( void ) ucVal;
 
-        #if ( INJECT_TEST_MEMORY_FAULT == 1 )
-            ucROTaskFaultTracker[ 0 ] = 1;
+#if ( INJECT_TEST_MEMORY_FAULT == 1 )
+        ucROTaskFaultTracker[ 0 ] = 1;
 
-            MPU_PRINTF( "Triggering memory violation...\r\n" );
+        MPU_PRINTF( "Triggering memory violation...\r\n" );
 
-            /* Illegal access to generate Memory Fault. */
-            ucSharedMemory[ 0 ] = 0;
+        /* Illegal access to generate Memory Fault. */
+        ucSharedMemory[ 0 ] = 0;
 
-            /* Ensure that the above line did generate MemFault and the fault
-             * handler did clear the  ucROTaskFaultTracker[ 0 ]. */
-            if( ucROTaskFaultTracker[ 0 ] == 0 )
-            {
-                MPU_PRINTF( "Access Violation handled.\r\n" );
-            }
-            else
-            {
-                MPU_PRINTF( "Error: Access violation should have triggered a fault\r\n" );
-            }
-        #endif /* ifdef INJECT_TEST_MEMORY_FAULT */
+        /* Ensure that the above line did generate MemFault and the fault
+         * handler did clear the  ucROTaskFaultTracker[ 0 ]. */
+        if( ucROTaskFaultTracker[ 0 ] == 0 )
+        {
+            MPU_PRINTF( "Access Violation handled.\r\n" );
+        }
+        else
+        {
+            MPU_PRINTF( "Error: Access violation should have triggered a fault\r\n" );
+        }
+#endif /* ifdef INJECT_TEST_MEMORY_FAULT */
         MPU_PRINTF( "Ran RO task\r\n" );
 
         vTaskDelay( pdMS_TO_TICKS( 500 ) );
@@ -317,6 +317,7 @@ void xCreateRestrictedTasks( BaseType_t xPriority )
             /*{ 0x20000500, 0x100, portMPU_REGION_READ_WRITE }, */
         }
     };
+
     xTaskCreateRestricted( &( xROAccessTaskParameters ), NULL );
 }
 

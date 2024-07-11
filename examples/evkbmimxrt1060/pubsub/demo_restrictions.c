@@ -25,18 +25,18 @@
  * 1 tab == 4 spaces!
  */
 
- /**
-  * @brief Demonstration of Memory Protection Unit functionalities.
-  * Demo creates two restricted tasks read-only task and and a read write task.
-  * To find more about create restricted task API, see: https://www.freertos.org/xTaskCreateRestricted.html.
-  * Read-only task has read only access to a shared memory region, while Read-Write task has both read and write
-  * access to it. Read-only task sets a global flag to one and then try to write to the shared memory region, which generates
-  * hard fault by MPU. The hard fault handler implemented in this demo handles the exception gracefully by setting the global
-  * flag back to zero and skipping to the next instruction in the task. The read only task verifies that flag is reset to zero to confirm
-  * that the memory fault was raised and handled gracefully.
-  */
+/**
+ * @brief Demonstration of Memory Protection Unit functionalities.
+ * Demo creates two restricted tasks read-only task and and a read write task.
+ * To find more about create restricted task API, see: https://www.freertos.org/xTaskCreateRestricted.html.
+ * Read-only task has read only access to a shared memory region, while Read-Write task has both read and write
+ * access to it. Read-only task sets a global flag to one and then try to write to the shared memory region, which generates
+ * hard fault by MPU. The hard fault handler implemented in this demo handles the exception gracefully by setting the global
+ * flag back to zero and skipping to the next instruction in the task. The read only task verifies that flag is reset to zero to confirm
+ * that the memory fault was raised and handled gracefully.
+ */
 
-  /* FreeRTOS include. */
+/* FreeRTOS include. */
 #include "FreeRTOS.h"
 
 /* Task API include. */
@@ -52,25 +52,25 @@
  */
 #define INJECT_TEST_MEMORY_FAULT      ( 0 )
 
- /**
-  * @brief Size of the shared memory between the restricted tasks.
-  */
+/**
+ * @brief Size of the shared memory between the restricted tasks.
+ */
 #define SHARED_MEMORY_SIZE            32
 
-  /**
-   * @brief Size of the memory region used by the Read only task and hard fault handler.
-   */
+/**
+ * @brief Size of the memory region used by the Read only task and hard fault handler.
+ */
 #define MIN_REGION_SIZE               32
 
-   /**
-    * @brief Stack size of the restricted tasks.
-    */
+/**
+ * @brief Stack size of the restricted tasks.
+ */
 #define RESTRICTED_TASK_STACK_SIZE    128
 
-    /*
-     * @brief Macro to override printf funtion to run it in privileged mode.
-     * NXP PRINTF code resides somewhere in RAM that could be provided as accessible region, but it's simpler to
-     * just run it as privileged */
+/*
+ * @brief Macro to override printf funtion to run it in privileged mode.
+ * NXP PRINTF code resides somewhere in RAM that could be provided as accessible region, but it's simpler to
+ * just run it as privileged */
 #define MPU_PRINTF( ... )                                      \
     {                                                          \
         BaseType_t xRunningPrivileged = xPortRaisePrivilege(); \
@@ -79,7 +79,7 @@
     }
 
 
-     /* For readability. Read about Hardfault Entry in ARMv7 docs for more details */
+/* For readability. Read about Hardfault Entry in ARMv7 docs for more details */
 typedef struct
 {
     uint32_t r0;
@@ -98,7 +98,7 @@ typedef struct
  *
  * @return pdFALSE if privilege was raised, pdTRUE otherwise.
  */
-extern BaseType_t xPortRaisePrivilege(void);
+extern BaseType_t xPortRaisePrivilege( void );
 
 /**
  * @brief Calls the port specific code to reset the privilege.
@@ -107,12 +107,12 @@ extern BaseType_t xPortRaisePrivilege(void);
  *
  * @param[in] xRunningPrivileged Whether running in privelged mode or not.
  */
-extern void vPortResetPrivilege(BaseType_t xRunningPrivileged);
+extern void vPortResetPrivilege( BaseType_t xRunningPrivileged );
 
 /**
  * @brief Function used to dump the MPU memory regions allocated by linker script.
  */
-void printRegions(void);
+void printRegions( void );
 
 /**
  * @brief The Read write restricted task.
@@ -121,7 +121,7 @@ void printRegions(void);
  *
  * @param[in] pvParameters Parameters to the task.
  */
-static void prvRWAccessTask(void* pvParameters);
+static void prvRWAccessTask( void * pvParameters );
 
 /**
  * @brief The read only task
@@ -131,7 +131,7 @@ static void prvRWAccessTask(void* pvParameters);
  *
  * @param[in] pvParameters Parameters to the task.
  */
-static void prvROAccessTask(void* pvParameters);
+static void prvROAccessTask( void * pvParameters );
 
 /**
  * @brief Memory regions used by the linker script.
@@ -151,12 +151,12 @@ extern uint32_t __SRAM_segment_end__[];
 /**
  * @brief Shared memory area used between the restricted tasks.
  */
-static uint8_t ucSharedMemory[SHARED_MEMORY_SIZE] __attribute__((aligned(SHARED_MEMORY_SIZE)));
+static uint8_t ucSharedMemory[ SHARED_MEMORY_SIZE ] __attribute__( ( aligned( SHARED_MEMORY_SIZE ) ) );
 
 /**
  * @brief Statically allocated stack for Read-write access restristed task.
  */
-static StackType_t xRWAccessTaskStack[RESTRICTED_TASK_STACK_SIZE] __attribute__((aligned(RESTRICTED_TASK_STACK_SIZE * sizeof(StackType_t))));
+static StackType_t xRWAccessTaskStack[ RESTRICTED_TASK_STACK_SIZE ] __attribute__( ( aligned( RESTRICTED_TASK_STACK_SIZE * sizeof( StackType_t ) ) ) );
 
 /*
  * @brief The memory region shared between Read only task and hard fault handler.
@@ -164,18 +164,18 @@ static StackType_t xRWAccessTaskStack[RESTRICTED_TASK_STACK_SIZE] __attribute__(
  * This is how RO task communicates to handler that it intentionally memory faulted.
  * Note, handlers run priviliged thus will have access)
  * Also note, 32B is minimum valid size for region*/
-static volatile uint8_t ucROTaskFaultTracker[MIN_REGION_SIZE] __attribute__((aligned(MIN_REGION_SIZE))) = { 0 };
+static volatile uint8_t ucROTaskFaultTracker[ MIN_REGION_SIZE ] __attribute__( ( aligned( MIN_REGION_SIZE ) ) ) = { 0 };
 
 /**
  * @brief Statically allocated stack for Read-only access restristed task.
  */
-static StackType_t xROAccessTaskStack[RESTRICTED_TASK_STACK_SIZE] __attribute__((aligned(RESTRICTED_TASK_STACK_SIZE * sizeof(StackType_t))));
+static StackType_t xROAccessTaskStack[ RESTRICTED_TASK_STACK_SIZE ] __attribute__( ( aligned( RESTRICTED_TASK_STACK_SIZE * sizeof( StackType_t ) ) ) );
 
 /* ------------------------------------------------------------------------------- */
 
-void printRegions(void)
+void printRegions( void )
 {
-    uint32_t* tmp = NULL;
+    uint32_t * tmp = NULL;
 
     tmp = __privileged_functions_start__;
     tmp = __privileged_functions_end__;
@@ -184,87 +184,87 @@ void printRegions(void)
     tmp = __privileged_data_start__;
     tmp = __privileged_data_end__;
 
-    (void)tmp;
+    ( void ) tmp;
 
-    PRINTF("\r\n");
-    PRINTF("privileged functions: %08x - %08x\r\n", __privileged_functions_start__, __privileged_functions_end__);
-    PRINTF("privileged data:      %08x - %08x\r\n", __privileged_data_start__, __privileged_data_end__);
-    PRINTF("system calls:         %08x - %08x\r\n", __syscalls_flash_start__, __syscalls_flash_end__);
-    PRINTF("flash segment:        %08x - %08x\r\n", __FLASH_segment_start__, __FLASH_segment_end__);
-    PRINTF("sram segment:         %08x - %08x\r\n", __SRAM_segment_start__, __SRAM_segment_end__);
-    PRINTF("\r\n");
+    PRINTF( "\r\n" );
+    PRINTF( "privileged functions: %08x - %08x\r\n", __privileged_functions_start__, __privileged_functions_end__ );
+    PRINTF( "privileged data:      %08x - %08x\r\n", __privileged_data_start__, __privileged_data_end__ );
+    PRINTF( "system calls:         %08x - %08x\r\n", __syscalls_flash_start__, __syscalls_flash_end__ );
+    PRINTF( "flash segment:        %08x - %08x\r\n", __FLASH_segment_start__, __FLASH_segment_end__ );
+    PRINTF( "sram segment:         %08x - %08x\r\n", __SRAM_segment_start__, __SRAM_segment_end__ );
+    PRINTF( "\r\n" );
 }
 
-static void prvRWAccessTask(void* pvParameters)
+static void prvRWAccessTask( void * pvParameters )
 {
     /* Unused parameters. */
-    (void)pvParameters;
+    ( void ) pvParameters;
 
-    ucSharedMemory[0] = 0;
+    ucSharedMemory[ 0 ] = 0;
 
-    while (1)
+    while( 1 )
     {
-        ucSharedMemory[0] = 1;
-        MPU_PRINTF("Ran RW task\r\n");
+        ucSharedMemory[ 0 ] = 1;
+        MPU_PRINTF( "Ran RW task\r\n" );
 
-        vTaskDelay(pdMS_TO_TICKS(8000));
+        vTaskDelay( pdMS_TO_TICKS( 8000 ) );
     }
 }
 
-static void prvROAccessTask(void* pvParameters)
+static void prvROAccessTask( void * pvParameters )
 {
     uint8_t ucVal;
 
     /* Unused parameters. */
-    (void)pvParameters;
-    ucROTaskFaultTracker[0] = 0;
+    ( void ) pvParameters;
+    ucROTaskFaultTracker[ 0 ] = 0;
 
-    for (; ; )
+    for( ; ; )
     {
         /* This task has RO access to ucSharedMemory and therefore it can read
          * it but cannot modify it. */
-        ucVal = ucSharedMemory[0];
+        ucVal = ucSharedMemory[ 0 ];
 
         /* Silent compiler warnings about unused variables. */
-        (void)ucVal;
+        ( void ) ucVal;
 
 #if ( INJECT_TEST_MEMORY_FAULT == 1 )
-        ucROTaskFaultTracker[0] = 1;
+        ucROTaskFaultTracker[ 0 ] = 1;
 
-        MPU_PRINTF("Triggering memory violation...\r\n");
+        MPU_PRINTF( "Triggering memory violation...\r\n" );
 
         /* Illegal access to generate Memory Fault. */
-        ucSharedMemory[0] = 0;
+        ucSharedMemory[ 0 ] = 0;
 
         /* Ensure that the above line did generate MemFault and the fault
          * handler did clear the  ucROTaskFaultTracker[ 0 ]. */
-        if (ucROTaskFaultTracker[0] == 0)
+        if( ucROTaskFaultTracker[ 0 ] == 0 )
         {
-            MPU_PRINTF("Access Violation handled.\r\n");
+            MPU_PRINTF( "Access Violation handled.\r\n" );
         }
         else
         {
-            MPU_PRINTF("Error: Access violation should have triggered a fault\r\n");
+            MPU_PRINTF( "Error: Access violation should have triggered a fault\r\n" );
         }
 #endif /* ifdef INJECT_TEST_MEMORY_FAULT */
-        MPU_PRINTF("Ran RO task\r\n");
+        MPU_PRINTF( "Ran RO task\r\n" );
 
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay( pdMS_TO_TICKS( 5000 ) );
     }
 }
 
-void xCreateRestrictedTasks(BaseType_t xPriority)
+void xCreateRestrictedTasks( BaseType_t xPriority )
 {
     /* Create restricted tasks */
     TaskParameters_t xRWAccessTaskParameters =
     {
-        .pvTaskCode = prvRWAccessTask,
-        .pcName = "RWAccess",
-        .usStackDepth = RESTRICTED_TASK_STACK_SIZE,
-        .pvParameters = NULL,
-        .uxPriority = xPriority,
+        .pvTaskCode     = prvRWAccessTask,
+        .pcName         = "RWAccess",
+        .usStackDepth   = RESTRICTED_TASK_STACK_SIZE,
+        .pvParameters   = NULL,
+        .uxPriority     = xPriority,
         .puxStackBuffer = xRWAccessTaskStack,
-        .xRegions =
+        .xRegions       =
         {
             { ucSharedMemory, SHARED_MEMORY_SIZE, portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER },
             { 0,              0,                  0                                                        },
@@ -272,25 +272,26 @@ void xCreateRestrictedTasks(BaseType_t xPriority)
         }
     };
 
-    xTaskCreateRestricted(&(xRWAccessTaskParameters), NULL);
+    xTaskCreateRestricted( &( xRWAccessTaskParameters ), NULL );
 
     TaskParameters_t xROAccessTaskParameters =
     {
-        .pvTaskCode = prvROAccessTask,
-        .pcName = "ROAccess",
-        .usStackDepth = RESTRICTED_TASK_STACK_SIZE,
-        .pvParameters = NULL,
-        .uxPriority = xPriority,
+        .pvTaskCode     = prvROAccessTask,
+        .pcName         = "ROAccess",
+        .usStackDepth   = RESTRICTED_TASK_STACK_SIZE,
+        .pvParameters   = NULL,
+        .uxPriority     = xPriority,
         .puxStackBuffer = xROAccessTaskStack,
-        .xRegions =
+        .xRegions       =
         {
             { ucSharedMemory,                  SHARED_MEMORY_SIZE, portMPU_REGION_PRIVILEGED_READ_WRITE_UNPRIV_READ_ONLY | portMPU_REGION_EXECUTE_NEVER },
-            { (void*)ucROTaskFaultTracker, SHARED_MEMORY_SIZE, portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER                             },
+            { ( void * ) ucROTaskFaultTracker, SHARED_MEMORY_SIZE, portMPU_REGION_READ_WRITE | portMPU_REGION_EXECUTE_NEVER                             },
             { 0,                               0,                  0                                                                                    }
             /*{ 0x20000500, 0x100, portMPU_REGION_READ_WRITE }, */
         }
     };
-    xTaskCreateRestricted(&(xROAccessTaskParameters), NULL);
+
+    xTaskCreateRestricted( &( xROAccessTaskParameters ), NULL );
 }
 
 
@@ -302,20 +303,20 @@ void xCreateRestrictedTasks(BaseType_t xPriority)
  * resets the shared flag to zero for read-only task and then skips the stack pointer to the next
  * instruction to be executed.
  */
-portDONT_DISCARD void vHandleMemoryFault(uint32_t* pulFaultStackAddress)
+portDONT_DISCARD void vHandleMemoryFault( uint32_t * pulFaultStackAddress )
 {
     uint32_t ulPC;
     uint16_t usOffendingInstruction;
 
-    HardFaultStack_t* const xFaultStack = (HardFaultStack_t*)pulFaultStackAddress;
+    HardFaultStack_t * const xFaultStack = ( HardFaultStack_t * ) pulFaultStackAddress;
 
     /* Read program counter. */
     ulPC = xFaultStack->return_address;
 
-    if (ucROTaskFaultTracker[0] == 1)
+    if( ucROTaskFaultTracker[ 0 ] == 1 )
     {
         /* Read the offending instruction. */
-        usOffendingInstruction = *(uint16_t*)ulPC;
+        usOffendingInstruction = *( uint16_t * ) ulPC;
 
         /* From ARM docs:
          * If the value of bits[15:11] of the halfword being decoded is one of
@@ -327,14 +328,14 @@ portDONT_DISCARD void vHandleMemoryFault(uint32_t* pulFaultStackAddress)
          * Otherwise, the halfword is a 16-bit instruction.
          */
 
-         /* Extract bits[15:11] of the offending instruction. */
+        /* Extract bits[15:11] of the offending instruction. */
         usOffendingInstruction = usOffendingInstruction & 0xF800;
-        usOffendingInstruction = (usOffendingInstruction >> 11);
+        usOffendingInstruction = ( usOffendingInstruction >> 11 );
 
         /* Increment to next instruction, depending on current instruction size (32-bit or 16-bit) */
-        if ((usOffendingInstruction == 0x001F) ||
-            (usOffendingInstruction == 0x001E) ||
-            (usOffendingInstruction == 0x001D))
+        if( ( usOffendingInstruction == 0x001F ) ||
+            ( usOffendingInstruction == 0x001E ) ||
+            ( usOffendingInstruction == 0x001D ) )
         {
             ulPC += 4;
         }
@@ -344,18 +345,18 @@ portDONT_DISCARD void vHandleMemoryFault(uint32_t* pulFaultStackAddress)
         }
 
         /* Indicate to RO task its expected fault was handled */
-        ucROTaskFaultTracker[0] = 0;
+        ucROTaskFaultTracker[ 0 ] = 0;
 
         /* Resume execution after offending instruction from RO task */
         xFaultStack->return_address = ulPC;
 
-        PRINTF("Expected memory violation caught by handler...\r\n", ulPC);
+        PRINTF( "Expected memory violation caught by handler...\r\n", ulPC );
     }
     else
     {
-        PRINTF("Memory Access Violation. Inst @ %x\r\n", ulPC);
+        PRINTF( "Memory Access Violation. Inst @ %x\r\n", ulPC );
 
-        while (1)
+        while( 1 )
         {
         }
     }
