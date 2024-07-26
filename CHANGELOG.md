@@ -1,7 +1,10 @@
 # Changelog for NXP i.MX RT1060 Featured FreeRTOS IoT Integration
 
 ## v202407.00 ( July 2024 )
-
+- [#49](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/49)
+  * Update 202407.00 release information
+  * Remove IDT folder and related information
+  * [coreMQTT v2.3.1] (https://github.com/FreeRTOS/coreMQTT/blob/v2.3.1)
 - [#48](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/48) Update third party submodule
   * [Unity v2.6.0](https://github.com/ThrowTheSwitch/Unity/tree/v2.6.0)
   * [mbedtls v2.28.8](https://github.com/Mbed-TLS/mbedtls/tree/v2.28.8)
