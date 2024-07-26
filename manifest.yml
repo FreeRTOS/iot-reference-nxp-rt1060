@@ -16,7 +16,7 @@ dependencies:
       url: "https://github.com/FreeRTOS/coreJSON.git"
       path: "Middleware/FreeRTOS/coreJSON"
   - name: "coreMQTT"
-    version: "v2.3.0"
+    version: "v2.3.1"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT.git"
