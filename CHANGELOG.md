@@ -1,15 +1,13 @@
 # Changelog for NXP i.MX RT1060 Featured FreeRTOS IoT Integration
 
 ## v202407.00 ( July 2024 )
-- [#49](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/49)
-  * Update 202407.00 release information
-  * Remove IDT folder and related information
+- [#49](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/49) Update 202407.00 release information and Long Term Support (LTS) libraries to 202406.01-LTS.
   * [coreMQTT v2.3.1] (https://github.com/FreeRTOS/coreMQTT/blob/v2.3.1)
 - [#48](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/48) Update third party submodule
   * [Unity v2.6.0](https://github.com/ThrowTheSwitch/Unity/tree/v2.6.0)
   * [mbedtls v2.28.8](https://github.com/Mbed-TLS/mbedtls/tree/v2.28.8)
-- [#47](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/47) Update integration test to 202406.00 version
-- [#45](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/45) Switch to modular OTA and aws-iot-core-mqtt-file-streams-embedded-c. Update Long Term Support (LTS) libraries to 202406.00.
+- [#47](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/47) Update FreeRTOS Libraries Integration Test to 202406.00 version
+- [#45](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/pull/45) Switch to modular OTA and aws-iot-core-mqtt-file-streams-embedded-c. Update Long Term Support (LTS) libraries to 202406.00-LTS.
   * [FreeRTOS-Kernel V11.1.0](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/V11.1.0)
   * [coreMQTT v2.3.0](https://github.com/FreeRTOS/coreMQTT/blob/v2.3.0)
   * [corePKCS11 v3.6.1](https://github.com/FreeRTOS/corePKCS11/tree/v3.6.1)
