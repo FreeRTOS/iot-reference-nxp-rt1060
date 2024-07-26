@@ -11,9 +11,8 @@ on:
         required: true
 
 env:
-  repository_name: iot-reference-nxp-rt1060
-  repository_compressed_name: ${{ env.repository_name }}v${{ github.event.inputs.version_number }}
-  repostiory_zip_name: ${{ env.repository_compressed_name }}.zip
+  repository_compressed_name: ${{ github.event.repository.name }}v${{ github.event.inputs.version_number }}
+  repostiory_zip_name: ${{ github.event.repository.name }}.zip
 
 jobs:
   tag-commit:
@@ -51,24 +50,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.commit_id }}
-          path: ${{ env.repository_name }}
+          path: ${{ github.event.repository.name }}
           submodules: recursive
       - name: Checkout disabled submodules
         run: |
-          cd ${{ env.repository_name }}
+          cd ${{ github.event.repository.name }}
           git submodule update --init --checkout --recursive
       - name: Create ZIP
         run: |
-          zip -r ${{ env.repostiory_zip_name }} ${{ env.repository_name }} -x "*.git*"
+          zip -r ${{ env.repostiory_zip_name }} ${{ github.event.repository.name }} -x "*.git*"
           ls ./
       - name: Validate created ZIP
         run: |
           mkdir zip-check
           mv ${{ env.repostiory_zip_name }} zip-check
           cd zip-check
-          unzip ${{ env.repostiory_zip_name }} -d ${{ repository_compressed_name }}
-          ls ${{ repository_compressed_name }}
-          diff -r -x "*.git*" ${{ env.repository_compressed_name }}/${{ env.repository_name }}/ ../${{ env.repository_name }}/
+          unzip ${{ env.repostiory_zip_name }} -d ${{ env.repository_compressed_name }}
+          ls ${{ env.repository_compressed_name }}
+          diff -r -x "*.git*" ${{ env.repository_compressed_name }}/${{ github.event.repository.name }}/ ../${{ github.event.repository.name }}/
       - name: Create artifact of ZIP
         uses: actions/upload-artifact@v2
         with:
