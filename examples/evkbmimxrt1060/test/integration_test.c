@@ -117,6 +117,17 @@ static void ThreadWrapper( void * pParam )
 
 /*-----------------------------------------------------------*/
 
+/* Adding this function to use the common MQTT agent task. */
+bool otaDemo_handleIncomingMQTTMessage( char * topic,
+                                        size_t topicLength,
+                                        uint8_t * message,
+                                        size_t messageLength )
+{
+	return false;
+}
+
+/*-----------------------------------------------------------*/
+
 int FRTest_GenerateRandInt()
 {
     static bool first = true;
