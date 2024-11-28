@@ -42,11 +42,6 @@ Many of these steps are automated in production environments.
 [7 Run the Shadow Demo](#7-run-the-shadow-demo)<br>
 [8 Run the Defender Demo](#8-run-the-defender-demo)<br>
 [9 Troubleshooting Guide](#9-troubleshooting-guide)<br>
-[10 Run AWS IoT Device Tester](#10-run-aws-iot-device-tester)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[10.1 Download AWS IoT Device Tester](#101-download-aws-iot-device-tester)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[10.2 Configure AWS IoT Device Tester](#102-configure-aws-iot-device-tester)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[10.3 Configure Divice](#103-configure-device)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[10.4 Running AWS IoT Device Tester](#104-running-aws-iot-device-tester)<br>
 
 ## 1 Prerequisites
 
@@ -88,7 +83,7 @@ Many of these steps are automated in production environments.
     [Configuration basics](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
     to configure the basic settings (security credentials, the default AWS output format and the default AWS Region)
     that AWS CLI uses to interact with AWS.
-* A serial terminal application, such as [Tera Term](https://ttssh2.osdn.jp/index.html.en).
+* A serial terminal application, such as [Tera Term](https://teratermproject.github.io/index-en.html).
 
 
 ## 2 Hardware and Software Setup
@@ -762,107 +757,3 @@ Besides the Defender metrics graph on the console, you can also use the MQTT Cli
      > * The image is not signed with a valid signature. Recreate the signed binary with a correct signature.
      > * The device encounters a niche error condition, such as receiving duplicate blocks, or the OTA buffer is
        not available to handle these error conditions. In these instances, you can retry OTA job from the console.
-
-## 10 Run AWS IoT Device Tester
-
-The reference integration can be tested using [AWS IoT Device Tester for FreeRTOS (IDT)](https://aws.amazon.com/freertos/device-tester/). IDT is a downloadable tool that can be used to exercise a device integration with FreeRTOS to validate functionality and compatibility with Amazon IoT cloud. Passing the test suite provided by IDT is also required to qualify a device for the [Amazon Partner Device Catalogue](https://devices.amazonaws.com/).
-
-IDT runs a suite of tests that include testing the device's transport interface layer implementation, PKCS11 functionality, and OTA capabilities. In IDT test cases, the IDT binary will make a copy of the source code, update the header files in the `examples/evkbmimxrt1060/test` project, then compile the project and flash the resulting image to your board. Finally, IDT will read serial output from the board and communicate with the AWS IoT cloud to ensure that test cases are passing.
-
-### 10.1 Download AWS IoT Device Tester
-
-The latest version of IDT can be downloaded from the [public documentation page](https://docs.aws.amazon.com/freertos/latest/userguide/dev-test-versions-afr.html). This reference implementation only supports test suites of version 2.0 or later.
-
-### 10.2 Configure AWS IoT Device Tester
-
-After downloading and unzipping IDT onto your file system, you should extract a file structure that includes the following directories:
-
-* The `bin` directory holds the devicetester binary, which is the entry point used to run IDT
-* The `results` directory holds logs that are generated every time you run IDT.
-* The `configs` directory holds configuration values that are needed to set up IDT
-
-Before we can run IDT, we have to update the files in `configs`. In this reference implementation, we have pre-defined configs available in the `idt_configs` directory. Copy these templates over into IDT, and the rest of this section will walk through the remaining values that need to be filled in.
-
-First, copy one of each file from `idt_configs` (based on host OS) in this reference repository to the `configs` directory inside the newly downloaded IDT project. This should provide you with the following files in `device_tester/configs` directory:
-
-```
-configs/flash.bat or flash.sh
-configs/config.json
-configs/userdata.json
-configs/device.json
-configs/build.bat or build.sh
-```
-
-Next, we need to update some configuration values in these files.
-
-* In `build.bat` / `build.sh`, update IDE_PATH
-* In `flash.bat` / `flash.sh`, update IDE_PATH, MCUX_FLASH_DIR0, and MCUX_IDE_BIN
-
-A few notes on the provided build and flash scripts: First, if you run into issues with the provided scripts, you can copy commands provided by the MCUXpresso IDE during a GUI build and flash to create your own build and flash scripts. Second, these scripts only work if your `test` and `bootloader` project have been built once using the MCUXpresso GUI (this creates a required files `MIMXRT1062xxxxA.xml` and `MIMXRT1062xxxxA_part.xml` at `iot-reference-nxp-rt1060/projects/evkmimxrt1060/$PROJECT/Debug`)
-
-* In `config.json`, update the `profile` and `awsRegion` fields
-* In `device.json`, update `serialPort` to the serial port of your board as from [section 2.1](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#21-setting-up-device). Update `publicDeviceCertificateArn` to the ARN of the certificate uploaded when [provisioning the device](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#41-provisioning-the-device).
-* In `userdata.json`, update `sourcePath` to the absolute path to the root of this reference implementation repository.
-* In `userdata.json`, update `signerCertificate` with the ARN of the [application code signing certificate you created.](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate)
-* Run all the steps to create a [second code signing certificate](https://github.com/FreeRTOS/iot-reference-nxp-rt1060/blob/main/GSG.md#62-creating-an-application-code-signing-certificate) but do NOT provision the key onto your board. Copy the ARN for this certificate in `userdata.json` for the field `untrustedSignerCertificate`.
-
-### 10.3 Configure Device
-
-To run test cases "OTADataplaneMQTT" / OTACore / FullPKCS11_PreProvisioned_ECC successfully, we need to set our public keys manually once.
-
-- OTADataplaneMQTT
-  - Follow [6.2 Creating an Application Code Signing Certificate](#62-creating-an-application-code-signing-certificate) to set code signing certificate.
-- OTACore
-  - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATIOn_TEST_SUITE to 0 in app_main.c
-  - Build and flash
-  - In TeraTerm or putty, `pki set pub_key sss:00223346`
-  - Copy and paste below content to the serial port
-    ```
-    -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyza/tGLVbVxhL41iYtC8D6tGEvAH
-    u498gNtqDtPsKaoR3t5xQx+6zdWiCi32fgFT2vkeVAmX3pf/Gl8nIP48Zg==
-    -----END PUBLIC KEY-----
-    ```
-  - Should print “OK”
-- FullPKCS11_PreProvisioned_ECC
-  - Set appmainPROVISIONING_MODE to 1 and appmainRUN_QUALIFICATION_TEST_SUITE to 0 in app_main.c
-  - Build and flash
-  - Get the cert at the label in Teraterm
-    ```
-    pki get cert sss:F0000001
-    ```
-  - Paste that cert into a file cert.pem
-  - Run command `openssl x509 -pubkey -noout -in cert.pem > pubkey.pem`
-  - In TeraTerm or putty, `pki set pub_key sss:00223345`
-  - Paste the content of pubkey.pem to TeraTerm or putty
-  - Should print “OK”
-
-*Note: If you fail at setting public key, try sss:00223343 and remember to change the config.*
-
-### 10.4 Running AWS IoT Device Tester
-
-With configuration complete, IDT can be run for an individual test group, a test case, or the entire qualification suite.
-
-To list the available test groups, run:
-
-```
-.\devicetester_win_x86-64.exe list-groups
-```
-
-To run any one test group, run e.g.:
-
-```
-.\devicetester_win_x86-64.exe run-suite -g FullCloudIoT
-```
-
-To run the entire qualification suite, run:
-
-```
-.\devicetester_win_x86-64.exe run-suite
-```
-
-For more information, `.\devicetester_win_x86-64.exe help` will show all available commands.
-
-When you run IDT, a `results/uuid` directory is generated that will contain all the logs and other information associated with your test run. This allows you to debug any failures.
-
-*Note: Please run qualification test without provision mode (set appmainPROVISIONING_MODE to 0 in [app_main.c](./examples/evkbmimxrt1060/test/app_main.c)).*
