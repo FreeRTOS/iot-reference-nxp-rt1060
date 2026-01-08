@@ -4237,6 +4237,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)
                 case kSSS_CipherType_RSA_CRT:
                     xP11KeyType = CKK_RSA;
                     break;
+                /* No way this works */
+                case kSSS_CipherType_EC_NIST_K:
                 case kSSS_CipherType_EC_NIST_P:
                     xP11KeyType = CKK_EC;
                     break;
