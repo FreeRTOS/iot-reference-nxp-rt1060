@@ -9,6 +9,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "mqtt_wrapper.h"
 #include "ota_demo.h"

@@ -60,6 +60,7 @@
 									<listOptionValue builtIn="false" value="DEBUG_CONSOLE_ENABLE_ECHO=1"/>
 									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B"/>
 									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B_cm7"/>
+									<listOptionValue builtIn="false" value="__STDC_HOSTED__=1"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1579638486" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fomit-frame-pointer -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.401864418" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-common" valueType="string"/>
@@ -324,6 +325,7 @@
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
 									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B"/>
 									<listOptionValue builtIn="false" value="CPU_MIMXRT1062DVL6B_cm7"/>
+									<listOptionValue builtIn="false" value="__STDC_HOSTED__=1"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.861110121" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.1379798117" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-common" valueType="string"/>
@@ -416,7 +418,7 @@
 	<storageModule moduleId="openCmsis"/>
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MIMXRT1060-EVKB</sdkName>
-		<sdkVersion>2.15.000</sdkVersion>
+		<sdkVersion>25.09.00</sdkVersion>
 		<boardId>evkbmimxrt1060</boardId>
 		<package>MIMXRT1062DVL6B</package>
 		<core>cm7</core>

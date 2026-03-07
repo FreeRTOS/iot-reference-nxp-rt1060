@@ -4,31 +4,31 @@ description: |-
   "Reference IoT integration project using NXP i.MX RT1060 with EdgeLock® SE050 secure element and FreeRTOS LTS libraries"
 dependencies:
   - name: "FreeRTOS-Kernel"
-    version: "V11.1.0"
+    version: "92d60e871"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
       path: "Middleware/FreeRTOS/kernel"
   - name: "coreJSON"
-    version: "v3.3.0"
+    version: "v3.3.1"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreJSON.git"
       path: "Middleware/FreeRTOS/coreJSON"
   - name: "coreMQTT"
-    version: "v2.3.0"
+    version: "f41704b"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT.git"
       path: "Middleware/FreeRTOS/coreMQTT"
   - name: "corePKCS11"
-    version: "v3.6.1"
+    version: "v3.6.4"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/corePKCS11.git"
       path: "Middleware/FreeRTOS/corePKCS11"
   - name: "backoffAlgorithm"
-    version: "v1.4.1"
+    version: "v1.4.2"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/backoffAlgorithm"
@@ -88,13 +88,13 @@ dependencies:
       url: "https://github.com/ThrowTheSwitch/Unity.git"
       path: "Middleware/unity"
   - name: "FreeRTOS-Libraries-Integration-Tests"
-    version: "202406.00"
+    version: "f2a6f9e"
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests"
       path: "Middleware/FreeRTOS/tests"
   - name: "aws-iot-core-mqtt-file-streams-embedded-c"
-    version: "v1.1.0"
+    version: "73182a7"
     repository:
       type: "git"
       url: "https://github.com/aws/aws-iot-core-mqtt-file-streams-embedded-c"
@@ -106,7 +106,7 @@ dependencies:
       url: "https://github.com/amazon-freertos/pkcs11.git"
       path: "Middleware/FreeRTOS/pkcs11"
   - name: "Jobs-for-AWS-IoT-embedded-sdk"
-    version: "v1.5.1"
+    version: "b7dd98a"
     repository:
       type: "git"
       url: "https://github.com/aws/Jobs-for-AWS-IoT-embedded-sdk.git"

@@ -590,7 +590,7 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler( OtaJobEventDat
     bool parseJobDocument = false;
     bool handled = false;
     char * jobId;
-    const char ** jobIdptr = &jobId;
+    const char ** jobIdptr = ( const char ** ) &jobId;
     size_t jobIdLength = 0U;
     OtaPalJobDocProcessingResult_t xResult = OtaPalJobDocFileCreateFailed;
 
@@ -771,9 +771,17 @@ static bool sendSuccessMessage( void )
          * Creating the message which contains the status of OTA job.
          * It will be published on the topic created in the previous step.
          */
-        size_t messageBufferLength = Jobs_UpdateMsg( Succeeded,
-                                                     "2",
-                                                     1U,
+
+        JobsUpdateRequest_t updateMsgReq =
+        {
+            Succeeded,
+            "2",
+            1U,
+            NULL,
+            0U
+        };
+
+        size_t messageBufferLength = Jobs_UpdateMsg( updateMsgReq,
                                                      messageBuffer,
                                                      UPDATE_JOB_MSG_LENGTH );
 
@@ -825,6 +833,8 @@ static bool jobDocumentParser( char * message,
             fileIndex = otaParser_parseJobDocFile( jobDoc,
                                                    jobDocLength,
                                                    fileIndex,
+                                                   "MQTT",
+                                                   4,
                                                    jobFields );
         } while( fileIndex > 0 );
     }
